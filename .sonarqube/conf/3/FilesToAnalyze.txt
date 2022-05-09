@@ -7,3 +7,4 @@ C:\Users\HP EliteBook 2570p\.nuget\packages\mstest.testadapter\2.2.7\build\_comm
 C:\Users\HP EliteBook 2570p\.nuget\packages\mstest.testadapter\2.2.7\build\_common\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
 C:\Users\HP EliteBook 2570p\.nuget\packages\mstest.testadapter\2.2.7\build\netcoreapp1.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
 C:\Users\HP EliteBook 2570p\.nuget\packages\mstest.testadapter\2.2.7\build\netcoreapp1.0\Microsoft.TestPlatform.AdapterUtilities.dll
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\coverage.opencover.xml
