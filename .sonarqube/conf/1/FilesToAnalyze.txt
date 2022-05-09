@@ -1,4 +1,4 @@
-﻿C:\Users\HP EliteBook 2570p\source\repos\siges-test\UnitTest1.cs
+﻿C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\UnitTest1.cs
 C:\Users\HP EliteBook 2570p\.nuget\packages\microsoft.net.test.sdk\16.11.0\build\netcoreapp2.1\Microsoft.NET.Test.Sdk.Program.cs
 C:\Users\HP EliteBook 2570p\.nuget\packages\microsoft.testplatform.testhost\16.11.0\build\netcoreapp2.1\x64\testhost.exe
 C:\Users\HP EliteBook 2570p\.nuget\packages\microsoft.testplatform.testhost\16.11.0\build\netcoreapp2.1\x64\testhost.dll
