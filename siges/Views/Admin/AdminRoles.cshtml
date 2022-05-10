@@ -1,0 +1,117 @@
+@using System;
+@using siges.Areas.Identity.Data;
+@using System.Collections;
+@using System.Collections.Generic;
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<RoatechIdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Roles Usuario";
+    List <RoatechIdentityUser> model = ViewData["riuList"] as List <RoatechIdentityUser>;
+    Dictionary <RoatechIdentityUser, List <string>> role = ViewData["riuDicc"] as Dictionary <RoatechIdentityUser, List <string>>;
+ }
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Administraci&oacute;n de Roles de Usuario</h2>
+        </div>
+    </div>
+    <div class="row">
+        <table id="tableRoles" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="name">
+            <thead>
+                <tr>
+                    <th data-field="nombre" data-sortable="true" data-field="name">Nombre</th>
+                    <th data-field="email" data-sortable="true">Correo Electr&oacute;nico</th>
+                    <th data-field="puesto" data-sortable="true">Puesto</th>
+                    <th data-field="role" data-sortable="true">Rol de Sistema</th>
+                    <th class="mobileHidden">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in model) {
+                    var role2 = role[item].Count > 0 ? role[item][0] : "No asigando";
+                    var nombre = item.per.Nombre + " " + item.per.Paterno + " " + item.per.Materno;
+                    if(role2 != "Admin"){
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => nombre)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                            <td>@Html.DisplayFor(modelItem => item.per.Puesto)</td>
+                            <td>@Html.DisplayFor(modelItem => role2)</td>
+                            <td class="mobileHidden"><a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Acciones" data-original-title="Tooltip on bottom"><i class="fab fa-elementor"></i></a></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts{
+<script>
+        const listRoles = @Html.Raw(Json.Serialize(ViewData["roles"]));
+        const objRoles = new Object();
+        for (const role of listRoles) {
+            if(role !== "Default" && role !== "Admin")
+            objRoles[`${role}`] = `${role}`
+        }
+
+    $('#tableRoles').on('click-row.bs.table', async (row, $element, field) => {
+    const nombre = field[0].children[0].innerText;
+    const { value: rol } = await Swal.fire({
+      title: `Rol de ${nombre}`,
+      input: 'select',
+      confirmButtonColor: "#67E7CF",
+      reverseButtons: true,
+      confirmButtonText:"Guardar",
+      cancelButtonText:"Cancelar",
+      inputOptions: objRoles,
+      inputPlaceholder: 'Roles de Usuario',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showCloseButton: true,
+      closeButtonHtml: '<i class="fas fa-times"></i>',
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          if (value !== '') {
+            $.ajax({
+              url: apihost + "/Admin/AsignRoleToUser",
+              method: "POST",
+              data: {
+                  "role":`${value}`,
+                  "user":`${field[0].children[1].innerText}`
+              },
+              async: true,
+              dataType: "json",
+              success: function (respuesta2) {
+                console.log(respuesta2)
+                resolve()
+              }
+            });
+          } else {
+            resolve('Necesitas asignar un rol')
+          }
+        })
+      }
+    })
+
+    if (rol) {
+      Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        confirmButtonColor: "#67E7CF",
+        confirmButtonText:"Aceptar",
+        text: `Se asigno el rol de ${rol} a ${nombre}`,
+        onClose: ()=>{
+          location.reload(true);
+      }
+      }).then((result) => {
+        if (result.value) {
+          location.reload(true);
+        }
+     })
+    }
+});
+</script>
+}

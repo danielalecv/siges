@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Reportes";
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div id="embedContainer" style="height: 100vh"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="/lib/powerbi/powerbi.min.js"></script>
+<script>
+    var token = @Html.Raw(Json.Serialize(ViewData["token"]));
+    var reportid = @Html.Raw(Json.Serialize(ViewData["reportId"]));
+    var txtEmbedUrl = 'https://app.powerbi.com/reportEmbed';
+    // Get models. models contains enums that can be used.
+    var models = window['powerbi-client'].models;
+    // Read embed type from radio
+    var tokenType = 0;
+    // We give All permissions to demonstrate switching between View and Edit mode and saving report.
+    var permissions = models.Permissions.All;
+    // Embed configuration used to describe the what and how to embed.
+    // This object is used when calling powerbi.embed.
+    // This also includes settings and options such as filters.
+    // You can find more information at https://github.com/Microsoft/PowerBI-JavaScript/wiki/Embed-Configuration-Details.
+    var config = {
+        type: 'report',
+        tokenType: tokenType == '0' ? models.TokenType.Aad : models.TokenType.Embed,
+        accessToken: token,
+        embedUrl: txtEmbedUrl,
+        id: reportid,
+        permissions: permissions,
+        settings: {
+            filterPaneEnabled: true,
+            navContentPaneEnabled: true
+        }
+    };
+    // Get a reference to the embedded report HTML element
+    var embedContainer = $('#embedContainer')[0];
+    // Embed the report and display it within the div container.
+    var report = powerbi.embed(embedContainer, config);
+</script>

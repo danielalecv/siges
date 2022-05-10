@@ -1,0 +1,120 @@
+﻿@using System.Data
+@model IEnumerable<siges.Models.Persona>
+
+@{
+    ViewData["Title"] = "Personal";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Personal</h2>
+        </div>
+    </div>
+    <div class="row">
+        <table id="tableStaff" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="name">
+            <thead>
+                <tr>
+                    <th data-visible="false"></th>
+                    <th>Fotografía</th>
+                    <th data-field="name" data-sortable="true">Nombre</th>
+                    <th data-sortable="true">Correo Electr&oacute;nico</th>
+                    <th data-sortable="true">RFC</th>
+                    <th data-sortable="true">Puesto</th>
+                    <th class="mobileHidden">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+              @if(Model != null){
+              @foreach (var item in Model) {
+              var imgSrc = Url.Content("~/img/staff_ad.png");
+              if(item.Fotografia != null){
+              var base64 = Convert.ToBase64String(item.Fotografia);
+              imgSrc = String.Format("data:image/jpeg;base64,{0}",base64);
+              }
+              var nombre = item.Nombre +" "+ item.Paterno + " " + item.Materno;
+              <tr>
+                <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                @*<td><img src="~/img/staff_ad.png" alt="Alternate Text" width="50" height="50" /></td>*@
+                <td><img src="@imgSrc" class="text-hide rounded" width="50" height="50" alt="@nombre"></td>
+                <td>@Html.DisplayFor(modelItem => nombre)</td>
+                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>@Html.DisplayFor(modelItem => item.RFC)</td>
+                <td>@Html.DisplayFor(modelItem => item.Puesto)</td>
+                <td class="mobileHidden"><a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Detalles" data-original-title="Tooltip on bottom"><i class="fas fa-search"></i></a></td>
+              </tr>
+              }
+              }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts{
+<script>
+    $('#tableStaff').on('click-row.bs.table', (row, $element, field) => {
+        $.ajax({
+            url: '@Url.Action("StaffDetail","Client")',
+            method: "GET",
+            data: {
+                id: $element[0]
+            },
+            async: true,
+            dataType: "json",
+            success: function (data){
+                Swal.fire({
+                    title:"Detalles", 
+                    confirmButtonColor: "#67E7CF",
+                    confirmButtonText:"Aceptar",
+                    html:`
+                        <div class="form-group text-center">
+                            <div id="imgUser" class="icon-outlined"></div>
+                        </div>
+                        <div class="form-group text-left">
+                            <label class="control-label">Nombre</label>
+                            <input type="text" class="form-control" value="${(data.data.nombre===null)?"":data.data.nombre} ${(data.data.paterno===null)?"":data.data.paterno} ${(data.data.materno===null)?"":data.data.materno}" readonly/>
+                        </div>
+                        <div class="form-group text-left">
+                            <label class="control-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" value="${data.data.email}" readonly/>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-6 text-left">
+                                <label class="control-label">RFC</label>
+                                <input type="text" class="form-control" value="${data.data.rfc}" readonly/>
+                            </div>
+                            <div class="form-group col-6 text-left">
+                                <label class="control-label">CURP</label>
+                                <input type="text" class="form-control" value="${(data.data.curp===null)?"":data.data.curp}" readonly/>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-6 text-left">
+                                <label class="control-label">Clave de Empleado</label>
+                                <input type="text" class="form-control" value="${(data.data.claveEmpleado===null)?"":data.data.claveEmpleado}" readonly/>
+                            </div>
+                            <div class="form-group col-6 text-left">
+                                <label class="control-label">Teléfono</label>
+                                <input type="text" class="form-control" value="${(data.data.telefono===null)?"":data.data.telefono}" readonly/>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-6 text-left">
+                                <label class="control-label">Campo Opcional</label>
+                                <input type="text" class="form-control" value="${(data.data.opcional1===null)?"":data.data.opcional1}" readonly/>
+                            </div>
+                            <div class="form-group col-6 text-left">
+                                <label class="control-label">Campo Opcional</label>
+                                <input type="text" class="form-control" value="${(data.data.opcional2===null)?"":data.data.opcional2}" readonly/>
+                            </div>
+                        </div> 
+                    `,
+                    onRender: ()=>{
+                        $("#imgUser").append(`<img class="rounded-circle text-hide img-fluid" src=${(data.data.fotografia !== null)?"data:image/jpeg;base64,"+data.data.fotografia:"@Url.Content("~/img/staff_ad.png")"} alt="" / >`)
+                    }
+                });
+            }
+        });
+    });
+</script>
+}

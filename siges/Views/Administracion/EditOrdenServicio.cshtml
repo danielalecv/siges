@@ -1,0 +1,611 @@
+@using siges.Models
+@using System
+@using System.Globalization
+@{
+ViewData["Title"] = "Editar Órden de Servicio";
+ViewData["TitlePage"] = "Editar Estatus Órden de Servicio";
+}
+
+@section css {
+<link href="~/lib/Parsley-2.8.1/parsley.css" rel="stylesheet" />
+}
+
+@{
+var eOS = ((OrdenServicio)ViewData["orden"]);
+var evidencias = ViewData["evidencias"] as List<Operador>;
+var personasDictionary = ViewData["personas"] as Dictionary<int, Persona>;
+var osafTotal = 0;
+var osTotal = 0;
+var osiTotal = 0;
+List<BitacoraEstatus> cambiosEstado = ViewData["cambiosEstado"] as List<BitacoraEstatus>;
+}
+
+<div class="container">
+<div class="row">
+<div class="col">
+  <div id="tab-lists" class="row">
+    <div class="col">
+      <div class="list-group" role="tablist">
+        <a id="stepOne" class="list-group-item list-group-item-action flex-column align-items-start active" href="#infoGral" role="tab">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">1) Informaci&oacute;n general</h5>
+          </div>
+          <small>Informaci&oacute;n general de la &oacute;rden.</small>
+        </a>
+      </div>
+    </div>
+    <div class="col">
+      <div class="list-group" role="tablist">
+        <a id="stepTwo" class="list-group-item list-group-item-action" href="#infoResponsable" role="tab">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">2) Informaci&oacute;n del responsable</h5>
+          </div>
+          <small>Informaci&oacute;n sobre el responsable que recibe el servicio.</small>
+        </a>
+      </div>
+    </div>
+    <div class="col">
+      <div class="list-group" role="tablist">
+        <a id="stepThree" class="list-group-item list-group-item-action" href="#infoPersonal" role="tab">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">3) Asignaci&oacute;n del personal</h5>
+          </div>
+          <small>Detalle del personal que brinda el servicio.</small>
+        </a>
+      </div>
+    </div>
+    <div class="col">
+      <div class="list-group" role="tablist">
+        <a id="stepFour" class="list-group-item list-group-item-action" href="#infoActivosFijos" role="tab">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">4) Asignaci&oacute;n de activos fijos</h5>
+          </div>
+          <small>Detalle del los activos fijos asignados.</small>
+        </a>
+      </div>
+    </div>
+    <div class="col">
+      <div class="list-group" role="tablist">
+        <a id="stepFive" class="list-group-item list-group-item-action" href="#infoInsumos" role="tab">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">5) Asignaci&oacute;n de insumos utilizados</h5>
+          </div>
+          <small>Detalle del los insumos utilizados en un servicio.</small>
+        </a>
+      </div>
+    </div>
+    <div class="col">
+      <div class="list-group" role="tablist">
+        <a id="stepSix" class="list-group-item list-group-item-action" href="#evidencias" role="tab">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Bitácora</h5>
+          </div>
+          <small>Observaciones y evidencias generadas en la atención del servicio</small>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="py-2">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="progress">
+          <div class="progress-bar" role="progressbar" aria-valuenow="25" aria-valuemin="25" aria-valuemax="100" style="width: 25%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <form id="fEditOS" action="@Url.Action( "EditOS", "Administracion")" method="post">
+        <div class="card">
+          <div class="card-body">
+            <div class="tab-content">
+              <div id="infoGral" class="tab-pane fade show active form-section" role="tabpanel">
+                <div class="form-group">
+                  <label for="iFolio">Folio</label>
+                  <input id="iFolio" type="text" class="form-control" name="Folio" value="@eOS.Folio" required="" readonly>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iCliente">Cliente</label>
+                  <input id="iCliente" class="form-control" name="Cliente" type="text" value="@eOS.Cliente.RazonSocial" readonly required>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iContrato">Documento</label>
+                  <input id="iContrato" class="form-control" name="Contrato" type="text" value="@eOS.Contrato.Nombre" readonly required>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iUbicacion">Ubicaci&oacute;n</label>
+                  <input id="iUbicacion" class="form-control" name="Ubicacion" type="text" value="@eOS.Ubicacion.Nombre" readonly required>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iLineaNegocio">L&iacute;nea de negocio</label>
+                  <input id="iLineaNegocio" class="form-control" name="LineaNegocio" type="text" value="@eOS.LineaNegocio.Nombre" readonly required>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iServicio">Servicio</label>
+                  <input id="iServicio" class="form-control" name="Servicio" type="text" value="@eOS.Servicio.Nombre" readonly required>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iTipo">Tipo</label>
+                  <input id="iTipo" class="form-control" name="Tipo" type="text" value="@eOS.Tipo" readonly required>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iFechaInicio">Fecha de inicio</label>
+                  <div class="input-group date" id="iFechaInicio" data-target-input="nearest">
+                    <input type="text" class="form-control datetimepicker-input" data-target="#iFechaInicio" name="FechaInicio" value="@(eOS.FechaInicio.HasValue ? eOS.FechaInicio : null)" readonly/>
+                    <div class="input-group-append" data-target="#iFechaInicio" data-toggle="datetimepicker">
+                      <div class="input-group-text"><i data-feather="calendar"></i></div>
+                    </div>
+                  </div>
+                  <div id="eiFechaInicio"></div>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iFechaFin">Fecha de fin</label>
+                  <div class="input-group date" id="iFechaFin" data-target-input="nearest">
+                    <input type="text" class="form-control datetimepicker-input" data-target="#iFechaFin" name="FechaFin" value="@(eOS.FechaFin.HasValue ? eOS.FechaFin : null)" readonly />
+                    <div class="input-group-append" data-target="#iFechaFin" data-toggle="datetimepicker">
+                      <div class="input-group-text"><i data-feather="calendar"></i></div>
+                    </div>
+                  </div>
+                  <div id="eiFechaFin"></div>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iEstatus">Estatus</label>
+                  <select id="iEstatus" class="form-control" name="EstatusServicio" required>
+                    <option value=""> -- Selecciona una opci&oacute;n -- </option>
+                    @if (eOS.EstatusServicio != null) {
+                    @if (eOS.EstatusServicio.Equals("cancelado")) {
+                    <option selected value="cancelado">Cancelado</option>
+                    } else if (eOS.EstatusServicio.Equals("finalizado")) {
+                    <option selected value="finalizado">Finalizado</option>
+                    <option value="facturado">Facturado</option>
+                    <option value="cobrado">Cobrado</option>
+                    <option value="nocobrado">No Cobrado</option>
+                    } else if (eOS.EstatusServicio.Equals("facturado")) {
+                    <option selected value="facturado">Facturado</option>
+                    <option value="cobrado">Cobrado</option>
+                    <option value="nocobrado">No Cobrado</option>
+                    } else if (eOS.EstatusServicio.Equals("cobrado")) {
+                    <option selected value="cobrado">Cobrado</option>
+                    <option value="nocobrado">No Cobrado</option>
+                    } else if (eOS.EstatusServicio.Equals("nocobrado")) {
+                    <option value="cobrado">Cobrado</option>
+                    <option selected value="nocobrado">No Cobrado</option>
+                    } else {
+                    <option value="facturado">Facturado</option>
+                    <option value="cobrado">Cobrado</option>
+                    <option value="nocobrado">No Cobrado</option>
+                    }
+                    }
+                  </select>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iObs">Observaciones</label>
+                  <textarea class="form-control" id="iObs" rows="3" name="Observaciones" readonly>@eOS.Observaciones</textarea>
+                </div>
+  
+              </div>
+  
+              <div id="infoResponsable" class="tab-pane fade show form-section" role="tabpanel">
+                <div class="form-group">
+                  <label for="iNombre">Nombre</label>
+                  <input id="iNombre" type="text" class="form-control" name="ContactoNombre" value="@eOS.ContactoNombre" readonly>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iAp">Apellido paterno</label>
+                  <input id="iAp" type="text" class="form-control" name="ContactoAP" value="@eOS.ContactoAP" readonly>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iAm">Apellido materno</label>
+                  <input id="iAm" type="text" class="form-control" name="ContactoAM" value="@eOS.ContactoAM" readonly>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iEm">Correo electrónico</label>
+                  <input id="iEm" type="email" class="form-control" name="ContactoEmail" value="@eOS.ContactoEmail" readonly>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iTel">Tel&eacute;fono de contacto</label>
+                  <input id="iTel" type="text" class="form-control" name="ContactoTelefono" value="@eOS.ContactoTelefono" readonly>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iOp1">Opcional 1</label>
+                  <input id="iOp1" type="text" class="form-control" name="Opcional1" value="@eOS.Opcional1" readonly>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iOp2">Opcional 2</label>
+                  <input id="iOp2" type="text" class="form-control" name="Opcional2" value="@eOS.Opcional2" readonly>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iOp3">Opcional 3</label>
+                  <input id="iOp3" type="text" class="form-control" name="Opcional3" value="@eOS.Opcional3" readonly>
+                </div>
+  
+                <div class="form-group">
+                  <label for="iOp4">Opcional 4</label>
+                  <input id="iOp4" type="text" class="form-control" name="Opcional4" value="@eOS.Opcional4" readonly>
+                </div>
+              </div>
+  
+              <div id="infoPersonal" class="tab-pane fade show form-section" role="tabpanel">
+                <div class="row">
+                  <div class="col">
+                    <h4 class="text-uppercase">Personal Asignado</h4>
+                    <table id="tPersonal" data-classes="table table-hover" data-page-size="5" data-page-list="[5,10,25]" data-show-footer="true" data-locale="es-MX" data-toggle="table" data-unique-id="id" data-pagination="true" data-page-size="6">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th data-field="id" data-visible="false">ID</th>
+                          <th data-field="idpersona" data-visible="false">IdPersona</th>
+                          <th data-field="idordper" data-visible="false">IdOrdPer</th>
+                          <th data-field="nombre">Nombre</th>
+                          <th data-field="puesto">Puesto</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @{ int i = 1; }
+                        @foreach (var persona in eOS.Personal as List<OrdenPersona>)
+                        {
+                        if (persona.Estatus)
+                        {
+                        <tr>
+                          <td>@i</td>
+                          <td>@persona.Persona.Id</td>
+                          <td>@persona.Id</td>
+                          <td>@persona.Persona.Nombre @persona.Persona.Paterno @persona.Persona.Materno</td>
+                          <td>@persona.Persona.Categoria</td>
+                        </tr>
+                        i++;
+                        osTotal++;
+                        }
+                        }
+                      </tbody>
+                    </table>
+                    <br />
+                    <div class="form-group row">
+                      <label for="osTotal" class="col-sm-2 col-form-label">Total</label>
+                      <div class="col-sm-10">
+                        <input id="osTotal" type="text" class="form-control-plaintext" readonly value="@osTotal" readonly>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
+                      <div id="aPCont"></div>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+  
+                  </div>
+                </div>
+  
+              </div>
+  
+              <div id="infoActivosFijos" class="tab-pane fade show form-section" role="tabpanel">
+                <div class="row">
+                  <div class="col">
+                    <h4 class="text-uppercase">Activo Fijo</h4>
+                    <table id="tActivoFijo" data-classes="table table-hover" data-page-size="5" data-page-list="[5,10,25]" data-show-footer="true" data-locale="es-MX" data-toggle="table" data-unique-id="idaf" data-pagination="true" data-page-size="6">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th data-field="idaf" data-visible="false">ID</th>
+                          <th data-field="idactivofijo" data-visible="false">IdActivoFijo</th>
+                          <th data-field="idordact" data-visible="false">IdOrdAct</th>
+                          <th data-field="activo">Nombre</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @{ i = 1; }
+                        @foreach (var activo in eOS.Activos as List<OrdenActivoFijo>)
+                        {
+                        if (activo.Estatus)
+                        {
+                        <tr>
+                          <td>@i</td>
+                          <td>@activo.ActivoFijo.Id</td>
+                          <td>@activo.Id</td>
+                          <td>@activo.ActivoFijo.Descripcion</td>
+                        </tr>
+                        i++;
+                        osafTotal++;
+                        }
+                        }
+                      </tbody>
+                    </table>
+                    <br />
+                    <div class="form-group row">
+                      <label for="osafTotal" class="col-sm-2 col-form-label">Total</label>
+                      <div class="col-sm-10">
+                        <input id="osafTotal" type="text" class="form-control-plaintext" readonly value="@osafTotal" readonly>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
+                      <div id="aAFCont"></div>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+  
+                  </div>
+                </div>
+  
+              </div>
+  
+              <div id="infoInsumos" class="tab-pane fade show form-section" role="tabpanel">
+                <div class="row">
+                  <div class="col">
+                    <h4 class="text-uppercase">Insumos Utilizados</h4>
+                    <table id="tInsumos" data-classes="table table-hover" data-page-size="5" data-page-list="[5,10,25]" data-show-footer="true" data-locale="es-MX" data-toggle="table" data-unique-id="idi" data-pagination="true" data-page-size="6">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th data-field="idi" data-visible="false">ID</th>
+                          <th data-field="idinsumo" data-visible="false">IdInsumo</th>
+                          <th data-field="idordins" data-visible="false">IdOrdIns</th>
+                          <th data-field="insumo">Insumo</th>
+                          <th data-field="cantidad">Cantidad</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @{ i = 1; }
+                        @foreach (var insumo in eOS.Insumos as List<OrdenInsumo>)
+                        {
+                        if (insumo.Estatus)
+                        {
+                        <tr>
+                          <td>@i</td>
+                          <td>@insumo.Insumo.Id</td>
+                          <td>@insumo.Id</td>
+                          <td>@insumo.Insumo.Descripcion</td>
+                          <td>@insumo.Cantidad</td>
+                        </tr>
+                        i++;
+                        osiTotal++;
+                        }
+                        }
+                      </tbody>
+                    </table>
+                    <br />
+                    <div class="form-group row">
+                      <label for="osiTotal" class="col-sm-2 col-form-label">Total</label>
+                      <div class="col-sm-10">
+                        <input id="osiTotal" type="text" class="form-control-plaintext" readonly value="@osiTotal" readonly>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
+                      <div id="aICont"></div>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+  
+                  </div>
+                </div>
+              </div>
+  
+              <div id="evidencias" class="tab-pane fade show form-section" role="tabpanel">
+                <div class="row">
+                  <div class="col-12">
+                    <h4 class="text-uppercase">Bitácora</h4>
+                    <div class="jumbotron"> <!-- Inicia Despliegue de evidencias - jumbotron -->
+                      <h1 class="display-4">@eOS.Cliente.RazonSocial</h1>
+                      <p class="lead">@eOS.Ubicacion.Nombre</p>
+                      <hr class="my-4">
+                      <p>@eOS.Servicio.Nombre</p>
+                      <div class="row">
+                        <div class="col-xs-12 col-md-5 col-lg-4">
+                          @if(cambiosEstado != null && cambiosEstado.Count > 0){
+                          @foreach(BitacoraEstatus be in cambiosEstado){
+                          <div class="p-3">
+                            <div class="card text-center">
+                              <div class="card-header">
+                                @be.FechaAdministrativa.ToString("f", CultureInfo.CreateSpecificCulture("es-ES"))
+                              </div>
+                              <div class="card-body">
+                                <h5 class="card-title">@(CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(be.De.ToLower())) -> @(CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(be.A.ToLower()))</h5>
+                                <p class="card-text">@be.Description</p>
+                              </div>
+                              <div class="card-footer text-muted">@be.QuienCambia.Nombre @be.QuienCambia.Paterno</div>
+                            </div>
+                          </div>
+                          }
+                          }
+                        </div>
+                        <div class="col-xs-12 col-md-7 col-lg-8">
+                      <!-- Inicia iteración de las evidencias - Centered Card -->
+                      @if(evidencias != null && evidencias.Count > 0){
+                      @foreach(Operador operador in evidencias) {
+                      <div class="p-3">
+                        <div class="card text-center">
+                          <div class="card-header">@operador.Hora</div>
+                          <div class="card-body">
+                            @if(operador.EstadoN != null && operador.EstadoN.Count > 0){
+                            @foreach(var estado in operador.EstadoN as List<Operador.Estado>){
+                            <h5 class="card-title">@(estado.NuevoEstado == "sitio" ? "En sitio:" : (estado.NuevoEstado=="noatendido"?"Evidencia:":"Atendido:"))</h5>
+                            <p class="card-text">@estado.ComentarioNuevoEstado</p>
+                            @if(estado.ArchivosEvidencia != null && estado.ArchivosEvidencia.Count > 0){
+                            @foreach(var archivo in estado.ArchivosEvidencia as List<Operador.Estado.Archivo>){
+                            <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action( "MostrarArchivo", "Servicio", new{@osId=@operador.OrdenServicio.Id, @operadorEstadoId=@estado.Id, @operadorEstadoArchivoId = @archivo.Id})'">@archivo.Name</button>
+                            }
+                            }
+                            }
+                            }
+                          </div>
+                          @try{
+                          <div class="card-footer text-muted">@personasDictionary[@operador.Id].Nombre @personasDictionary[@operador.Id].Paterno</div>
+                          } catch (KeyNotFoundException) {
+                          <div class="card-footer text-muted">Indefinido</div>
+                          }
+                        </div>
+                      </div>
+                      }
+                      }
+                      <!-- Termina iteración de las evidencias - Centered Card-->
+                      </div>
+                      </div>
+                    </div> <!-- Terminan las evidencias - jumbotron -->
+                    <br />
+                    <div class="form-group row">
+                      <label for="osiTotal" class="col-sm-2 col-form-label">@*Total*@</label>
+                      <div class="col-sm-10">
+                        @*<input id="osiTotal" type="text" class="form-control-plaintext" readonly value="@osiTotal">*@
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
+                      <div id="aICont"></div>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <br />
+              <div class="row">
+                <div class="col-lg-6 offset-lg-6 col-xl-9 offset-xl-5">
+                  @if(evidencias != null && evidencias.Count > 0){
+                  <button id="btnDescargarZip" class="btn btn-primary" type="button" onclick="location.href='@Url.Action( "DescargarZip", "Servicio", new {osId=eOS.Id})'">Descargar evidencias</button>
+                  }
+                  <button id="btnCancel" class="btn btn-danger" type="button" onclick="location.href='@Url.Action( "IndexListOS", "Administracion")'">Cancelar</button>
+                  <button id="btnsave" class="btn btn-success">Guardar cambio de estatus</button>
+                </div>
+              </div>
+  
+              <input type="hidden" name="Estatus" value="@(eOS.Estatus ? "true" : "false" )"  />
+              <input type="hidden" name="Id" value="@eOS.Id" />
+  
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="capturaDatosFactura" tabindex="-1" role="dialog" aria-labelledby="capturaDatosFacturaTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="capturaDatosFacturaTitle">Capturar datos de facturación</h5>
+        <button id="cancelaCapturaDatos1" type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="jumbotron jumbotron-fluid">
+          <div class="container">
+            <form id="capturaDatosFacturaForm" action="@Url.Action( "CapturaDatosFactura", "Administracion")" method="post">
+              <div class="form-group">
+                <label for="FacturaFolio">Factura Número/Folio</label>
+                <input type="text" class="form-control" id="FacturaFolio" aria-describedby="factFolio" placeholder="Número/Folio" required name="FacturaFolio">
+                <small id="factFolio" class="form-text text-muted">Capture el Número/Folio de la factura, tal cual.</small>
+              </div>
+              <div class="form-group">
+                <label for="FacturaFecha">Fecha de la factura</label>
+                <input type="date" class="form-control" id="FacturaFecha" name="FacturaFecha" placeholder="@DateTime.Today.Date" required/>
+              </div>
+              @*<div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+              </div>*@
+              <input type="hidden" value="@eOS.Id" name="OrdenServicioId">
+              <button type="submit" class="btn btn-success">Guardar datos</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelaCapturaDatos2" type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="modal fade" id="capturaComentario" tabindex="-1" role="dialog" aria-labelledby="capturaComentarioTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="capturaComentarioTitle">Cambio de estatus</h5>
+                    <button id="cancelaCapturaDatos1" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="jumbotron jumbotron-fluid">
+                        <div class="container">
+                            <form id="capturaComentarioForm" action="@Url.Action( "CapturaComentario", "Administracion")" method="post">
+                                <div class="form-group">
+                                    <label for="MotivoCambio">Motivo cambio de estatus</label>
+                                    <input type="text" class="form-control" id="MotivoCambio" aria-describedby="motivoCambio" placeholder="Cambio de estatus" required name="MotivoCambio">
+                                    <small id="motivoCambio" class="form-text text-muted">Descripción por el cual es necesario cambiar el estatus de la Orden de Servicio</small>
+                                </div>
+                                <input type="hidden" value="@eOS.Id" name="OrdenServicioId">
+                                <input id="iDeCambiaEstatus" type="hidden" name="De">
+                                <input id="iACambiaEstatus" type="hidden" name="A">
+                                <button id="cambiarEstatus" type="submit" class="btn btn-success">Cambiar estatus</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancelaCapturaDatos3" type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@section scripts {
+<script>
+  var eosFechaInicio = '@(eOS.FechaInicio.HasValue ? eOS.FechaInicio.Value.Date.ToString() : "")';
+  var eosFechaFin = '@(eOS.FechaFin.HasValue ? eOS.FechaFin.Value.Date.ToString() : "")';
+
+  $(document).ready(function(){
+    var estatusOriginal = "";
+    $('#iEstatus').on('click', function(event){
+      estatusOriginal = $(this).find(":selected").val();
+    });
+    $('#iEstatus').change(function () {
+      var sEstatus = $(this).find(":selected").val();
+      if(sEstatus == "facturado"){
+        $('#capturaDatosFactura').modal({show: true});
+      }
+    });
+    $('#cancelaCapturaDatos1').on('click', function(event){
+      $('#iEstatus').val(estatusOriginal)
+    });
+    $('#cancelaCapturaDatos2').on('click', function(event){
+      $('#iEstatus').val(estatusOriginal)
+    });
+    $('#capturaDatosFactura').on('hide.bs.modal', function (e) {
+      $('#iEstatus').val(estatusOriginal)
+    });
+  });
+</script>
+<script src="~/lib/Parsley-2.8.1/parsley.min.js"></script>
+<script src="~/lib/Parsley-2.8.1/i18n/es.js"></script>
+<script src="~/js/detailOrdenServicio.js"></script>
+}

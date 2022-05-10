@@ -1,0 +1,461 @@
+@model IEnumerable<siges.Models.Servicio>
+
+@{
+    ViewData["Title"] = "Tipos de servicio";
+    List<siges.Models.LineaNegocio> lineasNegocio = ViewData["LineasNegocio"] as List<siges.Models.LineaNegocio>;
+}
+
+@Html.AntiForgeryToken()
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Tipos de servicios</h2>
+        </div>
+        <div class="col align-self-center text-right">
+            <a onclick="btnAdd()" class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Agregar" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col margBott4em">
+                <table id="tableIndexTipoServicio" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="name">
+                <thead>
+                    <tr>
+                        <th data-visible="false" data-field="id"></th>
+                        <th data-sortable="true" data-field="name">@Html.DisplayNameFor(model => model.Nombre)</th>
+                        <th data-sortable="true">@Html.DisplayNameFor(model => model.Descripcion)</th>
+                        <th data-sortable="true">Línea de Negocio</th>
+                        <th class="mobileHidden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
+                            <td>@Html.DisplayFor(modelItem => item.LineaNegocio.Nombre)</td>
+                            <td class="mobileHidden">
+                                <a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Acciones" data-original-title="Tooltip on bottom"><i class="fab fa-elementor"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+<script>
+    const btnAdd = () => {
+        const token = $("[name='__RequestVerificationToken']").val();
+        const lineasNegocio = @Html.Raw(Json.Serialize(lineasNegocio));
+        Swal.fire({
+            title: "Nuevo Servicio",
+            confirmButtonColor: "#67E7CF",
+            confirmButtonText:"Guardar",
+            cancelButtonText:"Cancelar",
+            reverseButtons: true,
+            showCancelButton: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-group text-left">
+                    <label class="control-label">Servicio *</label>
+                    <input id="txtNombre" type="text" class="form-control" />
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Descripci&oacute;n *</label>
+                    <input type="text" id="txtDescripcion" class="form-control" />
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label" for="slcLineaNegocio">L&iacute;nea de Negocio *</label>
+                    <select class="form-control" id="slcLineaNegocio" >
+                        <option value="null" selected disabled>Selecciona L&iacute;nea de Negocio</option>
+                    </select>   
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Precio</label>
+                    <input id="txtOp1" type="text" class="form-control" />
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Costo proveedor externo</label>
+                    <input id="txtOp2" type="text" class="form-control"  />
+                </div>
+                <div class="form-group text-right">
+                    <small>* Campos obligatorios</small>
+                </div>
+            `,
+            onOpen:()=>{
+                $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();');
+                $("#txtOp1").keypress((evt) => {
+                    if (evt.which != 8 && evt.which != 0 && evt.which != 44 && evt.which != 46 && evt.which < 48 || evt.which > 57 ){
+                        evt.preventDefault();
+                    }
+                });
+                $("#txtOp2").keypress((evt) => {
+                    if (evt.which != 8 && evt.which != 0 && evt.which != 44 && evt.which != 46 && evt.which < 48 || evt.which > 57 ){
+                        evt.preventDefault();
+                    }
+                });
+            },
+            onRender: ()=>{
+                for (const lineaNegocio of lineasNegocio){
+                    $("#slcLineaNegocio").append(`<option value="${lineaNegocio.id}">${lineaNegocio.nombre}</option>`);
+                }
+            },
+            preConfirm: () =>{
+                if($("#txtNombre").val().length === 0){
+                    $("#txtNombre").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtNombre").removeAttr("style");
+                }
+                if($("#txtDescripcion").val().length === 0){
+                    $("#txtDescripcion").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtDescripcion").removeAttr("style");
+                }
+                if($("#slcLineaNegocio").val() === null){
+                    $("#slcLineaNegocio").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#slcLineaNegocio").removeAttr("style");
+                }
+
+                if($("#txtNombre").val().length === 0 || $("#txtDescripcion").val().length === 0 || $("#slcLineaNegocio").val() === null){
+                    Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                }
+            }
+        }).then(result => {
+            if(result.value){
+                $.ajax({
+                    url: '@Url.Action("IfServicioExists","Rest")',
+                    method: "GET",
+                    data: {
+                        nombre: $("#txtNombre").val()
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        if(res){
+                            Swal.fire({
+                                icon: 'error',
+                                title: '¡Error!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `El Servicio ${$("#txtNombre").val()} ya existe`
+                            });
+                        }
+                        else{
+                            $.ajax({
+                                url: '@Url.Action("Create","Servicios")',
+                                method: "POST",
+                                data: {
+                                    __RequestVerificationToken: token,
+                                    servicio:{
+                                        Nombre:$("#txtNombre").val(),
+                                        Descripcion:$("#txtDescripcion").val(),
+                                        Estatus: true,
+                                        Opcional1: ($("#txtOp1").val() === "")?"0.00":$("#txtOp1").val().replace(',', '.'),
+                                        Opcional2: ($("#txtOp2").val() === "")?"0.00":$("#txtOp2").val().replace(',', '.'),
+                                        LineaNegocioId: $("#slcLineaNegocio").val()
+                                    }
+                                },
+                                async: true,
+                                dataType: "json",
+                                success: function (res){
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Éxito!',
+                                        confirmButtonColor: "#67E7CF",
+                                        confirmButtonText:"Aceptar",
+                                        text: `El Servicio se registró con éxito`,
+                                        onClose: ()=>{
+                                            location.reload(true);
+                                        }
+                                    }).then((result) => {
+                                        if (result.value) {
+                                            location.reload(true);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+    const btnDetails = element => {
+        $.ajax({
+            url: '@Url.Action("Details","Servicios")',
+            method: "GET",
+            data: {
+                id: element.id
+            },
+            async: true,
+            dataType: "json",
+            success: function (data){
+                if(data.success){
+                    Swal.fire({
+                        title:"Detalles",
+                        confirmButtonColor: "#67E7CF",
+                        confirmButtonText:"Aceptar",
+                        html:`
+                            <div class="form-group text-left">
+                                <label class="control-label">Servicio</label>
+                                <input type="text" class="form-control" value="${(data.data.nombre===null)?"":data.data.nombre}" readonly/>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Descripci&oacute;n</label>
+                                <input type="text" class="form-control" value="${(data.data.descripcion===null)?"":data.data.descripcion}" readonly />
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">L&iacute;nea de Negocio</label>
+                                <input type="text" class="form-control" value="${(data.data.lineaNegocio.nombre===null)?"":data.data.lineaNegocio.nombre}" readonly/>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Precio</label>
+                                <input type="text" class="form-control" value="${(data.data.opcional1 === null)?"":data.data.opcional1}" readonly/>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Costo proveedor externo</label>
+                                <input type="text" class="form-control" value="${(data.data.opcional2 === null)?"":data.data.opcional2}" readonly/>
+                            </div>
+                        `
+                    });
+                }
+            }
+        });
+    }
+
+    const btnEdit = element => {
+        const token = $("[name='__RequestVerificationToken']").val();
+        const lineasNegocio = @Html.Raw(Json.Serialize(lineasNegocio));
+        $.ajax({
+            url: '@Url.Action("Details","Servicios")',
+            method: "GET",
+            data: {
+                id: element.id
+            },
+            async: true,
+            dataType: "json",
+            success: function (data){
+                if(data.success){
+                    Swal.fire({
+                        title:"Editar Servicio",
+                        confirmButtonColor: "#67E7CF",
+                        confirmButtonText:"Guardar",
+                        cancelButtonText:"Cancelar",
+                        reverseButtons: true,
+                        showCancelButton: true,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showCloseButton: true,
+                        closeButtonHtml: '<i class="fas fa-times"></i>',
+                        html:`
+                            <div class="form-group text-left">
+                                <label class="control-label">Servicio *</label>
+                                <input id="txtNombre" type="text" class="form-control" value="${(data.data.nombre===null)?"":data.data.nombre}" />
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Descripci&oacute;n *</label>
+                                <input type="text" id="txtDescripcion" class="form-control" value="${(data.data.descripcion===null)?"":data.data.descripcion}" />
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label" for="slcLineaNegocio">L&iacute;nea de Negocio *</label>
+                                <select class="form-control" id="slcLineaNegocio" >
+                                </select>   
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Precio</label>
+                                <input id="txtOp1" type="number" min="0" class="form-control" value="${(data.data.opcional1 === null)?"":data.data.opcional1}" />
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Costo proveedor externo</label>
+                                <input id="txtOp2" type="number" min="0" class="form-control" value="${(data.data.opcional2 === null)?"":data.data.opcional2}" />
+                            </div>
+                            <div class="form-group text-right">
+                                <small>* Campos obligatorios</small>
+                            </div>
+                        `,
+                        onOpen:()=>{
+                            $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();');
+                            $("#txtOp1").keypress((evt) => {
+                                if (evt.which != 8 && evt.which != 0 && evt.which != 44 && evt.which != 46 && evt.which < 48 || evt.which > 57 ){
+                                    evt.preventDefault();
+                                }
+                            });
+                            $("#txtOp2").keypress((evt) => {
+                                if (evt.which != 8 && evt.which != 0 && evt.which != 44 && evt.which != 46 && evt.which < 48 || evt.which > 57 ){
+                                    evt.preventDefault();
+                                }
+                            });
+                        },
+                        onRender: ()=>{
+                            for (const lineaNegocio of lineasNegocio) {
+                                $("#slcLineaNegocio").append(`<option value="${lineaNegocio.id}" ${(data.data.lineaNegocio.nombre === lineaNegocio.nombre)?"selected":""}>${lineaNegocio.nombre}</option>`);
+                            }
+                        },
+                        preConfirm: () =>{
+                            if($("#txtNombre").val().length === 0){
+                                $("#txtNombre").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtNombre").removeAttr("style");
+                            }
+                            if($("#txtDescripcion").val().length === 0){
+                                $("#txtDescripcion").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtDescripcion").removeAttr("style");
+                            }
+                            if($("#slcLineaNegocio").val() === null){
+                                $("#slcLineaNegocio").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#slcLineaNegocio").removeAttr("style");
+                            }
+
+                            if($("#txtNombre").val().length === 0 || $("#txtDescripcion").val().length === 0 || $("#slcLineaNegocio").val() === null){
+                                Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                            }
+                        }
+                    }).then(result =>{
+                        if(result.value){
+                            $.ajax({
+                                url: '@Url.Action("Edit","Servicios")',
+                                method: "POST",
+                                data: {
+                                    __RequestVerificationToken: token,
+                                    id: element.id,
+                                    servicio:{
+                                        Id:element.id,
+                                        Nombre:$("#txtNombre").val(),
+                                        Descripcion:$("#txtDescripcion").val(),
+                                        Estatus: true,
+                                        Opcional1: ($("#txtOp1").val() === "")?"0.00":$("#txtOp1").val().replace(',', '.'),
+                                        Opcional2: ($("#txtOp2").val() === "")?"0.00":$("#txtOp2").val().replace(',', '.'),
+                                        LineaNegocioId: parseInt($("#slcLineaNegocio").val())
+                                    }
+                                },
+                                async: true,
+                                dataType: "json",
+                                success: function (res){
+                                    if(res.success){
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Éxito!',
+                                            confirmButtonColor: "#67E7CF",
+                                            confirmButtonText:"Aceptar",
+                                            text: `El Servicio ${element.name} ha sido modificado`,
+                                            onClose: ()=>{
+                                                location.reload(true);
+                                            }
+                                        }).then((result) => {
+                                            if (result.value) {
+                                                location.reload(true);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                        else{
+                            Swal.close();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    const btnDelete = element => {
+        const token = $("[name='__RequestVerificationToken']").val();
+        Swal.fire({
+            icon: 'error',
+            title: `El Servicio ${element.name} se eliminará`,
+            text: `¿Seguro que deseas eliminarlo?`,
+            reverseButtons: true,
+            showCancelButton: true,
+            confirmButtonText:"Si, Eliminar",
+            cancelButtonText:"No, Cancelar",
+            confirmButtonColor:"#E74C3C",
+            cancelButtonColor: "#67E7CF",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>'
+        }).then(result =>{
+            if(result.value){
+                $.ajax({
+                    url: '@Url.Action("Delete","Servicios")',
+                    method: "POST",
+                    data: {
+                        __RequestVerificationToken: token,
+                        id: element.id
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        if(res.success){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `El Servicio ${element.name} ha sido eliminado`,
+                                onClose: ()=>{
+                                    location.reload(true);
+                                }
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.reload(true);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+    $('#tableIndexTipoServicio').on('click-row.bs.table', (row, element, field) => {
+        Swal.fire({
+            title: `${element.name}`,
+            showConfirmButton:false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-row margTop40">
+                    <div class="form-group col">
+                        <a onclick="btnDetails({'id':'${element.id}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Detalles" data-original-title="Tooltip on bottom"><i class="fas fa-search"></i></a>
+                        <label class="d-block margTop5px">Detalles</label>
+                    </div>
+                    <div class="form-group col">
+                        <a onclick="btnEdit({'id':'${element.id}', 'name':'${element.name}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a>
+                        <label class="d-block margTop5px">Editar</label>
+                    </div>
+                    <div class="form-group col">
+                        <a onclick="btnDelete({'id':'${element.id}', 'name':'${element.name}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Eliminar" data-original-title="Tooltip on bottom"><i class="fas fa-trash"></i></a>
+                        <label class="d-block margTop5px">Eliminar</label>
+                    </div>
+                </div>
+            `
+        });
+    });
+</script>
+}

@@ -1,0 +1,168 @@
+@section css {
+<link href="~/css/jquerysctipttop.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/solid.css" integrity="sha384-+0VIRx+yz1WBcCTXBkVQYIBVNEFH1eP6Zknm16roZCyeNg2maWEpk/l/KsyFKs7G" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/fontawesome.css" integrity="sha384-jLuaxTTBR42U2qJ/pm4JRouHkEDHkVqH0T1nyQXn1mZ7Snycpf6Rl25VBNthU4z0" crossorigin="anonymous">
+  <link rel="stylesheet" href="~/lib/fullCalendar/main.min.css">
+}
+
+@section modals{
+<!-- Folio Preview Modal -->
+<div class="modal fade" id="folioPreview" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="folioPreviewLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="folioPreviewLabel">Folio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card text-center">
+          <div class="card-header">
+            Featured
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Razon Social</h5>
+            <p class="card-text">Información previa del folio</p>
+            <a id="folioPreviewHref" href="#" class="btn btn-primary">Detalle</a>
+          </div>
+          <div class="card-footer text-muted">
+            2 days ago
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+}
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col" style="margin-bottom: 1em">
+        <i class="fas fa-circle" style="color: #00A776;"></i> <label>Programado</label> &VerticalBar;
+        <i class="fas fa-circle" style="color: #BE5389;"></i> <label>Reprogramado</label> &VerticalBar;
+        <i class="fas fa-circle" style="color: #007EAD;"></i> <label>Solicitado</label> &VerticalBar;
+        <i class="fas fa-circle" style="color: #CF002E;"></i> <label>Cancelado</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+         
+        @* <select id="locale-selector">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+        </select> *@
+        <div id="calendar"></div>
+      </div>
+    </div>
+  </div>
+
+
+@section scripts {
+<script src="~/js/moment-2.22.2/moment.js"></script>
+<script src="~/lib/fullCalendar/main.min.js"></script>
+<script src="~/lib/fullCalendar/locales-all.min.js"></script>
+
+<script>
+  var ordOper = @Html.Raw(ViewData["ordenesServicio"]);
+  var ordenesDelOperador = [];
+  var dayNotesColors = ['#F06292','#7986CB','#4FC3F7','#81C784','#FFD54F','#A1887F','#90A4AE','#e57373'];
+  ordOper.forEach(function(ordenServicio, index, array){
+    var eventId = 0;
+    if (ordenServicio.Estatus) {
+      if (ordenServicio.FechaInicio != null && ordenServicio.FechaFin != null) {
+        if(ordenServicio.EstatusServicio == "finalizado" || ordenServicio.EstatusServicio == "cobrado" || ordenServicio.EstatusServicio == "nocobrado" || ordenServicio.EstatusServicio == "" || ordenServicio.EstatusServicio == "cancelado") {
+          if (moment(ordenServicio.FechaInicio).isSameOrBefore(ordenServicio.FechaFin)) {
+            var duracionOrden = moment(ordenServicio.FechaFin).diff(moment(ordenServicio.FechaInicio), 'days');
+            var inicio = moment(ordenServicio.FechaInicio);
+            var fin = moment(ordenServicio.FechaFin);
+
+            ordenesDelOperador.push({
+              id: ++eventId,
+              groupId: ordenServicio.EstatusServicio,
+              allDay: false,
+              start: ordenServicio.FechaInicio,
+              end: ordenServicio.FechaFin,
+              //daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+              //startTime: ordenServicio.FechaInicio,
+              //endTime: ordenServicio.FechaFin,
+              //startRecur: ordenServicio.FechaInicio,
+              //endRecur: ordenServicio.FechaFin,
+              title: ordenServicio.Folio,
+//url: //String. A URL that will be visited when this event is clicked by the user. For more information on controlling this behavior, see the eventClick callback.
+              editable: false,
+              startEditable: false,
+              durationEditable: false,
+              resourceEditable: false,
+              color: ordenServicio.EstatusServicio === 'programado' ? '#00A776' : ordenServicio.EstatusServicio === 'reprogramado' ? '#BE5389' : ordenServicio.EstatusServicio === 'cancelado' ? '#CF002E' : ordenServicio.EstatusServicio === 'solicitado' ? '#007EAD' : '#464555',
+//resourceId: //String. The string ID of a Resource. See Associating Events with Resources. Requires one of the resource plugins.
+//resourceIds: //Array. An array of string IDs of Resources. See Associating Events with Resources. Requires one of the resource plugins.
+//display: //Allows alternate rendering of the event, like background events. Can be 'auto' (the default), 'block', 'list-item', 'background', 'inverse-background', or 'none'. See eventDisplay.
+//overlap: false, //Boolean (true or false). Overrides the master eventOverlap option for this single event. If false, prevents this event from being dragged/resized over other events. Also prevents other events from being dragged/resized over this event.
+//constraint: //A groupId belonging to other events, "businessHours", or an object. Overrides the master eventConstraint option for this single event.
+//color: //String. An alias for specifying the backgroundColor and borderColor at the same time.
+//backgroundColor: //Sets an event’s background color just like the calendar-wide eventBackgroundColor option.
+//borderColor: //Sets an event’s border color just like the calendar-wide eventBorderColor option.
+//textColor: //Sets an event’s text color just like the calendar-wide eventTextColor option.
+//extendedProps: //Object. A plain object with any miscellaneous properties. It will be directly transferred to the extendedProps hash in each Event Object. Often, these props are useful in event render hooks.
+            });
+          }
+        }
+      }
+    }
+  });
+
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+  var calendarEl = document.getElementById('calendar');
+  //var localeSelectorEl = document.getElementById('locale-selector');
+  var initialLocaleCode = 'es';
+  calendar = new FullCalendar.Calendar(calendarEl, {
+    headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+      },
+    initialView: 'dayGridWeek',
+    locale: initialLocaleCode,
+    buttonIcons: true, // show the prev/next text
+    weekNumbers: true,
+    navLinks: true, // can click day/week names to navigate views
+    editable: false,
+    dayMaxEvents: true, // allow "more" link when too many events
+    eventClick: function(info) {
+      const folio = ordOper.filter(op => op.Folio === info.event.title);
+      const previewModel = document.getElementById('folioPreview')
+      const personal = folio[0].Personal;
+      let listaPer = "";
+      for(persona of personal){
+        listaPer+=`<p>${persona.Persona.Nombre} ${(persona.Persona.Paterno)?persona.Persona.Paterno:""} ${(persona.Persona.Materno)?persona.Persona.Materno:""}</p>`
+      }
+      previewModel.querySelector('.card-header').innerText= folio[0].Folio
+      previewModel.querySelector('.btn.btn-primary').href = location.origin+'/Servicio/IndexDetailOS?ordenId='+folio[0].Id
+      previewModel.querySelector('.card-title').innerText = folio[0].Cliente.RazonSocial
+      previewModel.querySelector('.card-text').innerHTML = `<p>${folio[0].Ubicacion.Nombre}</p><p>Fecha Inicio: ${moment(folio[0].FechaInicio).format("DD-MM-YYYY, h:mm:ss a")}</p><p>Fecha Fin: ${moment(folio[0].FechaFin).format("DD-MM-YYYY, h:mm:ss a")}</p><p>${folio[0].LineaNegocio.Nombre}</p>${listaPer}`;
+      const days = parseInt(moment(info.event.end).diff(moment(info.event.start), 'days')) + 1;
+      previewModel.querySelector('.card-footer.text-muted').innerText = (days)?days+' día(s) requerido(s).':'1 día(s) requerido(s).'
+      $('#folioPreview').modal('show')
+    },
+  });
+
+  ordenesDelOperador.forEach((os,i,l) => {
+    calendar.addEvent(os);
+  });
+
+  calendar.render();
+
+// when the selected option changes, dynamically change the calendar option
+    //localeSelectorEl.addEventListener('change', function() {
+      //if (this.value) {
+        //calendar.setOption('locale', this.value);
+      //}
+    //});
+});
+</script>
+}

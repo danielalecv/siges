@@ -1,0 +1,228 @@
+@using siges.Areas.Identity.Data;
+@using System.Collections.Generic;
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<RoatechIdentityUser> UserManager
+@inject RoleManager<IdentityRole> roleManager
+
+@{
+    ViewData["Title"] = "Catálogo Roles";
+    List<IdentityRole> model = ViewData["roles"] as List<IdentityRole>;
+ }
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Cat&aacute;logo de Roles</h2>
+        </div>
+        <div class="col align-self-center text-right">
+            <a id="addRole" class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Agregar" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a>
+        </div>
+    </div>
+    <div class="row  justify-content-md-center">
+        <div class="col align-self-center">
+            <table id="tableCatRoles" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="role">
+                <thead>
+                    <tr>
+                        <th data-sortable="true" data-field="role">Rol</th>
+                        <th class="mobileHidden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  @foreach(IdentityRole role in model) {
+                        if(role.Name != "Admin" && role.Name != "Default"){
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => role.Name)</td>
+                                <td class="mobileHidden"><a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Acciones" data-original-title="Tooltip on bottom"><i class="fab fa-elementor"></i></a></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+<script>
+   $("#addRole").on("click", async ()=>{
+    var m = []
+    const { value: newRol } = await Swal.fire({
+        title: 'Agregar un Rol',
+        input: 'text',
+        confirmButtonColor: "#67E7CF",
+        reverseButtons: true,
+        showCancelButton: true,
+        confirmButtonText:"Guardar",
+        cancelButtonText:"Cancelar",
+        inputPlaceholder: 'Rol de usuario',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showCloseButton: true,
+        closeButtonHtml: '<i class="fas fa-times"></i>',
+        inputValidator: (value) => {
+          m = /[a-zÀ-ÿ\u00f1\u00d10-9]+/ig.exec(value)
+          if(m === null || m.length < 1)
+            return;
+            return new Promise((resolve) => {
+                if (value !== '') {
+                    $.ajax({
+                        url: apihost + "/Admin/CreateRole",
+                        method: "POST",
+                        data: {
+                          "role":`${m[0]}`,
+                        },
+                        async: true,
+                        dataType: "json",
+                        success: function (respuesta){
+                          resolve()
+                        }
+                    });
+                } else {
+                    resolve('Necesitas ingresar un nuevo rol');
+                }
+            });
+        }
+    });
+    if(m !== null){
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            confirmButtonColor: "#67E7CF",
+            confirmButtonText:"Aceptar",
+            text: `El rol ${m[0]} ha sido creado`,
+            onClose: ()=>{
+                location.reload(true);
+            }
+        }).then((result) => {
+            if (result.value) {
+                location.reload(true);
+            }
+        })
+    }
+});
+
+
+$('#tableCatRoles').on('click-row.bs.table', async (row, $element, field) => {
+    const name = field[0].children[0].innerText;
+    Swal.fire({
+        icon: 'question',
+        title: `${name}`,
+        text: `¿Qué deseas hacer?`,
+        reverseButtons: true,
+        showCancelButton: true,
+        confirmButtonText:"Editar",
+        cancelButtonText:"Eliminar",
+        confirmButtonColor: "#67E7CF",
+        cancelButtonColor:"#E74C3C",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showCloseButton: true,
+        closeButtonHtml: '<i class="fas fa-times"></i>',
+    }).then((result) => {
+        if (result.value) {
+            (async () => {
+                const { value: editRole } = await Swal.fire({
+                    title: 'Editar un Rol',
+                    input: 'text',
+                    inputValue: `${name}`,
+                    confirmButtonColor: "#67E7CF",
+                    reverseButtons: true,
+                    showCancelButton: true,
+                    confirmButtonText:"Guardar",
+                    cancelButtonText:"Cancelar",
+                    inputPlaceholder: 'Rol de usuario',
+                    inputValidator: (value) => {
+                        return new Promise((resolve) => {
+                            if (value !== '') {
+                                $.ajax({
+                                    url: apihost + "/Admin/EditRole",
+                                    method: "POST",
+                                    data: {
+                                      "newName":`${value}`,
+                                      "oldName":`${name}`
+                                    },
+                                    async: true,
+                                    dataType: "json",
+                                    success: function (respuesta){
+                                      resolve()
+                                    }
+                                });
+                            } else {
+                                resolve('Necesitas ingresar el nombre del rol');
+                            }
+                        });
+                    }
+                })
+                if(editRole){
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        confirmButtonColor: "#67E7CF",
+                        confirmButtonText:"Aceptar",
+                        text: `El rol ${name} ha sido modificado a ${editRole}`,
+                        onClose: ()=>{
+                            location.reload(true);
+                        }
+                    }).then((result) => {
+                        if (result.value) {
+                            location.reload(true);
+                        }
+                    })
+                }
+            })();
+        }
+        else if(result.dismiss === Swal.DismissReason.cancel){
+            Swal.fire({
+                icon: 'error',
+                title: `${name} se eliminará`,
+                text: `¿Seguro que deseas eliminarlo?`,
+                reverseButtons: true,
+                showCancelButton: true,
+                confirmButtonText:"Si, Eliminar",
+                cancelButtonText:"No, Cancelar",
+                confirmButtonColor:"#E74C3C",
+                cancelButtonColor: "#67E7CF",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showCloseButton: true,
+                closeButtonHtml: '<i class="fas fa-times"></i>',
+            }).then((result) => {
+                if(result.value){
+                    $.ajax({
+                        url: apihost + "/Admin/DeleteRole",
+                        method: "POST",
+                        data: {
+                          "name":`${name}`
+                        },
+                        async: true,
+                        dataType: "json",
+                        success: function (respuesta){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `El rol ${name} ha sido eliminado`,
+                                onClose: ()=>{
+                                    location.reload(true);
+                                }
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.reload(true);
+                                }
+                            })
+                        }
+                    });
+                }
+                else{
+                    Swal.Close();
+                }
+            });
+        }
+    })
+});
+</script>
+}
+
+
+

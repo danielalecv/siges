@@ -1,0 +1,89 @@
+@using siges.Models
+@{
+    ViewData["Title"] = "Administración para órdenes de servicio eliminadas";
+    ViewData["TitlePage"] = "Administración para órdenes de servicio eliminadas";
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>&Oacute;rdenes de Servicio Eliminadas</h2>
+        </div>
+        <div class="col align-self-center text-right">
+            <a class="btn bg-blue marg-Float float" href='@Url.Action( "IndexListOS", "Administracion")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+        </div>
+    </div>
+<div class="row">
+<table id="tOrdenes" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
+    <thead>
+        <tr>
+            <th data-field="id" data-visible="false">ID</th>
+            <th data-field="folio" data-sortable="true" data-width="10%">Folio</th>
+            <th data-field="fecha" data-sortable="true" data-width="10%">Fecha</th>
+            <th data-field="cliente" data-sortable="true" data-width="10%">Cliente</th>
+            <th data-field="documento" data-sortable="true" data-width="20%">Documento</th>
+            <th data-field="ubicacion" data-sortable="true" data-width="20%">Ubicaci&oacute;n</th>
+            <th data-field="servicio" data-sortable="true" data-width="10%">Servicio</th>
+            <th data-field="estatus" data-sortable="true" data-width="10%">Estatus</th>
+            <th data-width="5%">Restaurar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var orden in ViewData["ordenes"] as List<OrdenServicio>)
+        {
+            <tr>
+                <td>@orden.Id</td>
+                <td>@orden.Folio</td>
+                <td>@(orden.FechaInicio.HasValue ? orden.FechaInicio.Value.Date.ToString("dd/MM/yyyy") : "Sin fecha registrada" )</td>
+                <td>@orden.Cliente.RazonSocial</td>
+                <td>@orden.Contrato.Nombre</td>
+                <td>@orden.Ubicacion.Nombre</td>
+                <td>@orden.Servicio.Nombre</td>
+                <td>@orden.EstatusServicio</td>
+                <td>
+                    <div class="row">
+                        <div class="col">
+                            <span data-toggle="tooltip" data-placement="top" title="Restaurar">
+                                <button class="btn btn-success float_Table"data-toggle="modal" data-target="#restoreOrdenModal" data-s-id="@orden.Id" data-s-folio="@orden.Folio">
+                                    <i class="fas fa-file-import"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+</div>
+
+
+@section Modals {
+  
+    <div id="restoreOrdenModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Restaurar &oacute;rden de servicio</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estas seguro de que deseas restaurar la &oacute;rden de servicio con el folio <span id="delNo"></span>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="resBtn" type="button" class="btn btn-success">S&iacute;</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@section scripts {
+    <script src="~/js/listDeletedOrdenServicio.js"></script>
+}

@@ -1,0 +1,66 @@
+﻿@model siges.Models.ViewModels.SupportViewModel
+@{
+    ViewData["Title"] = "SoporteTecnico";
+}
+
+<div class="container">
+    <h3>@ViewData["Message"]</h3>
+    <div class="row">
+        <div class="col">
+            <h2>Soporte Técnico</h2>
+            <hr />
+        </div>
+    </div>
+    <div class="row p-3">
+        <div class="col">
+            <form class="needs-validation" enctype="multipart/form-data" action="/Home/SoporteTecnico" method="post">
+                <div class="form-row">
+                    <div class="col-md-6 mb-3">
+                        <label for="validationTooltip01">Nombre(s)</label>
+                        <input asp-for="Name" class="form-control">
+                        @Html.ValidationMessageFor(d => d.Name, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="validationTooltip02">Apellidos</label>
+                        <input asp-for="LastName" class="form-control">
+                        @Html.ValidationMessageFor(d => d.LastName, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-6 mb-3">
+                        <label for="validationTooltip03">Email</label>
+                        <input asp-for="Email" class="form-control">
+                        @Html.ValidationMessageFor(d => d.Email, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="validationTooltip04">Prioridad</label>
+                        <select asp-for="Priority" class="custom-select">
+                            <option selected disabled value="">Choose...</option>
+                            <option>Alta</option>
+                            <option>Media</option>
+                            <option>Baja</option>
+                        </select>
+                        @Html.ValidationMessageFor(d => d.Priority, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="validationTooltip05">Título / Asunto</label>
+                        <input asp-for="Title" class="form-control">
+                        @Html.ValidationMessageFor(d => d.Title, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="col mb-3">
+                        <label for="validationTooltip06">Descripción del asunto</label>
+                        <textarea asp-for="Body" class="form-control"></textarea>
+                        @Html.ValidationMessageFor(d => d.Body, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" asp-for="Screenshots" class="custom-file-input" id="inputGroupFile04" multiple accept=".jpg, .jpeg, .png, .svg, .gif">
+                        <label class="custom-file-label" for="inputGroupFile04">Agrega todas las capturas del error</label>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block mt-2" type="submit"><h5>Reportar</h5></button>
+            </form>
+        </div>
+    </div>
+</div>

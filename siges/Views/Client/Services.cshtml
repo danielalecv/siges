@@ -1,0 +1,122 @@
+﻿@using System.Data
+@using System.Globalization
+@model IEnumerable<siges.Models.OrdenServicio>
+
+@{
+    ViewData["Title"] = "Servicios";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Servicios</h2>
+        </div>
+    </div>
+    <div class="row">
+        <table id="tableServices" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="folio">
+            <thead>
+                <tr>
+                    <th data-visible="false"></th>
+                    <th data-sortable="true" data-field="folio">Folio</th>
+                    <th data-sortable="true">Fecha</th>
+                    <th data-sortable="true">Servicio</th>
+                    <th data-sortable="true">Ubicación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+              @if(Model != null){
+              @foreach (var item in Model) {
+              var fecha = ((DateTime)item.FechaInicio).ToString("d", CultureInfo.CreateSpecificCulture("es-ES"));
+              <tr>
+                <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                <td>@Html.DisplayFor(modelItem => item.Folio)</td>
+                <td>@Html.DisplayFor(modelItem => fecha)</td>
+                <td>@Html.DisplayFor(modelItem => item.Servicio.Nombre)</td>
+                <td>@Html.DisplayFor(modelItem => item.Ubicacion.Nombre)</td>
+                <td>
+                  <a onclick="btnMoreDetails({'id':@item.Id})" class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Más Detalles" data-original-title="Tooltip on bottom"><i class="far fa-file-alt"></i></a>
+                </td>
+              </tr>
+              }
+              }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts{
+<script>
+    const btnMoreDetails = (value) => {
+        event.stopPropagation();
+        window.location.href = `@Url.Action("IndexDetailOS", "Servicio")?ordenId=${value.id}`;
+    }
+
+    $('#tableServices').on('click-row.bs.table', (row, $element, field) => {
+        $.ajax({
+            url: '@Url.Action("ServicesDetail","Client")',
+            method: "GET",
+            data: {
+                id: $element[0]
+            },
+            async: true,
+            dataType: "json",
+            success: function (data){
+                const details ={
+                    Folio: data.data[0].ordenServicio.folio,
+                    FechaInicio: (data.data[0].ordenServicio.fechaInicio !== null)?`${data.data[0].ordenServicio.fechaInicio.substring(8,10)}/${data.data[0].ordenServicio.fechaInicio.substring(5,7)}/${data.data[0].ordenServicio.fechaInicio.substring(0,4)}`:null,
+                    FechaFin: (data.data[0].ordenServicio.fechaFin !== null)?`${data.data[0].ordenServicio.fechaFin.substring(8,10)}/${data.data[0].ordenServicio.fechaFin.substring(5,7)}/${data.data[0].ordenServicio.fechaFin.substring(0,4)}`:null,
+                    Contrato: data.data[0].ordenServicio.contrato.nombre,
+                    Ubicacion: data.data[0].ordenServicio.ubicacion.contacto,
+                    Servicio: data.data[0].ordenServicio.servicio.nombre,
+                    Descripcion: data.data[0].ordenServicio.servicio.descripcion,
+                    Persona: `${data.data[0].persona.nombre} ${data.data[0].persona.paterno} ${data.data[0].persona.materno}`
+                }
+                Swal.fire({
+                    title:"Detalles", 
+                    confirmButtonColor: "#67E7CF",
+                    confirmButtonText:"Aceptar",
+                    cancelButtonColor: "#67E7CF",
+                    cancelButtonText:"Más detalle",
+                    html:`
+                        <div class="form-group text-left">
+                            <label class="control-label">Folio</label>
+                            <input type="text" class="form-control" value="${(details.Folio===null)?"":details.Folio}" readonly/>
+                        </div>
+                         <div class="form-row">
+                            <div class="form-group col-6 text-left">
+                                <label class="control-label">Fecha Inicio</label>
+                                <input type="text" class="form-control" value="${(details.FechaInicio===null)?"":details.FechaInicio}" readonly/>
+                            </div>
+                            <div class="form-group col-6 text-left">
+                                <label class="control-label">Fecha Fin</label>
+                                <input type="text" class="form-control" value="${(details.FechaFin===null)?"":details.FechaFin}" readonly/>
+                            </div>
+                        </div>
+                        <div class="form-group text-left">
+                            <label class="control-label">Contrato</label>
+                            <input type="text" class="form-control" value="${(details.Contrato===null)?"":details.Contrato}" readonly/>
+                        </div>
+                        <div class="form-group text-left">
+                            <label class="control-label">Ubicación</label>
+                            <input type="text" class="form-control" value="${(details.Ubicacion===null)?"":details.Ubicacion}" readonly/>
+                        </div>
+                        <div class="form-group text-left">
+                            <label class="control-label">Servicio</label>
+                            <input type="text" class="form-control" value="${(details.Servicio===null)?"":details.Servicio}" readonly/>
+                        </div>
+                        <div class="form-group text-left">
+                            <label class="control-label">Descripción</label>
+                            <input type="text" class="form-control" value="${(details.Descripcion===null)?"":details.Descripcion}" readonly/>
+                        </div>
+                        <div class="form-group text-left">
+                            <label class="control-label">Personal</label>
+                            <input type="text" class="form-control" value="${(details.Persona===null)?"":details.Persona}" readonly/>
+                        </div>
+                    `
+                });
+            }
+        });
+    });
+</script>
+}

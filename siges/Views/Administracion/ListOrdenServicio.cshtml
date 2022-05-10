@@ -1,0 +1,89 @@
+@using siges.DTO
+@using siges.Models
+@using System
+@using System.Globalization
+@using System.Collections.Generic
+@{
+    ViewData["Title"] = "Órdenes de Servicio";
+    ViewData["TitlePage"] = "Órdenes de Servicio";
+    Dictionary<int, Administracion> facturas = ViewData["facturas"] as Dictionary<int,Administracion>;
+    Administracion factura = new Administracion();
+}
+
+
+<div class="container">
+<div class="row">
+    <div class="col">
+        <h2>&Oacute;rdenes de Servicio</h2>
+    </div>
+    <div class="col align-self-center text-right">
+        @*<button id="filtrarBtn" type="button" onclick="openFilterMenu()" class="btn btn-primary">Filtrar</button>*@
+        <a class="btn bg-yellow margR-30px float" href='@Url.Action("Index", "Administracion")' data-toggle="tooltip" data-placement="bottom" title="Calendario" data-original-title="Tooltip on bottom"><i class="fas fa-calendar-alt"></i></a>
+        @* <a class="btn btn-danger marg-Float float" href='@Url.Action( "IndexListDOS", "Administracion")' data-toggle="tooltip" data-placement="bottom" title="Órdenes de Servicio Eliminadas" data-original-title="Tooltip on bottom"><i class="fas fa-file-excel"></i></a> *@
+    </div>
+</div>
+<div class="row">
+    <table id="tOrdenes" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="folio">
+    <thead>
+        <tr>
+            <th data-field="id" data-visible="false">ID</th>
+            <th data-field="folio" data-sortable="true">Folio</th>
+            <th data-field="fecha" data-sortable="true" data-filter-control="input">Fecha</th>
+            <th data-field="cliente" data-sortable="true" data-filter-control="select">Cliente</th>
+            <th data-field="documento" data-sortable="true" data-filter-control="select">Documento</th>
+            <th data-field="ubicacion" data-sortable="true" data-filter-control="select">Ubicaci&oacute;n</th>
+            <th data-field="servicio" data-sortable="true" data-filter-control="select">Servicio</th>
+            <th data-field="estatus" data-sortable="true" data-filter-control="select">Estatus</th>
+            <th>Editar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var orden in ViewData["ordenes"] as List<IndexListOSDTO>)
+        {
+            <tr>
+                <td>@orden.Id</td>
+                <td>@orden.Folio</td>
+                <td>@(orden.FechaInicio.HasValue ? orden.FechaInicio.Value.Date.ToString("dd/MM/yyyy") : "Sin fecha registrada" )</td>
+                <td>@orden.Cliente</td>
+                <td>@orden.Contrato / @orden.ContratoTipo</td>
+                <td>@orden.Ubicacion</td>
+                <td>@orden.Servicio</td>
+                <td style="text-transform: capitalize;">@(orden.EstatusServicio == "finalizado" ? "Finalizado" : orden.EstatusServicio == "cobrado" ? "Cobrado" : orden.EstatusServicio == "nocobrado" ? "No cobrado" : orden.EstatusServicio == "cancelado" ? "Cancelado" : orden.EstatusServicio == "facturado" ? "Facturado" : "Indefinido") @(orden.EstatusServicio == "facturado" ? facturas.TryGetValue(orden.Id, out factura) ? "/ " + factura.FacturaFolio + " - " + factura.FacturaFecha.ToString("D", CultureInfo.CreateSpecificCulture("es-ES")) : "/ Sin factura" : "")</td>
+                <td>
+                    <a href="@Url.Action( "IndexEditOS", "Administracion" , new { ordenId=@orden.Id })" class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+</div>
+
+@section Modals {
+
+    <div id="deleteOrdenModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar &oacute;rden de servicio</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estas seguro de que deseas eliminar la &oacute;rden de servicio con el folio <span id="delNo"></span>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="delBtn" type="button" class="btn btn-danger">S&iacute;</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@section scripts {
+    <script src="~/js/listOrdenServicio.js"></script>
+}
+

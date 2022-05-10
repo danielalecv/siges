@@ -1,0 +1,121 @@
+@using siges.Models
+
+@{
+    ViewData["Title"] = "Calendario";
+}
+
+@section css {
+<link href="~/css/jquery-calendar-bs4-master/dist/css/jquery-calendar.min.css" rel="stylesheet" />
+<link href="~/css/jquerysctipttop.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/solid.css" integrity="sha384-+0VIRx+yz1WBcCTXBkVQYIBVNEFH1eP6Zknm16roZCyeNg2maWEpk/l/KsyFKs7G" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/fontawesome.css" integrity="sha384-jLuaxTTBR42U2qJ/pm4JRouHkEDHkVqH0T1nyQXn1mZ7Snycpf6Rl25VBNthU4z0" crossorigin="anonymous">
+}
+
+<div class="container" style="margin-bottom: 100px;">
+    <div class="row">
+        <div class="col">
+            <h2>Calendario</h2>
+        </div>
+        <div class="col align-self-center text-right">
+          <a class="btn bg-blue marg-Float float" href='@Url.Action("IndexListOS", "Servicio")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col">
+            <div id="calendarioAllOs"></div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+<script src="~/js/moment-2.22.2/min/moment-with-locales.js"></script>
+<script src="~/js/TouchSwipe-Jquery-Plugin-master/jquery.touchSwipe.min.js"></script>
+<script src="~/js/Date-Time-Picker-Bootstrap-4/build/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/js/jquery-calendar-bs4-master/src/js/jquery-calendar.js"></script>
+
+<script>
+  var ordOper = @Html.Raw(ViewData["ordenesServicio"]);
+  var ordenesDelOperador = [];
+  var ordenesDelOperadorEvents = [];
+  var dayNotesColors = ['#F06292','#7986CB','#4FC3F7','#81C784','#FFD54F','#A1887F','#90A4AE','#e57373'];
+  ordOper.forEach(function(ordenServicio, index, array){
+    if (ordenServicio.Estatus) {
+      if (ordenServicio.FechaInicio != null && ordenServicio.FechaFin != null) {
+        if(ordenServicio.EstatusServicio != "finalizado" && ordenServicio.EstatusServicio != "Finalizado" && ordenServicio.EstatusServicio != "Indefinido" && ordenServicio.EstatusServicio != "Cancelado" && ordenServicio.EstatusServicio != "Programado" && ordenServicio.EstatusServicio != "Ejecutado" && ordenServicio.EstatusServicio != "ejecutado" && ordenServicio.EstatusServicio != "Reprogramado" && ordenServicio.EstatusServicio != "cobrado" && ordenServicio.EstatusServicio != "nocobrado" && ordenServicio.EstatusServicio != "facturado") {
+          if (moment(ordenServicio.FechaInicio).isSameOrBefore(ordenServicio.FechaFin)) {
+            var duracionOrden = moment(ordenServicio.FechaFin).diff(moment(ordenServicio.FechaInicio), 'days');
+            var inicio = moment(ordenServicio.FechaInicio);
+            var fin = moment(ordenServicio.FechaFin);
+console.log({ordenServicio}, {inicio}, {fin});
+
+            ordenesDelOperador.push({
+              time: inicio.startOf('day').format('X'),
+              title: ordenServicio.Folio,
+                content: 'Servicio:<br>'+(ordenServicio.Servicio.Nombre != null ? ordenServicio.Servicio.Nombre : "No capturado")+'<br>Cliente:<h6>' + (ordenServicio.Cliente.RazonSocial != null ? ordenServicio.Cliente.RazonSocial : "No capturado") + '</h6>Ubicación: <br><h6>' + (ordenServicio.Ubicacion.Nombre != null ? ordenServicio.Ubicacion.Nombre : "No capturada" )+ '</h6>Observaciones:<br>' +(ordenServicio.Observaciones != null ? ordenServicio.Observaciones : 'Sin observaciones') + '<br>Tipo:<br>' + (ordenServicio.Tipo != null ? ordenServicio.Tipo : "No capturado"),
+              category: ordenServicio.EstatusServicio
+            });
+
+            ordenesDelOperadorEvents.push({
+              start: inicio.startOf('day').format('X'),
+              end: fin.startOf('day').format('X'), 
+              title: ordenServicio.Folio, 
+              content: 'Servicio:<br>'+(ordenServicio.Servicio.Nombre != null ? ordenServicio.Servicio.Nombre : "No capturado")+'<br>Cliente:<h6>' + (ordenServicio.Cliente.RazonSocial != null ? ordenServicio.Cliente.RazonSocial : "No capturado") + '</h6>Ubicación: <br><h6>' + (ordenServicio.Ubicacion.Nombre != null ? ordenServicio.Ubicacion.Nombre : "No capturada" )+ '</h6>Observaciones:<br>' +(ordenServicio.Observaciones != null ? ordenServicio.Observaciones : 'Sin observaciones') + '<br>Tipo:<br>' + (ordenServicio.Tipo != null ? ordenServicio.Tipo : "No capturado"),
+              category: ordenServicio.EstatusServicio
+            });
+
+            for ( var i = 0; i < duracionOrden; i++) {
+              inicio.add(1,'day');
+              fin.add(1,'day');
+
+              ordenesDelOperador.push({
+                time: inicio.startOf('day').format('X'),
+                title: ordenServicio.Folio,
+                content: 'Servicio:<br>'+(ordenServicio.Servicio.Nombre != null ? ordenServicio.Servicio.Nombre : "No capturado")+'<br>Cliente:<h6>' + (ordenServicio.Cliente.RazonSocial != null ? ordenServicio.Cliente.RazonSocial : "No capturado") + '</h6>Ubicación: <br><h6>' + (ordenServicio.Ubicacion.Nombre != null ? ordenServicio.Ubicacion.Nombre : "No capturada" )+ '</h6>Observaciones:<br>' +(ordenServicio.Observaciones != null ? ordenServicio.Observaciones : 'Sin observaciones') + '<br>Tipo:<br>' + (ordenServicio.Tipo != null ? ordenServicio.Tipo : "No capturado"),
+                category: ordenServicio.EstatusServicio
+              });
+
+            ordenesDelOperadorEvents.push({
+              start: inicio.startOf('day').format('X'),
+              end: fin.startOf('day').format('X'), 
+              title: ordenServicio.Folio, 
+              content: 'Servicio:<br>'+(ordenServicio.Servicio.Nombre != null ? ordenServicio.Servicio.Nombre : "No capturado")+'<br>Cliente:<h6>' + (ordenServicio.Cliente.RazonSocial != null ? ordenServicio.Cliente.RazonSocial : "No capturado") + '</h6>Ubicación: <br><h6>' + (ordenServicio.Ubicacion.Nombre != null ? ordenServicio.Ubicacion.Nombre : "No capturada" )+ '</h6>Observaciones:<br>' +(ordenServicio.Observaciones != null ? ordenServicio.Observaciones : 'Sin observaciones') + '<br>Tipo:<br>' + (ordenServicio.Tipo != null ? ordenServicio.Tipo : "No capturado"),
+              category: ordenServicio.EstatusServicio
+            });
+            }
+          }
+        }
+      }
+    }
+  });
+
+  $(document).ready(function(){
+    var cale = $('#calendarioAllOs').Calendar({
+      locale: 'es',
+      weekday: {
+        timeline: {
+          intervalMinutes: 30,
+          fromHour: 1,
+          toHour: 24
+        },
+        dayline: {
+          format: 'dddd DD',
+          month: {
+            weekFormat: 'WW',
+          },
+        },
+      },
+      colors: {
+        daynotes: dayNotesColors,
+        random: false,
+      },
+      events: ordenesDelOperadorEvents,
+      daynotes: ordenesDelOperador
+    });
+    cale.setView('month');
+    cale.init();
+  });
+</script>
+@* <script src="~/js/CalendarAllOrdenServicio.js"></script> *@
+}
+

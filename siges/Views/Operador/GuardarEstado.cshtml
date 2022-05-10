@@ -1,0 +1,49 @@
+@using siges.Models
+@using System
+@{
+var ordenServicio = ViewData["ordenServicio"] as OrdenServicio;
+var operador = ViewData["operador"] as Operador;
+var atencionServicio = ViewData["atencionServicio2"] as List<Operador>;
+}
+
+<div class="jumbotron">
+  <h1 class="display-4">@ordenServicio.Cliente.RazonSocial</h1>
+  <p class="lead">@ordenServicio.Ubicacion.Nombre</p>
+  <hr class="my-4">
+  <p>@ordenServicio.Servicio.Nombre</p>
+
+  <div class="row p-2">
+    <div class="col-md-12">
+      @foreach ( var atencion in atencionServicio) {
+      @foreach (var estado in atencion.EstadoN as List<Operador.Estado>) {
+      <div class="p-3">
+        <div class="card text-center">
+          <div class="card-header">@atencion.Hora.ToString("D")</div>
+          <div class="card-body">
+            <h5 class="card-title">@(estado.NuevoEstado == "sitio" ? "En sitio:" : estado.NuevoEstado == "noatendido" ? "Reporte de actividad" : estado.NuevoEstado == "asistencia" ? "Asistencia" : estado.NuevoEstado == "atendido" ? "Atendido" : estado.NuevoEstado == "reporteInterno" ? "Reporte Interno" : estado.NuevoEstado == "revequiposeguridad" ? "Revisión de equipo de seguridad" : "Estado Indefinido")</h5>
+            <p class="card-text">@estado.ComentarioNuevoEstado</p>
+            @if(estado.ArchivosEvidencia != null && estado.ArchivosEvidencia.Count > 0){
+            @foreach(var archivo in estado.ArchivosEvidencia as List<Operador.Estado.Archivo>){
+            <button type="button" class="btn btn-primary m-1" onclick="location.href='@Url.Action( "MostrarArchivo", "Operador", new{@osId=@operador.OrdenServicio.Id, @operadorEstadoId=@estado.Id, @operadorEstadoArchivoId = @archivo.Id})'">@archivo.Name</button>
+            }
+            }
+          </div>
+          <div class="card-footer text-muted">@(atencion.OrdenServicio.Id == @ordenServicio.Id ? atencion.Persona.Nombre != null && atencion.Persona.Paterno != null ? String.Format("{0} {1}", atencion.Persona.Nombre, atencion.Persona.Paterno) : "Supervisor con datos personales incompletos" : "Supervisor con datos personales incompletos")</div>
+        </div>
+      </div>
+      }
+      }
+    </div>
+  </div>
+
+  <button class="btn btn-success btn-lg" type="button" onclick="location.href='@Url.Action( "Index", "Operador")'" >Regresar</button>
+</div>
+
+@section scripts{
+<script>
+  $(document).ready(function(){
+    @*document.getElementById('MenuReporteActividad').setAttribute('style', 'display:none');*@
+    document.getElementById('MenuCambiarEstadoOperador').setAttribute('style', 'display:none');
+  });
+</script>
+}

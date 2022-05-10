@@ -1,0 +1,155 @@
+@page
+@model LoginModel
+
+@{
+ViewData["Title"] = "Entrar";
+}
+
+
+<div class="container">
+  <div class="row justify-content-md-center">
+    <div id="cardLogin" class="card">
+      <div class="card-header text-center">
+        <img src="~/img/siges700px.png" class="rounded img-fluid" width="150" height="130" alt="SSM4.0 - Roatech Services">
+      </div>
+      <div class="card-body">
+        <form id="account" method="post" class="padd-R-L-5px">
+          <div class="form-group">
+            <label class="h5" asp-for="Input.Email">Usuario</label>
+            <input asp-for="Input.Email" class="form-control form-control-lg" placeholder="Correo electrónico"/>
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+          </div>
+          <div class="form-group">
+            <label class="h5" asp-for="Input.Password">Contrase&ntilde;a</label>
+            <div class="input-group">
+              <input id="inputPassword" asp-for="Input.Password" class="form-control form-control-lg" placeholder="Contrase&ntilde;a"/>
+              <div class="input-group-append">
+                <button id="showPassword" class="btn input-group-text" type="button"><i class="fas fa-eye"></i></button >
+              </div>
+            </div>
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+          </div>
+          <div class="form-group"> 
+            <button type="submit" class="btn btn-primary btn-block margTop40"><h5>Entrar</h5></button>
+          </div>
+        </form>
+        @if(!String.IsNullOrEmpty(Model.ErrorMessage)){
+        @if(String.Equals(Model.ErrorMessage, "bloquear")){
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+          En la siguiente se va a<strong> BLOQUEAR </strong>la cuenta.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        } else {
+        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+          <strong> ¡Alerta! </strong>@Model.ErrorMessage
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        }
+        }
+      </div>
+      <div class="card-footer">
+        <div class="row justify-content-between">
+          <div class="col">
+            @* <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Reenviar correo de confirmaci&oacute;n</a> *@
+          </div>
+          <div class="col text-right">
+            <a id="forgot-password" asp-page="./ForgotPassword">Olvid&eacute; mi contrase&ntilde;a</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@*<div class="checkbox">
+  <label asp-for="Input.RememberMe">
+    <input asp-for="Input.RememberMe" />
+    @Html.DisplayNameFor(m => m.Input.RememberMe)
+  </label>
+</div>
+</div>
+<div class="form-group">
+  <button type="submit" class="btn btn-primary">Log in</button>
+</div>
+<div class="form-group">
+  <p>
+  <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+  </p>
+  <p>
+  <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+  </p>
+  <p>
+  <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
+  </p>
+</div>
+</form>
+</section>
+</div> *@
+@* <div class="col-md-6 col-md-offset-2">
+  <section>
+    <h4>Use another service to log in.</h4>
+    <hr />
+    @{
+    if ((Model.ExternalLogins?.Count ?? 0) == 0)
+    {
+    <div>
+      <p>
+      There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+      for details on setting up this ASP.NET application to support logging in via external services.
+      </p>
+    </div>
+    }
+    else
+    {
+    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+      <div>
+        <p>
+        @foreach (var provider in Model.ExternalLogins)
+        {
+        <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+        }
+        </p>
+      </div>
+    </form>
+    }
+    }
+  </section>
+</div>
+</div> *@
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var getBrowserInfo = function() {
+      var ua = navigator.userAgent, tem,
+      M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+      if(/trident/i.test(M[1])){
+        tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+        return 'IE '+(tem[1] || '');
+      }
+      if(M[1] === 'Chrome'){
+        tem = ua.match(/\b(OPR|Edg)\/(\d+)/);
+        if(tem != null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
+      }
+      M = M[2] ? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+      if((tem = ua.match(/version\/(\d+)/i)) != null) M.splice(1, 1, tem[1]);
+      console.log(M)
+      return M.join(' ');
+    };
+  }, false);
+
+  $('#showPassword').on('mousedown touchstart', event => {
+    event.preventDefault();
+    $('#inputPassword').attr("type", "text");
+  });
+  $('#showPassword').on('mouseup touchend', event => {
+    event.preventDefault();
+    $('#inputPassword').attr("type", "password");
+  });
+</script>
+}

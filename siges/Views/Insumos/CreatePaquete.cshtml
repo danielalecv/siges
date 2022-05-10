@@ -1,0 +1,135 @@
+@using System
+@using System.Collections
+@using System.Collections.Generic;
+@using siges.Models
+
+@{
+    ViewData["Title"] = "Paquetes Insumos";
+    List<Insumo> iL = ViewData["insumos"] as List<Insumo>;
+    List<Lote> lL = ViewData["lotes"] as List<Lote>;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Nuevo paquete de insumos</h2>
+            <p class="lead">Es posible crear subpaquetes (kits) para este mismo paquete</p>
+        </div>
+        <div class="col align-self-center text-right">
+            <a class="btn bg-blue marg-Float float" href='@Url.Action("Paquetes", "Insumos")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+        </div>
+    </div>
+    <hr>
+    <div class="row justify-content-md-center">
+        <div class="col-8">
+            <form id="creaPaqueteInsumo" action="@Url.Action("SaveCreaPaqueteInsumo", "Insumos")" method="post">
+                <div class="form-group">
+                    <label for="Clasificacion">Clasificación del paquete</label>
+                    <input type="text" class="form-control" id="ClasificacionPaquete" name="ClasificacionPaquete" aria-describedby="info" placeholder="">
+                    <small id="info" class="form-text text-muted">Subpartida</small>
+                </div>
+                <div class="form-group">
+                    <label for="Descripcion">Nombre o descripción del paquete</label>
+                    <input type="text" class="form-control" id="DescripcionPaquete" name="DescripcionPaquete" aria-describedby="info" placeholder="">
+                    <small id="info" class="form-text text-muted">Nombre que identifica al paquete para ser seleccionado al programar un folio</small>
+                </div>
+                <div class="form-group">
+                    <label for="insumos">Insumos</label>
+                    <select class="form-control" id="insumos">
+                        <option value=""> -- Seleccione un opción -- </option>
+                        @foreach(Insumo i in iL){
+                            <option value="@i.Id">@i.Descripcion</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <table id="tPaquetesInsumo" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="descripcion">
+                        <thead>
+                            <tr>
+                                <th data-field="idxId" data-visible="false">IdxId</th>
+                                <th data-field="iId" data-visible="false">InsumoId</th>
+                                <th data-field="descripcion" data-sortable="true" data-width="50%">Descripción</th>
+                                <th data-field="clave" data-sortable="true" data-sorter="dateSort" data-width="15%" data-filter-control="input">Clave</th>
+                                <th data-field="marca" data-sortable="true" data-width="15%" data-filter-control="select">Marca</th>
+                                <th data-field="tipo" data-sortable="true" data-width="15%" data-filter-control="select">Tipo</th>
+                                <th data-field="actions" data-width="5%" style="text-transform: uppercase"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <input type="hidden" id="JsonInsumos" name="JsonInsumos">
+                </div>
+                <button type="submit" class="btn btn-success btn-lg btn-block" id="btnCreaPaquete">Crear paquete de insumos</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade kit-modal-lg" id="kitModal" tabindex="-1" role="dialog" aria-labelledby="kitModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <form id="crearKitInsumo" action="@Url.Action("SaveCrearKitInsumo", "Insumos")" method="post">
+        <div class="modal-header">
+          <h5 class="modal-title" id="kitModalTitle">Crear nuevo kit de insumos</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <table id="tKitInsumo" class="table table-striped" data-toggle="table" data-pagination="true" data-search="true" data-unique-id="id" data-sortable="true" data-filter-control="true" data-filter-show-clear="true">
+            <thead>
+              <tr>
+                <th data-field="id" data-visible="false">ID</th>
+                <th data-width="5%"></th>
+                <th data-field="cantidad" data-width="5%">Cantidad</th>
+                <th data-field="descripcion" data-sortable="true" data-width="10%">Descripción</th>
+                <th data-field="clave" data-sortable="true" data-sorter="dateSort" data-width="5%" data-filter-control="input">Clave</th>
+                <th data-field="marca" data-sortable="true" data-width="13%" data-filter-control="select">Marca</th>
+                <th data-field="tipo" data-sortable="true" data-width="15%" data-filter-control="select">Tipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if(iL != null && iL.Count > 0){
+              @foreach (Insumo i in iL)
+              {
+              <tr>
+                <td>@i.Id</td>
+                <td>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="@i.Id">
+                    <label class="form-check-label m-1" for="@i.Id"></label>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-check form-row text-center">
+                    <input class="form-check-input col-6" type="number" min="0" id="@i.Id cant">
+                  </div>
+                </td>
+                <td>@i.Descripcion</td>
+                <td>@i.Clave</td>
+                <td>@i.Marca</td>
+                <td>@i.Tipo</td>
+              </tr>
+              }
+              }
+            </tbody>
+          </table>
+
+        </div>
+        <input type="hidden" id="KitInsumoId" name="KitInsumoId">
+        <input type="hidden" id="KitInsumoCant" name="KitInsumoCant">
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+          <button id="btnCrearKit" type="button" class="btn btn-success">Crear kit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+@section scripts {
+<script src="~/js/createPaquete.js"> </script>
+}

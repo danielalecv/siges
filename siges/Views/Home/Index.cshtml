@@ -1,8 +1,180 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using System;
+@{
+    ViewData["Title"] = "Index";
+    RoatechIdentityUser name = ViewData["riu"] as RoatechIdentityUser;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Carousel Start-->
+<section class="carrousel__Start relative-positioned">
+    <div class="home-carousel">
+        <div class="dark-mask"></div>
+        <div class="container">
+            <div class="homepage owl-carousel">
+              <div class="item">
+                <div class="row">
+                    <div class="col-md-5 text-right">
+                    <h1>Roatech Services</h1>
+                    <h3>Cambiando la manera de entregar soluciones</h3>
+                    </div>
+                    <div class="col-md-7"><img src="~/img/template-1.png" alt="" class="img-fluid"></div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="row">
+                  <div class="col-md-5 text-right">
+                    <h1>Roatech Services Platform</h1>
+                    <h3>Soluciones para el sector de servicios en sitio</h3>
+                  </div>
+                  <div class="col-md-7"><img src="~/img/template-2.png" alt="" class="img-fluid"></div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="row">
+                  <div class="col-md-5 text-right">
+                    <h1>Roatech Services</h1>
+                    <h3>Publicidad personalizada</h3>
+                  </div>
+                  <div class="col-md-7"><img src="~/img/template-3.png" alt="" class="img-fluid"></div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Carousel End-->
+<section class="bar bg-white">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-lg-4 col-md-6">
+              <div class="box-simple">
+                <div class="icon-outlined"><i class="fa fa-desktop"></i></div>
+                <h3 class="h4">Plataforma</h3>
+                <p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Obtén más dinamismo y una atención oportuna en procesos de supervisión</li>
+                        <li class="list-group-item">Comparte la información de identificación del personal con tus clientes</li>
+                        <li class="list-group-item">Podrás contar con herramientas en línea y para dispositivos móviles que permiten establecer una adecuada colaboración entre tú empresa y tus clientes</li>
+                    </ul>
+                </p>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+              <div class="box-simple">
+                <div class="icon-outlined"><i class="fas fa-users"></i></div>
+                <h3 class="h4">Beneficios</h3>
+                <p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Reducción de costos</li>
+                        <li class="list-group-item">Control del personal</li>
+                        <li class="list-group-item">Fortalece relaciones con tus clientes</li>
+                        <li class="list-group-item">Disponible en dispositivos móviles</li>
+                    </ul>
+                </p>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+              <div class="box-simple">
+                <div class="icon-outlined"><i class="fas fa-laptop-code"></i></div>
+                <h3 class="h4">Servicios</h3>
+                <p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Desarrollo de sistemas informáticos</li>
+                        <li class="list-group-item">Modelado de procesos - Business Intelligence</li>
+                        <li class="list-group-item">Diseño y automatización de indicadores</li>
+                        <li class="list-group-item">Soluciones orientadas a internet de las cosas</li>
+                    </ul>
+                </p>
+              </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="bar bg-gray">
+    <div class="container">
+        <div class="heading text-center">
+            <h2>Roatech</h2>
+        </div>
+        <blockquote class="blockquote text-center">
+            <p class="mb-0">Nuestro trabajo es independiente del producto, lo ayudamos a elegir el que más se acomode a sus necesidades.</p>
+            <p class="mb-0">Nuestros servicios de consultoría especializados incluyen la creación de metodologías de análisis y evaluación de los procesos genéricos y su contra parte en software comercial que atiende los procesos genéricos, así como de los procesos particulares y un desarrollo a la medida. Esto se traduce en la atención 70% o más con soluciones ya probadas y 30% o menos de desarrollo a la medida.</p>
+        </blockquote>
+    </div>
+</section>
+<section class="bar bg-white">
+    <div class="container">
+        <div class="heading">
+            <h2>¿Quiénes somos?</h2>
+        </div>
+        <blockquote class="blockquote">
+            <p class="mb-0">Somos una empresa que tiene como objetivo proporcionar soluciones estratégicas para el óptimo desempeño de las funciones de su empresa, con experiencia en el desarrollo de soluciones orientadas a mejorar la rentabilidad financiera, la reducción de costos y la mejora de la productividad a través del análisis de procesos y la incorporación de tecnologías de la información.</p>
+        </blockquote>
+    </div>
+</section>
+<div class="container">
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="box-simple">
+                <div class="icon-outlined"><i class="fas fa-map-marker-alt"></i></div>
+                <h3 class="h4">Dirección</h3>
+                    <p>Popocatepetl #218 Interior #101<br/>
+                    Pedro Maria Anaya, C.P. 03340,<br/>Benito Juarez, Ciudad de México</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="box-simple">
+                <div class="icon-outlined"><i class="fa fa-phone"></i></div>
+                <h3 class="h4">Teléfono</h3>
+                <p><strong>(55)5605-8941</strong></p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="box-simple">
+                <div class="icon-outlined"><i class="fa fa-envelope"></i></div>
+                <h3 class="h4">Correo electrónico</h3>
+                <ul class="list-unstyled text-sm">
+                    <li><strong>Soporte:</strong> <a href="mailto:soporte@roatech.com.mx">soporte@roatech.com.mx</a></li>
+                    <li><strong>Contacto:</strong> <a href="mailto:contacto@roatech.com.mx">contacto@roatech.com.mx</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
+<section class="bar bg-gray no-mb">
+    <div class="container">
+      <div class="row showcase text-center">
+          <div class="col-md-4 col-sm-6">
+              <div class="item">
+                  <div class="icon-outlined icon-sm icon-thin"><i class="fas fa-server"></i></div>
+                  <h4><span class="h1 counter">180</span><br>Sitios Web</h4>
+              </div>
+          </div>
+          <div class="col-md-4 col-sm-6">
+              <div class="item">
+                  <div class="icon-outlined icon-sm icon-thin"><i class="fas fa-user-friends"></i></div>
+                  <h4><span class="h1 counter">100</span><br>Clientes Satisfechos</h4>
+              </div>
+          </div>
+          <div class="col-md-4 col-sm-6">
+              <div class="item">
+                  <div class="icon-outlined icon-sm icon-thin"><i class="fas fa-tasks"></i></div>
+              <h4><span class="h1 counter">120</span><br>Proyectos</h4>
+              </div>
+          </div>
+      </div>
+    </div>
+</section>
+
+@section scripts {
+    <script>
+        localStorage.clear();
+        const person = (@Html.Raw(Json.Serialize(name.per)));
+        const client = @Html.Raw(Json.Serialize(ViewData["cliente"]));
+        localStorage.setItem('photography', person.fotografia);
+        localStorage.setItem('name', `${person.nombre} ${person.paterno}`);
+        localStorage.setItem('client', `${client}`);
+    </script>
+    <script src="~/lib/owl.carousel/owl.carousel.min.js"></script>
+    <script src="~/lib/waypoints/lib/jquery.waypoints.min.js"> </script>
+    <script src="~/lib/jquery.counterup/jquery.counterup.min.js"></script>
+    <script src="~/js/index.js"></script>
+}

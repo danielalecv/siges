@@ -1,0 +1,211 @@
+@using siges.Areas.Identity.Data;
+@using System.Collections.Generic;
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<RoatechIdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Administración Usuarios";
+    List<RoatechIdentityUser> model = ViewData["riuList"] as List<RoatechIdentityUser>;
+    Dictionary <RoatechIdentityUser, List <string>> role = ViewData["riuDicc"] as Dictionary <RoatechIdentityUser, List <string>>;
+ }
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Administración de Usuarios</h2>
+        </div>
+        <div class="col align-self-center text-right">
+            <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Agregar" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a>
+        </div>
+    </div>
+    <div class="row">
+        <table id="tableAdminUsers" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="name">
+            <thead>
+                <tr>
+                    <th data-sortable="true" data-field="name">Nombre</th>
+                    <th data-sortable="true" data-field="email">Correo Electr&oacute;nico</th>
+                    <th data-sortable="true">¿Confirmado?</th>
+                    <th data-sortable="true">Rol de Sistema</th>
+                    <th data-sortable="true">¿Bloqueado?</th>
+                    <th>N&uacute;mero Telef&oacute;nico</th>
+                    <th class="mobileHidden">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in model) {
+                    var role2 = role[item].Count > 0 ? role[item][0] : "No asigando";
+                    var nombre = item.per.Nombre + " " + item.per.Paterno + " " + item.per.Materno;
+                    var resp1 = UserManager.IsEmailConfirmedAsync(item).Result ? "Si" : "No";
+                    var resp2 = UserManager.IsLockedOutAsync (item).Result ? "Si" : "No";
+                    if(role2 != "Admin"){
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => nombre)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                            <td>@Html.DisplayFor(modelItem => resp1)</td>
+                            <td>@Html.DisplayFor(modelItem => role2)</td>
+                            <td>@Html.DisplayFor(modelItem => resp2)</td>
+                            <td>@Html.DisplayFor(modelItem => item.per.Telefono)</td>
+                            <td class="mobileHidden"><a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Acciones" data-original-title="Tooltip on bottom"><i class="fab fa-elementor"></i></a></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts{
+<script>
+
+    const btnEmailConf = data => {
+        Swal.fire({
+            icon: 'warning',
+            title: `${data.name}`,
+            text: `¡Reenviar correo de confirmación para activar cuenta!`,
+            reverseButtons: true,
+            showCancelButton: true,
+            confirmButtonText:"Reenviar correo",
+            cancelButtonText:"No, Cancelar",
+            confirmButtonColor:"#67E7CF",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>'
+        }).then(result => {
+            if(result.value){
+                $.ajax({
+                    url: apihost + "/Admin/EmailConfirmation",
+                    method: "POST",
+                    data: {
+                        "email":`${data.email}`,
+                        "name":`${data.name}`
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (respuesta){
+                        if(respuesta.data.mensaje !== "No es necesario reenviar correo de confirmación"){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `${respuesta.data.mensaje},\n ${respuesta.data.nombre}`,
+                                onClose: ()=>{
+                                    location.reload(true);
+                                }
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.reload(true);
+                                }
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: '¡Éxito!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `${respuesta.data.mensaje}\n a ${respuesta.data.nombre} \n la cuenta está activa.`,
+                                onClose: ()=>{
+                                    location.reload(true);
+                                }
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.reload(true);
+                                }
+                            })
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+    const btnDelete = data => { 
+        Swal.fire({
+            icon: 'error',
+            title: `${data.usuario}\nse eliminará`,
+            text: `¿Seguro que deseas eliminarlo?`,
+            reverseButtons: true,
+            showCancelButton: true,
+            confirmButtonText:"Si, Eliminar",
+            cancelButtonText:"No, Cancelar",
+            confirmButtonColor:"#E74C3C",
+            cancelButtonColor: "#67E7CF",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+        }).then(result =>{
+            if(result.value){
+                $.ajax({
+                    url: apihost + "/Admin/DeleteRIU",
+                    method: "POST",
+                    data: {
+                      "email":`${data.email}`
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        if(data){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `El usuario ${data.usuario}\n ha sido eliminado`,
+                                onClose: ()=>{
+                                    location.reload(true);
+                                }
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.reload(true);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.Close();
+            }
+        });
+    }
+
+    $('#tableAdminUsers').on('click-row.bs.table', (row, element, field) => {
+        Swal.fire({
+            title: `${element.name}`,
+            showConfirmButton:false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-row margTop40">
+                    <div class="form-group col">
+                        <a href="${apihost}/Admin/SetLockout?email=${element.email}" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Desbloquear cuenta" data-original-title="Tooltip on bottom"><i class="fas fa-unlock"></i></a>
+                        <label class="d-block margTop5px">Desbloquear cuenta</label>
+                    </div>
+                    <div class="form-group col">
+                        <a onclick="btnEmailConf({'email':'${element.email}', 'name':'${element.name}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Reenviar correo de confirmación" data-original-title="Tooltip on bottom"><i class="fas fa-paper-plane"></i></a>
+                        <label class="d-block margTop5px">Reenviar correo de confirmación</label>
+                    </div>
+                </div>
+                <div class="form-row margTop40">
+                    <div class="form-group col">
+                        <a href="${apihost}/Admin/EditRIU?email=${element.email}" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a>
+                        <label class="d-block margTop5px">Editar</label>
+                    </div>
+                    <div class="form-group col">
+                        <a onclick="btnDelete({'email':'${element.email}', 'usuario':'${element.name}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Eliminar" data-original-title="Tooltip on bottom"><i class="fas fa-trash"></i></a>
+                        <label class="d-block margTop5px">Eliminar</label>
+                    </div>
+                </div>
+            ` 
+        });
+    });
+</script>
+}

@@ -1,0 +1,66 @@
+@model siges.Models.Contrato
+@{
+ViewData["Title"] = "Nuevo registro";
+}
+<h2>Nuevo registro</h2>
+<h4>Documento</h4>
+<hr />
+<div class="row">
+  <div class="col-md-4">
+    <form asp-action="CreateContrato">
+      <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+      <div class="form-group">
+        <label asp-for="Nombre" class="control-label"></label>
+        <input asp-for="Nombre" class="form-control" required/>
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+      </div>
+      <div class="form-group">
+        <label asp-for="Tipo" class="control-label"></label>
+        <select asp-for="Tipo" class="form-control" required>
+          <option value="" selected> -- Selecciona una opci&oacute;n -- </option>
+          <option value="Contrato">Contrato</option>
+          <option value="Póliza">P&oacute;liza</option>
+          <option value="Orden de servicio">Orden de servicio</option>
+          <option value="Cotización">Cotizaci&oacute;n</option>
+          <option value="Orden de compra">Orden de compra</option>
+        </select>
+      </div>
+      @*<div class="form-group">
+        <div class="checkbox">
+          <label>
+            <input asp-for="Estatus" /> @Html.DisplayNameFor(model => model.Estatus)
+          </label>
+        </div>
+      </div>*@
+      <div class="form-group">
+        <label asp-for="Opcional1" class="control-label"></label>
+        <input asp-for="Opcional1" class="form-control" />
+        <span asp-validation-for="Opcional1" class="text-danger"></span>
+      </div>
+      <div class="form-group">
+        <label asp-for="Opcional2" class="control-label"></label>
+        <input asp-for="Opcional2" class="form-control" />
+        <span asp-validation-for="Opcional2" class="text-danger"></span>
+      </div>
+      <div class="form-group">
+        <label asp-for="ClienteId" class="control-label"></label>
+        <select asp-for="ClienteId" class="form-control" asp-items="ViewBag.ClienteId" required></select>
+      </div>
+      <div class="form-group">
+        <label asp-for="ServicioId" class="control-label"></label>
+        <select asp-for="ServicioId" class="form-control" asp-items="ViewBag.ServicioId" required></select>
+      </div>
+      <div class="form-group">
+        <input type="submit" value="Guardar" class="btn btn-default" />
+      </div>
+    </form>
+  </div>
+</div>
+
+<div>
+  <a asp-action="Index">Cancelar</a>
+</div>
+
+@section Scripts {
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

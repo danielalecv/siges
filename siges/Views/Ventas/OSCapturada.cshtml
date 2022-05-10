@@ -1,0 +1,45 @@
+@using siges.Models
+@using System
+@using System.Globalization
+@{
+OrdenServicio os = ViewData["osCapturado"] as OrdenServicio;
+}
+<div class="jumbotron">
+  <h1 class="display-4">@os.Folio</h1>
+  <p class="lead">Este Folio ha sido capturado anteriormente con la siguiente información:</p>
+  <hr class="my-4">
+  <div align="left">@os.Cliente.RazonSocial</div>
+  <div align="left" style="text-transform: capitalize">Inicio @(((DateTime)os.FechaInicio).ToString("D", CultureInfo.CreateSpecificCulture("es-ES")))</div>
+  <div align="left" style="text-transform: capitalize">Fin @(((DateTime)os.FechaFin).ToString("D", CultureInfo.CreateSpecificCulture("es-ES")))</div>
+  <div align="left">@os.Contrato.Nombre</div>
+  <div align="left">@os.Ubicacion.Nombre</div>
+  <div align="left">@os.LineaNegocio.Nombre</div>
+  <div align="left">@os.Servicio.Nombre</div>
+  <div align="left">@os.Tipo</div>
+  <div align="left">@os.EstatusServicio</div>
+  <div align="left">@os.Observaciones</div>
+  <hr class="my-4">
+  <p class="lead">Información del responsable</p>
+  <div align="left">@os.ContactoNombre @os.ContactoAP @os.ContactoAM</div>
+  <div align="left">@os.ContactoEmail</div>
+  <div align="left">@os.ContactoTelefono</div>
+  @if(!(String.IsNullOrEmpty(os.NombreCompletoCC1) && String.IsNullOrEmpty(os.EmailCC1))){
+  <br>
+  <p>Notificación cliente con copia:</p>
+  <div align="left">@os.NombreCompletoCC1</div>
+  <div align="left">@os.EmailCC1</div>
+  }
+  @if(!(String.IsNullOrEmpty(os.NombreCompletoCC2) && String.IsNullOrEmpty(os.EmailCC2))){
+  <div align="left">@os.NombreCompletoCC2</div>
+  <div align="left">@os.EmailCC2</div>
+  }
+  <br>
+  <div class="m-2" align="right">
+    <button id="btnVolver" type="button" class="btn btn-warning" onclick="location.href='@Url.Action( "SolicitarServicio", "Ventas")'">Volver</button>
+    @if(os.PersonaComercial.Email == ViewData["userLogged"] as string){
+    <button id="btnEditar" type="button" class="btn btn-primary" onclick="location.href='@Url.Action("EditOS", "Ventas", new{ordenId=os.Id})'">Editar</button>
+    }
+    <button type="button" class="btn btn-danger"
+      onclick="location.href='@Url.Action("DeleteOS", "Ventas", new{osid=@os.Id})'">Eliminar</button>
+  </div>
+</div>

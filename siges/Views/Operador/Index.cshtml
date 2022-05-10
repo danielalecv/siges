@@ -1,0 +1,362 @@
+@model siges.Models.OrdenPersona
+@using siges.Models
+@{
+ViewData["Title"] = "Operador - Calendario";
+ViewData["TitlePage"] = "Servicios";
+RoatechIdentityUser name = ViewData["riu"] as RoatechIdentityUser;
+}
+
+@section css {
+<link href="~/css/jquery-calendar-bs4-master/dist/css/jquery-calendar.min.css" rel="stylesheet" />
+<link href="~/css/jquerysctipttop.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/solid.css" integrity="sha384-+0VIRx+yz1WBcCTXBkVQYIBVNEFH1eP6Zknm16roZCyeNg2maWEpk/l/KsyFKs7G" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/fontawesome.css" integrity="sha384-jLuaxTTBR42U2qJ/pm4JRouHkEDHkVqH0T1nyQXn1mZ7Snycpf6Rl25VBNthU4z0" crossorigin="anonymous">
+  <link rel="stylesheet" href="~/lib/fullCalendar/main.min.css">
+}
+
+@section modals{
+<!-- Folio Preview Modal -->
+<div class="modal fade" id="folioPreview" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="folioPreviewLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="folioPreviewLabel">Folio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card text-center">
+          <div class="card-header">
+            Featured
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Razon Social</h5>
+            <p class="card-text">Información previa del folio</p>
+            <a id="folioPreviewHref" href="#" class="btn btn-primary">Detalle</a>
+          </div>
+          <div class="card-footer text-muted">
+            2 days ago
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Cambiar Estado Modal -->
+@* <div class="modal fade" id="CambiarEstadoModal" tabindex="-1" role="dialog" aria-labelledby="CambiarEstadoModalTitulo" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="CambiarEstadoModalTitulo">Seleccionar servicio</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div class="container">
+            <form id="CambiarEstadoForm" action="@Url.Action("CambiarEstado","Operador")" method="post">
+              <div class="form-group">
+                <h5 class="display-4">Folios:</h5>
+                <select multiple class="form-control" id="cambiarEstadoFolio" name="OrdenServicioId" required>
+                  @foreach(var ordenServicio in ViewData["OrdenServicioEnTiempo"] as List<OrdenPersona>){
+                    <option class="d-flex justify-content-center p-2" value="@ordenServicio.OrdenServicio.Id">@ordenServicio.OrdenServicio.Folio</option>
+                  }
+                </select>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success">Reportar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> *@
+
+@* <!-- Reporte Actividad -->
+<div class="modal fade" id="ReporteActividad" tabindex="-1" role="dialog" aria-labelledby="ReporteActividadTitulo" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ReporteActividadTitulo">Seleccionar servicio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="jumbotron jumbotron-fluid">
+          <div class="container">
+            <form id="CambiarEstadoForm" action="@Url.Action("ReporteActividad","Operador")" method="post">
+              <div class="form-group">
+                <h5 class="display-4">Folio</h5>
+                <select multiple class="form-control" id="cambiardoFolio" name="OrdenServicioId" required>
+                  @foreach(var ordenServicio in ViewData["OrdenServicioEnTiempo"] as List<OrdenPersona>){
+                  <option class="d-flex justify-content-center p-2" value="@ordenServicio.OrdenServicio.Id">@ordenServicio.OrdenServicio.Folio</option>
+                  }
+                  @foreach (var ordenPersona in ViewData["ordenesPersona"] as List<OrdenPersona>) {
+                  <option class="d-flex justify-content-center p-2" value="@ordenPersona.OrdenServicio.Id">@ordenPersona.OrdenServicio.Folio</option>
+                  }
+                </select>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-success">Actividades</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> *@
+
+
+<!-- Información Servicio Modal -->
+<div class="modal fade" id="InfoServicioModal" tabindex="-1" role="dialog" aria-labelledby="InfoServicioModalTitulo" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="InfoServicioModalTitulo">Seleccionar servicio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="InfoServicioForm" action="@Url.Action("InfoServicio", "Operador")" method="post">
+          <div class="form-group">
+            <label for="infoServicioFolio">Folio:</label>
+            <select multiple class="form-control" id="infoServicioFolio" name="OrdenServicioId" required>
+              @foreach (var ordenPersona in ViewData["ordenesPersona"] as List<OrdenPersona>) {
+              <option class="d-flex justify-content-center p-2" value="@ordenPersona.OrdenServicio.Id">@ordenPersona.OrdenServicio.Folio</option>
+              }
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-success">Detalle</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col" style="margin-bottom: 1em">
+        <i class="fas fa-circle" style="color: #00A776;"></i> <label>Programado</label> &VerticalBar;
+        <i class="fas fa-circle" style="color: #BE5389;"></i> <label>Reprogramado</label> &VerticalBar;
+        <i class="fas fa-circle" style="color: #007EAD;"></i> <label>Solicitado</label> &VerticalBar;
+        <i class="fas fa-circle" style="color: #CF002E;"></i> <label>Cancelado</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+         
+        @* <select id="locale-selector">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+        </select> *@
+        <div id="calendar"></div>
+      </div>
+    </div>
+  </div>
+
+@section scripts {
+  <script src="~/lib/moment-2.22.2/min/moment-with-locales.js"></script>
+  <script src="~/js/TouchSwipe-Jquery-Plugin-master/jquery.touchSwipe.min.js"></script>
+  <script src="~/js/Date-Time-Picker-Bootstrap-4/build/js/bootstrap-datetimepicker.min.js"></script>
+  <script src="~/js/jquery-calendar-bs4-master/src/js/jquery-calendar.js"></script>
+  <script src="~/lib/fullCalendar/main.min.js"></script>
+  <script src="~/lib/fullCalendar/locales-all.min.js"></script>
+
+<script>
+  localStorage.clear();
+  const person = (@Html.Raw(Json.Serialize(name.per)));
+  const ordOper = @Html.Raw(ViewData["ordenesOperador"]);
+  localStorage.setItem('photography', person.fotografia);
+  localStorage.setItem('name', `${person.nombre} ${person.paterno}`);
+  var ordenesDelOperador = [];
+  var dayNotesColors = ['#F06292','#7986CB','#4FC3F7','#81C784','#FFD54F','#A1887F','#90A4AE','#e57373'];
+  ordOper.forEach(function(ordenPersona, index, array){
+var eventId = 0;
+    if (ordenPersona.OrdenServicio.Estatus) {
+      if (ordenPersona.OrdenServicio.FechaInicio != null && ordenPersona.OrdenServicio.FechaFin != null) {
+        if (moment(ordenPersona.OrdenServicio.FechaInicio).isSameOrBefore(ordenPersona.OrdenServicio.FechaFin)) {
+          var duracionOrden = moment(ordenPersona.OrdenServicio.FechaFin).diff(moment(ordenPersona.OrdenServicio.FechaInicio), 'days');
+          var inicio = moment(ordenPersona.OrdenServicio.FechaInicio);
+          var fin = moment(ordenPersona.OrdenServicio.FechaFin);
+
+            ordenesDelOperador.push({
+              id: ++eventId,
+              groupId: ordenPersona.OrdenServicio.EstatusServicio,
+              allDay: false,
+              start: ordenPersona.OrdenServicio.FechaInicio,
+              end: ordenPersona.OrdenServicio.FechaFin,
+              //daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
+              //startTime: ordenServicio.FechaInicio,
+              //endTime: ordenServicio.FechaFin,
+              //startRecur: ordenServicio.FechaInicio,
+              //endRecur: ordenServicio.FechaFin,
+              title: ordenPersona.OrdenServicio.Folio,
+//url: //String. A URL that will be visited when this event is clicked by the user. For more information on controlling this behavior, see the eventClick callback.
+              editable: false,
+              startEditable: false,
+              durationEditable: false,
+              resourceEditable: false,
+              color: ordenPersona.OrdenServicio.EstatusServicio === 'programado' ? '#00A776' : ordenPersona.OrdenServicio.EstatusServicio === 'reprogramado' ? '#BE5389' : ordenPersona.OrdenServicio.EstatusServicio === 'cancelado' ? '#CF002E' : ordenPersona.OrdenServicio.EstatusServicio === 'solicitado' ? '#007EAD' : '#464555',
+//resourceId: //String. The string ID of a Resource. See Associating Events with Resources. Requires one of the resource plugins.
+//resourceIds: //Array. An array of string IDs of Resources. See Associating Events with Resources. Requires one of the resource plugins.
+//display: //Allows alternate rendering of the event, like background events. Can be 'auto' (the default), 'block', 'list-item', 'background', 'inverse-background', or 'none'. See eventDisplay.
+//overlap: false, //Boolean (true or false). Overrides the master eventOverlap option for this single event. If false, prevents this event from being dragged/resized over other events. Also prevents other events from being dragged/resized over this event.
+//constraint: //A groupId belonging to other events, "businessHours", or an object. Overrides the master eventConstraint option for this single event.
+//color: //String. An alias for specifying the backgroundColor and borderColor at the same time.
+//backgroundColor: //Sets an event’s background color just like the calendar-wide eventBackgroundColor option.
+//borderColor: //Sets an event’s border color just like the calendar-wide eventBorderColor option.
+//textColor: //Sets an event’s text color just like the calendar-wide eventTextColor option.
+//extendedProps: //Object. A plain object with any miscellaneous properties. It will be directly transferred to the extendedProps hash in each Event Object. Often, these props are useful in event render hooks.
+            });
+        }
+      }
+    }
+  });
+
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+  var calendarEl = document.getElementById('calendar');
+  //var localeSelectorEl = document.getElementById('locale-selector');
+  var initialLocaleCode = 'es';
+  calendar = new FullCalendar.Calendar(calendarEl, {
+    headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+      },
+    initialView: 'dayGridWeek',
+    locale: initialLocaleCode,
+    buttonIcons: true, // show the prev/next text
+    weekNumbers: true,
+    navLinks: true, // can click day/week names to navigate views
+    editable: false,
+    dayMaxEvents: true, // allow "more" link when too many events
+    eventClick: function(info) {
+      const folio = ordOper.filter(op => op.OrdenServicio.Folio === info.event.title);
+      const previewModel = document.getElementById('folioPreview')
+      const personal = folio[0].OrdenServicio.Personal;
+      let listaPer = "";
+      for(persona of personal){
+        listaPer+=`<p>${persona.Persona.Nombre} ${(persona.Persona.Paterno)?persona.Persona.Paterno:""} ${(persona.Persona.Materno)?persona.Persona.Materno:""}</p>`
+      }
+      previewModel.querySelector('.card-header').innerText= folio[0].OrdenServicio.Folio
+      previewModel.querySelector('.btn.btn-primary').href = location.origin+'/Servicio/IndexDetailOS?ordenId='+folio[0].OrdenServicio.Id
+      previewModel.querySelector('.card-title').innerText = folio[0].OrdenServicio.Cliente.RazonSocial
+      previewModel.querySelector('.card-text').innerHTML = `<p>${folio[0].OrdenServicio.Ubicacion.Nombre}</p><p>Fecha Inicio: ${moment(folio[0].OrdenServicio.FechaInicio).format("DD-MM-YYYY, h:mm:ss a")}</p><p>Fecha Fin: ${moment(folio[0].OrdenServicio.FechaFin).format("DD-MM-YYYY, h:mm:ss a")}</p><p>${folio[0].OrdenServicio.LineaNegocio.Nombre}</p>${listaPer}`;
+      const days = parseInt(moment(info.event.end).diff(moment(info.event.start), 'days')) + 1;
+      previewModel.querySelector('.card-footer.text-muted').innerText = (days)?days+' día(s) requerido(s).':'1 día(s) requerido(s).'
+      $('#folioPreview').modal('show')
+    },
+  });
+
+  ordenesDelOperador.forEach((os,i,l) => {
+    calendar.addEvent(os);
+  });
+
+  calendar.render();
+
+// when the selected option changes, dynamically change the calendar option
+    //localeSelectorEl.addEventListener('change', function() {
+      //if (this.value) {
+        //calendar.setOption('locale', this.value);
+      //}
+    //});
+});
+
+  $(document).ready(function(){
+    var cale = $('#CalendarioOperador').Calendar({
+      locale: 'es',
+      weekday: {
+        timeline: {
+          intervalMinutes: 30,
+          fromHour: 1,
+          toHour: 24
+        },
+        dayline: {
+          format: 'dddd DD',
+          month: {
+            weekFormat: 'Wo',
+          },
+        },
+      },
+      colors: {
+        daynotes: dayNotesColors,
+        random: false,
+      },
+      daynotes: ordenesDelOperador
+    });
+    cale.setView('month');
+    cale.init();
+  });
+
+  $("#MenuCambiarEstadoOperador").on("click", ()=>{
+    const listOS = @Html.Raw(ViewData["OrdenServicioEnTiempo"]);
+    Swal.fire({
+      title: `Seleccionar Servicio`,
+      confirmButtonColor: "#67E7CF",
+      confirmButtonText:"Reportar",
+      cancelButtonText:"Cancelar",
+      reverseButtons: true,
+      showCancelButton: true,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showCloseButton: true,
+      closeButtonHtml: '<i class="fas fa-times"></i>',
+      html:`
+      <form id="CambiarEstadoForm" action="@Url.Action("CambiarEstado","Operador")" method="post">
+        <div class="form-group text-left">
+          <label class="control-label" for="slcOS">Folios *</label>
+          <select class="form-control" id="slcOS" name="OrdenServicioId" >
+            <option value="null" selected disabled>Selecciona un Folio</option>
+          </select>   
+        </div>
+        <div class="form-group text-right">
+          <small>* Campos obligatorios</small>
+        </div>
+      </form>
+      `,
+      onRender: ()=>{
+        for (const list of listOS){
+          $("#slcOS").append(`<option value="${list.OrdenServicio.Id}">${list.OrdenServicio.Folio}</option>`);
+        }
+      },
+      preConfirm: () =>{
+        if($("#slcOS").val() === null){
+          $("#slcOS").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+        }
+        else{
+          $("#slcOS").removeAttr("style");
+        }
+        if($("#slcOS").val() === null){
+          Swal.showValidationMessage("Algún campo obligatorio está vacío");
+        }
+      }
+    }).then(result => {
+      if(result.value){
+        $("#CambiarEstadoForm").submit();
+      }
+      else{
+        Swal.close();
+      }
+    });
+  });
+
+</script>
+}

@@ -1,0 +1,844 @@
+@model IEnumerable<siges.Models.Persona>
+
+@{
+    ViewData["Title"] = "Personas";
+}
+
+@Html.AntiForgeryToken()
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Personas</h2>
+        </div>
+        @if (!User.IsInRole("Ventas")){
+            <div class="col align-self-center text-right">
+                <a class="btn btn-danger margR-30px float" href='@Url.Action("IndexListDP", "Personas")' data-toggle="tooltip" data-placement="bottom" title="Personas Eliminadas" data-original-title="Tooltip on bottom"><i class="fas fa-user-slash"></i></a>
+                <a onclick="btnAdd()" class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Agregar" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col margBott4em">
+                <table id="tableIndexPersonas" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="name">
+                <thead>
+                    <tr>
+                        <th data-visible="false" data-field="id"></th>
+                        <th>Fotografía</th>
+                        <th data-sortable="true" data-field="name">@Html.DisplayNameFor(model => model.Nombre)</th>
+                        <th data-sortable="true">Correo Electrónico</th>
+                        <th data-sortable="true">@Html.DisplayNameFor(model => model.RFC)</th>
+                        <th data-sortable="true">@Html.DisplayNameFor(model => model.Puesto)</th>
+                        <th class="mobileHidden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        var nombre = item.Nombre +" "+ item.Paterno + " " + item.Materno;
+                        var imgSrc = Url.Content("~/img/staff_ad.png");
+                        if(item.Fotografia != null){
+                        var base64 = Convert.ToBase64String(item.Fotografia);
+                        imgSrc = String.Format("data:image/jpeg;base64,{0}",base64);
+                        }
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                            @*<td><img src="~/img/staff_ad.png" alt="Alternate Text" width="50" height="50" /></td>*@
+                            <td><img src="@imgSrc" class="text-hide rounded" width="50" height="50" alt="@nombre"></td>
+                            <td>@Html.DisplayFor(modelItem => nombre)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                            <td>@Html.DisplayFor(modelItem => item.RFC)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Puesto)</td>
+                            <td class="mobileHidden">
+                                <a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Acciones" data-original-title="Tooltip on bottom"><i class="fab fa-elementor"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+<script>
+
+    const btnAdd = () => {
+        const token = $("[name='__RequestVerificationToken']").val();
+        Swal.fire({
+            title: "Nueva Persona",
+            confirmButtonColor: "#67E7CF",
+            confirmButtonText:"Guardar",
+            cancelButtonText:"Cancelar",
+            reverseButtons: true,
+            showCancelButton: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <form id="createPerForm" method="POST" enctype="multipart/form-data">
+                    <div class="form-group text-left">
+                        <label class="control-label">Nombre *</label>
+                        <input id="txtNombre" type="text" class="form-control" maxlength="30" />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">Apellido Paterno *</label>
+                            <input id="txtPaterno" type="text" class="form-control" maxlength="30" />
+                        </div>
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">Apellido Materno *</label>
+                            <input id="txtMaterno" type="text" class="form-control" maxlength="30" />
+                        </div>
+                    </div>
+                    <div class="form-group text-left">
+                        <label class="control-label">Correo Electrónico *</label>
+                        <input id="txtEmail" type="email" class="form-control" />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">RFC *</label>
+                            <input id="txtRFC" type="text" class="form-control"  />
+                        </div>
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">CURP *</label>
+                            <input id="txtCURP" type="text" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">Clave de Empleado</label>
+                            <input id="txtCVEEmpleado" type="text" class="form-control" maxlength="30" />
+                        </div>
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">Teléfono</label>
+                            <input id="txtTelefono" type="text" class="form-control" maxlength="10" placeholder="Ej: 5556058941" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">Puesto *</label>
+                            <input id="txtPuesto" type="text" class="form-control" maxlength="50" />
+                        </div>
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">Categoría *</label>
+                            <input id="txtCategoria" type="text" class="form-control" maxlength="50" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label" for="slcAdscripcion">Adscripción *</label>
+                            <select class="form-control" id="slcAdscripcion" >
+                                <option value="null" disabled selected>Selecciona Adscripción</option>
+                                <option value="Interno">Interno</option>
+                                <option value="Externo">Externo</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">Sueldo</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                </div>
+                                <input id="txtSueldo" type="text" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12 text-left">
+                            <label class="control-label">Dirección</label>
+                            <input id="txtDireccion" type="text" class="form-control" maxlength="100" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">Municipio</label>
+                            <input id="txtMunicipio" type="text" class="form-control" maxlength="50" />
+                        </div>
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">Entidad Federativa</label>
+                            <input id="txtEntidad" type="text" class="form-control" maxlength="50" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">Campo Opcional</label>
+                            <input id="txtOp1" type="text" class="form-control" maxlength="100"/>
+                        </div>
+                        <div class="form-group col-6 text-left">
+                            <label class="control-label">Campo Opcional</label>
+                            <input id="txtOp2" type="text" class="form-control" maxlength="100" />
+                        </div>
+                    </div>
+                    <div class="form-group text-left">
+                        <label class="control-label">Fotografía</label>
+                        <input id="iptFoto" type="file" class="form-control-file" />
+                    </div>
+                    <div class="form-group text-right">
+                        <small>* Campos obligatorios</small>
+                    </div>
+                </form>
+            `,
+            onOpen: () => {
+                $("#txtTelefono").keypress(evt => {
+                  if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                    evt.preventDefault();
+                  }
+                });
+                $("#txtSueldo").keypress(evt => {
+                  if (evt.which != 8 && evt.which != 0 && evt.which != 44 && evt.which != 46 && evt.which < 48 || evt.which > 57 ){
+                    evt.preventDefault();
+                  }
+                });
+                $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();');
+            },
+            preConfirm: () =>{
+                if($("#txtNombre").val().length === 0){
+                    $("#txtNombre").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtNombre").removeAttr("style");
+                }
+                if($("#txtPaterno").val().length === 0){
+                    $("#txtPaterno").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtPaterno").removeAttr("style");
+                }
+                if($("#txtMaterno").val().length === 0){
+                    $("#txtMaterno").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtMaterno").removeAttr("style");
+                }
+                if($("#txtEmail").val().length === 0){
+                    $("#txtEmail").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else if(!$("#txtEmail").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                    $("#txtEmail").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtEmail").removeAttr("style");
+                }
+                if($("#txtRFC").val().length === 0){
+                    $("#txtRFC").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else if(!$("#txtRFC").val().match(/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/)){
+                    $("#txtRFC").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtRFC").removeAttr("style");
+                }
+                if($("#txtCURP").val().length === 0){
+                    $("#txtCURP").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else if(!$("#txtCURP").val().match(/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/)){
+                    $("#txtCURP").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtCURP").removeAttr("style");
+                }
+                if($("#txtTelefono").val().length > 0 && !$("#txtTelefono").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/)){
+                    $("#txtTelefono").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtTelefono").removeAttr("style");
+                }
+                if($("#txtPuesto").val().length === 0){
+                    $("#txtPuesto").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtPuesto").removeAttr("style");
+                }
+                if($("#txtCategoria").val().length === 0){
+                    $("#txtCategoria").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtCategoria").removeAttr("style");
+                }
+                if($("#slcAdscripcion").val() === null){
+                    $("#slcAdscripcion").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#slcAdscripcion").removeAttr("style");
+                }
+
+                if($("#slcAdscripcion").val() === null){
+                    Swal.showValidationMessage("Selecciona adscripción");
+                }
+                if($("#txtTelefono").val().length > 0 && $("#txtTelefono").val().length < 10){
+                    Swal.showValidationMessage("El teléfono es incorrecto");
+                }
+                if(!$("#txtCURP").val().match(/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/)){
+                    Swal.showValidationMessage("El CURP es incorrecto, ingresar un CURP correcto");
+                }
+                if(!$("#txtRFC").val().match(/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/)){
+                    Swal.showValidationMessage("El RFC es incorrecto, ingresar un RFC correcto");
+                }
+                if(!$("#txtEmail").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                    Swal.showValidationMessage("El correo electrónico es incorrecto");
+                }
+                if($("#txtNombre").val().length === 0 || $("#txtPaterno").val().length === 0 || $("#txtMaterno").val().length === 0 || $("#txtEmail").val().length === 0 || $("#txtRFC").val().length === 0 || $("#txtCURP").val().length === 0 || $("#txtPuesto").val().length === 0 || $("#txtCategoria").val().length === 0 ){
+                    Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                }
+            }
+        }).then(result => {
+            if(result.value){
+                $.ajax({
+                    url: '@Url.Action("IfPersonExist","Rest")',
+                    method: "GET",
+                    data: {
+                        RFC: $("#txtRFC").val(),
+                        CURP: $("#txtCURP").val()
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        if(res){
+                            Swal.fire({
+                                icon: 'error',
+                                title: '¡Error!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `La persona ya existe`
+                            });
+                        }
+                        else{
+                            const formData = new FormData($('form')[1]);
+                            formData.append('__RequestVerificationToken', token);
+                            if($("#iptFoto")[0].files[0]){
+                                formData.append('fotografia', $("#iptFoto")[0].files[0], $("#iptFoto")[0].files[0].name);
+                            }
+                            formData.append('Nombre', $("#txtNombre").val());
+                            formData.append('Paterno', $("#txtPaterno").val());
+                            formData.append('Materno', $("#txtMaterno").val());
+                            formData.append('RFC', $("#txtRFC").val());
+                            formData.append('CURP', $("#txtCURP").val());
+                            formData.append('Email',$("#txtEmail").val());
+                            formData.append('ClaveEmpleado', $("#txtCVEEmpleado").val());
+                            formData.append('Telefono', $("#txtTelefono").val());
+                            formData.append('TelefonoContacto', $("#txtTelefono").val());
+                            formData.append('Estatus', true);
+                            formData.append('Puesto', $("#txtPuesto").val());
+                            formData.append('Categoria', $("#txtCategoria").val());
+                            formData.append('Adscripcion', $("#slcAdscripcion").val());
+                            formData.append('Direccion', $("#txtDireccion").val());
+                            formData.append('EntidadFederativa', $("#txtEntidad").val());
+                            formData.append('Municipio', $("#txtMunicipio").val());
+                            formData.append('Sueldo', ($("#txtSueldo").val() === "")?"0.00":$("#txtSueldo").val().replace(',', '.'));
+                            formData.append('Opcional1', $("#txtOp1").val());
+                            formData.append('Opcional2', $("#txtOp2").val());
+                            $.ajax({
+                                url: '@Url.Action("Create","Personas")',
+                                method: "POST",
+                                data: formData,
+                                async: true,
+                                contentType: false,
+                                processData: false,
+                                success: function (res){
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Éxito!',
+                                        confirmButtonColor: "#67E7CF",
+                                        confirmButtonText:"Aceptar",
+                                        text: `La persona se registró con éxito`,
+                                        onClose: ()=>{
+                                            location.reload(true);
+                                        }
+                                    }).then((result) => {
+                                        if (result.value) {
+                                            location.reload(true);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+    const btnDetails = element => {
+        $.ajax({
+            url: '@Url.Action("Details","Personas")',
+            method: "GET",
+            data: {
+                id: element.id
+            },
+            async: true,
+            dataType: "json",
+            success: function (data){
+                if(data.success){
+                    Swal.fire({
+                        title:"Detalles", 
+                        confirmButtonColor: "#67E7CF",
+                        confirmButtonText:"Aceptar",
+                        html:`
+                            <div class="form-group text-left">
+                                <label class="control-label">Nombre</label>
+                                <input type="text" class="form-control" value="${(data.data.nombre===null)?"":data.data.nombre} ${(data.data.paterno===null)?"":data.data.paterno} ${(data.data.materno===null)?"":data.data.materno}" readonly/>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Correo Electrónico</label>
+                                <input type="email" class="form-control" value="${data.data.email}" readonly/>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">RFC</label>
+                                    <input type="text" class="form-control" value="${data.data.rfc}" readonly/>
+                                </div>
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">CURP</label>
+                                    <input type="text" class="form-control" value="${(data.data.curp===null)?"":data.data.curp}" readonly/>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Clave de Empleado</label>
+                                    <input type="text" class="form-control" value="${(data.data.claveEmpleado===null)?"":data.data.claveEmpleado}" readonly/>
+                                </div>
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Teléfono</label>
+                                    <input type="number" min="0" class="form-control" value="${(data.data.telefono===null)?"":data.data.telefono}" readonly/>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Puesto</label>
+                                    <input type="text" class="form-control" value="${(data.data.puesto===null)?"":data.data.puesto}" readonly/>
+                                </div>
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Categoría</label>
+                                    <input type="text" class="form-control" value="${(data.data.categoria===null)?"":data.data.categoria}" readonly/>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Adscripción</label>
+                                    <input type="text" class="form-control" value="${(data.data.adscripcion===null)?"":data.data.adscripcion}" readonly/>
+                                </div>
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Sueldo</label>
+                                    <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                            </div>
+                                            <input type="text" class="form-control" value="${(data.data.sueldo===null)?"":data.data.sueldo}" readonly/>
+                                        </div>
+                                    </div>               
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-12 text-left">
+                                    <label class="control-label">Dirección</label>
+                                    <input type="text" class="form-control" value="${(data.data.direccion===null)?"":data.data.direccion}" readonly/>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Municipio</label>
+                                    <input type="text" class="form-control" value="${(data.data.municipio===null)?"":data.data.municipio}" readonly/>
+                                </div>
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Entidad Federativa</label>
+                                    <input type="text" class="form-control" value="${(data.data.entidadFederativa===null)?"":data.data.entidadFederativa}" readonly/>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Campo Opcional</label>
+                                    <input type="text" class="form-control" value="${(data.data.opcional1===null)?"":data.data.opcional1}" readonly/>
+                                </div>
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Campo Opcional</label>
+                                    <input type="text" class="form-control" value="${(data.data.opcional2===null)?"":data.data.opcional2}" readonly/>
+                                </div>
+                            </div> 
+                        `
+                    });
+                }
+            }
+        });
+    }
+
+    const btnEdit = element => {
+        const token = $("[name='__RequestVerificationToken']").val();
+        $.ajax({
+            url: '@Url.Action("Details","Personas")',
+            method: "GET",
+            data: {
+                id: element.id
+            },
+            async: true,
+            dataType: "json",
+            success: function (data){
+                if(data.success){
+                    Swal.fire({
+                        title:"Editar Persona",
+                        confirmButtonColor: "#67E7CF",
+                        confirmButtonText:"Guardar",
+                        cancelButtonText:"Cancelar",
+                        reverseButtons: true,
+                        showCancelButton: true,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showCloseButton: true,
+                        closeButtonHtml: '<i class="fas fa-times"></i>',
+                        html:`
+                            <form id="editPerForm" method="POST" enctype="multipart/form-data">
+                                <div class="form-group text-left">
+                                    <label class="control-label">Nombre *</label>
+                                    <input id="txtNombre" type="text" class="form-control" value="${(data.data.nombre===null)?"":data.data.nombre}" maxlength="30" />
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Apellido Paterno *</label>
+                                        <input id="txtPaterno" type="text" class="form-control" value="${(data.data.paterno===null)?"":data.data.paterno}" maxlength="30" />
+                                    </div>
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Apellido Materno *</label>
+                                        <input id="txtMaterno" type="text" class="form-control" value="${(data.data.materno===null)?"":data.data.materno}" maxlength="30" />
+                                    </div>
+                                </div>
+                                <div class="form-group text-left">
+                                    <label class="control-label">Correo Electrónico *</label>
+                                    <input id="txtEmail" type="email" class="form-control" value="${data.data.email}" />
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">RFC *</label>
+                                        <input id="txtRFC" type="text" class="form-control" value="${data.data.rfc}" />
+                                    </div>
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">CURP *</label>
+                                        <input id="txtCURP" type="text" class="form-control" value="${(data.data.curp===null)?"":data.data.curp}" />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Clave de Empleado</label>
+                                        <input id="txtCVEEmpleado" type="text" class="form-control" value="${(data.data.claveEmpleado===null)?"":data.data.claveEmpleado}" maxlength="30" />
+                                    </div>
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Teléfono</label>
+                                        <input id="txtTelefono" type="text" class="form-control" maxlength="10" value="${(data.data.telefono===null)?"":data.data.telefono}" />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Puesto *</label>
+                                        <input id="txtPuesto" type="text" class="form-control" value="${(data.data.puesto===null)?"":data.data.puesto}" maxlength="50" />
+                                    </div>
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Categoría *</label>
+                                        <input id="txtCategoria" type="text" class="form-control" value="${(data.data.categoria===null)?"":data.data.categoria}" maxlength="50" />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label" for="slcAdscripcion">Adscripción *</label>
+                                        <select class="form-control" id="slcAdscripcion" >
+                                            <option value="null" disabled ${((data.data.adscripcion=== null))?'selected':''}>Selecciona Adscripción</option>
+                                            <option value="Interno" ${((data.data.adscripcion==="Interno"))?'selected':''}>Interno</option>
+                                            <option value="Externo" ${((data.data.adscripcion==="Externo"))?'selected':''}>Externo</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Sueldo</label>
+                                        <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                                </div>
+                                                <input id="txtSueldo" type="text" class="form-control" value="${(data.data.sueldo===null)?"":data.data.sueldo}" />
+                                            </div>
+                                        </div>               
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-12 text-left">
+                                        <label class="control-label">Dirección</label>
+                                        <input id="txtDireccion" type="text" class="form-control" value="${(data.data.direccion===null)?"":data.data.direccion}" maxlength="100" />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Municipio</label>
+                                        <input id="txtMunicipio" type="text" class="form-control" value="${(data.data.municipio===null)?"":data.data.municipio}" maxlength="50" />
+                                    </div>
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Entidad Federativa</label>
+                                        <input id="txtEntidad" type="text" class="form-control" value="${(data.data.entidadFederativa===null)?"":data.data.entidadFederativa}" maxlength="50"/ >
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Campo Opcional</label>
+                                        <input id="txtOp1" type="text" class="form-control" value="${(data.data.opcional1===null)?"":data.data.opcional1}" maxlength="100" />
+                                    </div>
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Campo Opcional</label>
+                                        <input id="txtOp2" type="text" class="form-control" value="${(data.data.opcional2===null)?"":data.data.opcional2}" maxlength="100" />
+                                    </div>
+                                </div>
+                                <div class="form-group text-left">
+                                    <label class="control-label">Fotografía</label>
+                                    <input id="iptFoto" type="file" class="form-control-file" />
+                                </div>
+                                <div class="form-group text-right">
+                                    <small>* Campos obligatorios</small>
+                                </div>
+                            </form>
+                        `,
+                        onOpen: () => {
+                            $("#txtTelefono").keypress((evt) => {
+                                if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                                    evt.preventDefault();
+                                }
+                            });
+                            $("#txtSueldo").keypress((evt) => {
+                                if (evt.which != 8 && evt.which != 0 && evt.which != 44 && evt.which != 46 && evt.which < 48 || evt.which > 57 ){
+                                    evt.preventDefault();
+                                }
+                            });
+                            $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();');
+                        },
+                        preConfirm: () => {
+                            if($("#txtNombre").val().length === 0){
+                                $("#txtNombre").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtNombre").removeAttr("style");
+                            }
+                            if($("#txtPaterno").val().length === 0){
+                                $("#txtPaterno").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtPaterno").removeAttr("style");
+                            }
+                            if($("#txtMaterno").val().length === 0){
+                                $("#txtMaterno").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtMaterno").removeAttr("style");
+                            }
+                            if($("#txtEmail").val().length === 0){
+                                $("#txtEmail").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else if(!$("#txtEmail").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                                $("#txtEmail").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtEmail").removeAttr("style");
+                            }
+                            if($("#txtRFC").val().length === 0){
+                                $("#txtRFC").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else if(!$("#txtRFC").val().match(/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/)){
+                                $("#txtRFC").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtRFC").removeAttr("style");
+                            }
+                            if($("#txtCURP").val().length === 0){
+                                $("#txtCURP").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else if(!$("#txtCURP").val().match(/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|        PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/)){
+                                $("#txtCURP").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtCURP").removeAttr("style");
+                            }
+                            if($("#txtTelefono").val().length > 0 && !$("#txtTelefono").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|        \-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/)){
+                                $("#txtTelefono").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                 $("#txtTelefono").removeAttr("style");
+                            }
+                            if($("#txtPuesto").val().length === 0){
+                                $("#txtPuesto").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtPuesto").removeAttr("style");
+                            }
+                            if($("#txtCategoria").val().length === 0){
+                                $("#txtCategoria").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtCategoria").removeAttr("style");
+                            }
+                            if($("#slcAdscripcion").val() === null){
+                                $("#slcAdscripcion").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#slcAdscripcion").removeAttr("style");
+                            }
+
+                            if($("#slcAdscripcion").val() === null){
+                                Swal.showValidationMessage("Selecciona adscripción");
+                            }
+                            if($("#txtTelefono").val().length > 0 && $("#txtTelefono").val().length < 10){
+                                Swal.showValidationMessage("El teléfono es incorrecto");
+                            }
+                            if(!$("#txtCURP").val().match(/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q     [TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/)){
+                                Swal.showValidationMessage("El CURP es incorrecto, ingresar un CURP correcto");
+                            }
+                            if(!$("#txtRFC").val().match(/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/)){
+                                Swal.showValidationMessage("El RFC es incorrecto, ingresar un RFC correcto");
+                            }
+                            if(!$("#txtEmail").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                                Swal.showValidationMessage("El correo electrónico es incorrecto");
+                            }
+                            if($("#txtNombre").val().length === 0 || $("#txtPaterno").val().length === 0 || $("#txtMaterno").val().length === 0 || $("#txtEmail").val().length === 0 || $       ("#txtRFC").val().length === 0 || $("#txtCURP").val().length === 0 || $("#txtPuesto").val().length === 0 || $("#txtCategoria").val().length === 0 ){
+                                Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                            }
+                        }
+                    }).then(result => {
+                        if(result.value){
+                            const formData = new FormData($('form')[1]);
+                            formData.append('__RequestVerificationToken', token);
+                            formData.append('id', element.id);
+                            if($("#iptFoto")[0].files[0]){
+                                formData.append('fotografia', $("#iptFoto")[0].files[0], $("#iptFoto")[0].files[0].name);
+                            }
+                            formData.append('Id', element.id);
+                            formData.append('Nombre', $("#txtNombre").val());
+                            formData.append('Paterno', $("#txtPaterno").val());
+                            formData.append('Materno', $("#txtMaterno").val());
+                            formData.append('RFC', $("#txtRFC").val());
+                            formData.append('CURP', $("#txtCURP").val());
+                            formData.append('Email',$("#txtEmail").val());
+                            formData.append('ClaveEmpleado', $("#txtCVEEmpleado").val());
+                            formData.append('Telefono', $("#txtTelefono").val());
+                            formData.append('TelefonoContacto', $("#txtTelefono").val());
+                            formData.append('Estatus', true);
+                            formData.append('Puesto', $("#txtPuesto").val());
+                            formData.append('Categoria', $("#txtCategoria").val());
+                            formData.append('Adscripcion', $("#slcAdscripcion").val());
+                            formData.append('Direccion', $("#txtDireccion").val());
+                            formData.append('EntidadFederativa', $("#txtEntidad").val());
+                            formData.append('Municipio', $("#txtMunicipio").val());
+                            formData.append('Sueldo', ($("#txtSueldo").val() === "")?"0.00":$("#txtSueldo").val().replace(',', '.'));
+                            formData.append('Opcional1', $("#txtOp1").val());
+                            formData.append('Opcional2', $("#txtOp2").val());
+                            $.ajax({
+                                url: '@Url.Action("Edit","Personas")',
+                                method: "POST",
+                                data: formData,
+                                async: true,
+                                contentType: false,
+                                processData: false,
+                                success: function (res){
+                                    if(res.success){
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Éxito!',
+                                            confirmButtonColor: "#67E7CF",
+                                            confirmButtonText:"Aceptar",
+                                            text: `La persona ${element.name} ha sido modificada`,
+                                            onClose: ()=>{
+                                                location.reload(true);
+                                            }
+                                        }).then((result) => {
+                                            if (result.value) {
+                                                location.reload(true);
+                                            }
+                                        });
+                                    }
+                                },
+                            });
+                        }
+                        else{
+                            Swal.close();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    const btnDelete = element => {
+        const token = $("[name='__RequestVerificationToken']").val();
+        Swal.fire({
+            icon: 'error',
+            title: `${element.name} ${element.secondName} se eliminará`,
+            text: `¿Seguro que deseas eliminarlo?`,
+            reverseButtons: true,
+            showCancelButton: true,
+            confirmButtonText:"Si, Eliminar",
+            cancelButtonText:"No, Cancelar",
+            confirmButtonColor:"#E74C3C",
+            cancelButtonColor: "#67E7CF",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>'
+        }).then(result => {
+            if(result.value){
+                $.ajax({
+                    url: '@Url.Action("Delete","Personas")',
+                    method: "POST",
+                    data: {
+                        __RequestVerificationToken: token,
+                        id: element.id
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        if(res.success){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `La persona ${element.name} ha sido eliminada`,
+                                onClose: ()=>{
+                                    location.reload(true);
+                                }
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.reload(true);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+    $('#tableIndexPersonas').on('click-row.bs.table', (row, element, field) => {
+        Swal.fire({
+            title: `${element.name}`,
+            showConfirmButton:false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-row margTop40">
+                    <div class="form-group col">
+                        <a onclick="btnDetails({'id':'${element.id}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Detalles" data-original-title="Tooltip on bottom"><i class="fas fa-search"></i></a>
+                        <label class="d-block margTop5px">Detalles</label>
+                    </div>
+                    <div class="form-group col">
+                        <a onclick="btnEdit({'id':'${element.id}', 'name':'${element.name}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a>
+                        <label class="d-block margTop5px">Editar</label>
+                    </div>
+                    @if(!User.IsInRole("Ventas")){
+                    <div class="form-group col">
+                        <a onclick="btnDelete({'id':'${element.id}', 'name':'${element.name}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Eliminar" data-original-title="Tooltip on bottom"><i class="fas fa-trash"></i></a>
+                        <label class="d-block margTop5px">Eliminar</label>
+                    </div>
+                    }
+                </div>
+            `
+        });
+    });
+</script>
+}

@@ -1,0 +1,281 @@
+@model siges.Models.Operador
+@using siges.Models
+@{
+  ViewData["Title"] = "Cambiar Estado";
+  var ordenServicio = ViewData["ordenServicio"] as OrdenServicio;
+  var estados = ViewData["estados"] as string;
+  var faceapiuso = (bool)ViewData["faceapiuso"];
+  var customvisionuso = (bool)ViewData["customvisionuso"];
+}
+
+@section css {
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/file-upload-with-preview@4.0.2/dist/file-upload-with-preview.min.css">
+}
+<div class="container justify-content-center">
+  <div class="row d-flex justify-content-center">
+    <div class="col-10">
+      <div class="">
+  <h1>@ordenServicio.Cliente.RazonSocial</h1>
+  <p class="lead">@ordenServicio.Ubicacion.Nombre</p>
+  <hr class="my-4">
+  <p>@ordenServicio.Servicio.Nombre</p>
+@estados
+  <form id="GuardarEstadoForm" enctype="multipart/form-data" action="@Url.Action("GuardarEstado","Operador")" method="post">
+    <div class="card text-center">
+      <div class="card-header"><b>@ordenServicio.Folio</b></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="NuevoEstadoSelect">Nuevo estado:</label>
+          <select size=2 class="form-control" id="NuevoEstadoSelect" name="NuevoEstado" required>
+            @if(estados == "todos"){
+            @if(faceapiuso){
+            <option class="d-flex justify-content-center p-2" value="asistencia" data-toggle="tooltip" data-placement="bottom" title="Foto del rostro de la persona que reporta" data-original-title="Tooltip on bottom"><b>Asistencia</b></option>
+            }
+            <option class="d-flex justify-content-center p-2" value="sitio" data-toggle="tooltip" data-placement="bottom" title="Foto del lugar donde se hará el servicio" data-original-title="Tooltip on bottom"><b>En sitio</b></option>
+            <option class="d-flex justify-content-center p-2" value="reporteInterno" data-placement="bottom" title="Foto para el reporte interno" data-original-title="Tooltip on bottom"><b>Reporte interno</b></option>
+            @if(customvisionuso){
+            <option class="d-flex justify-content-center p-2" value="revequiposeguridad" data-placement="bottom" title="Foto donde la persona utilice elementos de seguridad" data-original-title="Tooltip on bottom"><b>Revisión equipo seguridad</b></option>
+            }
+            }else if(estados == "sinsitio"){
+            <option class="d-flex justify-content-center p-2" value="noatendido" data-placement="bottom" title="Foto para reportar actividad" data-original-title="Tooltip on bottom"><b>Reportar actividad</b></option>
+            <option class="d-flex justify-content-center p-2" value="atendido" data-placement="bottom" title="Foto para reportar actividad" data-original-title="Tooltip on bottom"><b>Terminar día</b></option>
+            <option class="d-flex justify-content-center p-2" value="reporteInterno" data-placement="bottom" title="Foto para el reporte interno" data-original-title="Tooltip on bottom"><b>Reporte interno</b></option>
+            @if(customvisionuso){
+            <option class="d-flex justify-content-center p-2" value="revequiposeguridad" data-placement="bottom" title="Foto donde la persona utilice elementos de seguridad" data-original-title="Tooltip on bottom"><b>Revisión equipo seguridad</b></option>
+            }
+            }else if(estados == "sinsitioyatendido"){
+            <option class="d-flex justify-content-center p-2" value="noatendido" data-placement="bottom" title="Foto para reportar actividad" data-original-title="Tooltip on bottom"><b>Reportar actividad</b></option>
+            <option class="d-flex justify-content-center p-2" value="reporteInterno" data-placement="bottom" title="Foto para el reporte interno" data-original-title="Tooltip on bottom"><b>Reporte interno</b></option>
+            @if(customvisionuso){
+            <option class="d-flex justify-content-center p-2" value="revequiposeguridad" data-placement="bottom" title="Foto donde la persona utilice elementos de seguridad" data-original-title="Tooltip on bottom"><b>Revisión equipo seguridad</b></option>
+            }
+            } else if(estados == "vacio"){
+            <span class="d-flex justify-content-center p-2"><b>Existen evidencias registradas para esta Orden de Servicio.</b></span>
+            }
+          </select>
+        </div>
+        <div id="clock" class="clock card-title">loading ...</div>
+        <div class="form-group shadow-textarea">
+          <textarea class="form-control z-depth-1" id="ComentarioNuevoEstadoTextArea" name="ComentarioNuevoEstado" rows="3" placeholder="    Recuerda seguir la redacción y plantilla de evidencias" required></textarea>
+        </div>
+        <div class="form-group">
+
+
+          @*<div class="custom-file">
+            <input type="file" class="custom-file-input" id="ArchivosEvidencia" lang="es" name="ArchivosEvidencia" multiple onchange="handleFiles(this.files)">
+            <label class="custom-file-label" for="ArchivosEvidencia">Evidencia</label>
+            <label for="ArchivosEvidencia">5 archivos máximo / 20MB máximo</label>
+          </div>*@
+
+          <br>
+
+          <div class="custom-file-container" data-upload-id="myUniqueUploadId">
+            <label class="custom-file-container__image-clear" title="Quitar Imagenes">Quitar imagenes
+              <a href="javascript:void(0)" class="custom-file-container__image-clear" title="Quitar Imagenes"><i class="fas fa-times"></i></a>
+            </label>
+            <label class="custom-file-container__custom-file" >
+              <input type="file" class="custom-file-container__custom-file__custom-file-input" accept="*" id="ArchivosEvidencia" name="ArchivosEvidencia" multiple aria-label="Choose File">
+              <input type="hidden" name="MAX_FILE_SIZE" value="20971520" />
+              <span class="custom-file-container__custom-file__custom-file-control"></span>
+            </label>
+            <div class="custom-file-container__image-preview"></div>
+          </div>
+
+
+        </div>
+        <input name="OrdenServicioId" type="hidden" value="@ordenServicio.Id">
+        <input name="PersonaId" type="hidden" value="@ViewData["personaId"]">
+        <input type="hidden" id="LastModified" name="LastModified">
+        <input type="hidden" name="Hora" id="Hora">
+        <input type="hidden" name="Exif" id="Exif">
+        <div class="row d-flex justify-content-center">
+          <div class="col-6">
+            <button id="btnSave" type="submit" class="btn btn-primary btn-lg btn-block" disabled>Guardar</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer text-muted"><b>@(ordenServicio.EstatusServicio.ToUpper())</b></div>
+    </div>
+  </form>
+</div>
+    </div>
+  </div>
+</div>
+
+<!-- Spinner Modal -->
+<div class="modal fade" id="spinnerModalCenter" tabindex="-1" role="dialog" aria-labelledby="spinnerModalCenterTitle" aria-hidden="false" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="spinnerModalCenterTitle">Cargando...</h5>
+      </div>
+      <div class="modal-body">
+
+        <div class="d-flex justify-content-center text-center">
+          <div class="spinner-grow text-warning" role="status" style="width: 4rem; height: 4rem;">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+        <div class="spinner-grow text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div class="text-center">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ExcedeMegas Modal -->
+<div class="modal fade" id="excedeMegas" tabindex="-1" role="dialog" aria-labelledby="excedeMegasTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="excedeMegasTitle">Exceso de Megabytes</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="jumbotron jumbotron-fluid">
+          <div class="container">
+            <h1 id="mb" class="display-4"></h1>
+            <p class="lead">Favor de seleccionar otro archivo o reducir la cantidad de archivos.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+@section scripts {
+<script src="~/lib/Exif/exif-reader.js"></script>
+<script src="~/lib/moment-2.22.2/min/moment-with-locales.js"></script>
+<script src="https://unpkg.com/file-upload-with-preview@4.0.2/dist/file-upload-with-preview.min.js"></script>
+<script>
+  var files = new FileUploadWithPreview('myUniqueUploadId', {
+    showDeleteButtonOnImages: true,
+    text: {
+      chooseFile: 'Evidencias',
+      browse: 'Seleccionar archivos',
+      selectedCount: 'archivos seleccionados',
+    },
+    presetFiles: [],
+  })
+
+  /*
+  * Valida si está seleccionado un estado y si está capturado el comentario del cambio de estado
+  *
+  * */
+  document.querySelector('button.btn-primary[type="submit"]').addEventListener('click', e => {
+    e.preventDefault()
+    if(document.getElementById('NuevoEstadoSelect').value === '' || document.getElementById('ComentarioNuevoEstadoTextArea').value === ''){
+      document.getElementById('spinnerModalCenterTitle').innerText = 'Falta información requerida para continuar...';
+      if(document.getElementById('NuevoEstadoSelect').value === ''){
+        document.getElementById('spinnerModalCenter').removeAttribute('data-backdrop');
+        document.getElementById('spinnerModalCenter').removeAttribute('data-keyboard');
+        document.querySelector('#spinnerModalCenter .modal-body').innerHTML = '<div class="alert alert-warning" role="alert"><p align="center"> Favor de seleccionar un estado </p></div>';
+        $('#spinnerModalCenter').modal('toggle');
+      } else if(document.getElementById('ComentarioNuevoEstadoTextArea').value === ''){
+        document.getElementById('spinnerModalCenter').removeAttribute('data-backdrop');
+        document.getElementById('spinnerModalCenter').removeAttribute('data-keyboard');
+        document.querySelector('#spinnerModalCenter .modal-body').innerHTML = '<div class="alert alert-warning" role="alert"><p align="center"> Favor de redactar información adicional al reporte.  </p></div>';
+        $('#spinnerModalCenter').modal('toggle');
+      }
+    } else {
+      document.getElementById('spinnerModalCenter').setAttribute('data-keyboard','false');
+      document.getElementById('spinnerModalCenter').setAttribute('data-backdrop','static');
+      document.getElementById('spinnerModalCenterTitle').innerText = 'Cargando...';
+      document.querySelector('#spinnerModalCenter .modal-body').innerHTML = '<div class="text-center"><div class="spinner-border text-primary m-5" role="status"><span class="sr-only">Loading...</span></div></div>';
+      @*document.getElementById('ArchivosEvidencia').value = files.cachedFileArray;*@
+      $('#spinnerModalCenter').modal('toggle');
+      $('#Hora').val(moment().format("YYYY MM DD HH:mm:ss"));
+      $('#Exif').val(Tags);
+      document.getElementById('GuardarEstadoForm').submit();
+    }
+  });
+
+  document.getElementById('inputMultiFile');
+  var lastModified = {};
+
+  function handleFiles(files){
+    var fileList = files;
+    for(let i = 0; i < fileList.length; i++){
+      var folio = document.querySelector('div.card-header').firstChild.innerText;
+      var ext = fileList[i].name.substring(files[i].name.lastIndexOf('.'));
+      var name = folio+i+ext;
+      var file = fileList[i].slice();
+    }
+  }
+
+  $(document).ready(function(){
+    if(document.getElementById('MenuCambiarEstadoOperador') != null)
+      document.getElementById('MenuCambiarEstadoOperador').setAttribute('style', 'display: none');
+  });
+  
+
+  function update() {
+    $('#clock').html(moment().locale('es').format('D MMMM YYYY H:mm:ss'));
+  }
+  setInterval(update, 1000);
+
+  const Tags = [];
+  var archivosAsubir = [];
+
+  const VALID_EXT = ["JPEG", "JPG", "BMP", "PNG"];
+
+  $("#ArchivosEvidencia").on("change", (event)=>{
+    const EXTEN = $("#ArchivosEvidencia").prop('files')[0].name.split('.');
+    const VALID = VALID_EXT.includes(EXTEN[EXTEN.length - 1].toUpperCase());
+    if(!VALID){
+      $("#btnSave").attr('disabled', 'true');
+      Swal.fire({
+        icon: 'error',
+        title: '¡Error!',
+        confirmButtonColor: "#67E7CF",
+        confirmButtonText:"Aceptar",
+        text: `Archivo no valido`
+      });
+    }
+    else{
+    files = event.target.files;
+    console.log({files});
+    for(const file of files ){
+      $("#btnSave").removeAttr('disabled');
+      archivosAsubir.push(file);
+      console.log({file});
+      let reader = new FileReader();
+      const name = file.name;
+      console.log({name});
+      reader.onload = function (readerEvent) {
+        try {
+            let tags = ExifReader.load(readerEvent.target.result);
+            delete tags['MakerNote'];
+            tags['FileName'] = name; 
+            //Tags.push(tags);
+            Tags.push(JSON.stringify(tags));
+            console.log({Tags});
+        } catch (error) {
+            console.log(error.toString());
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+    }
+})
+
+document.getElementById('ArchivosEvidencia').addEventListener('click', e => {
+  document.querySelector('a.custom-file-container__image-clear').click();
+  console.log({e});
+});
+
+</script>
+}

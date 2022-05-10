@@ -1,0 +1,129 @@
+@using siges.Models
+@using System
+@using System.Globalization
+@using System.Collections.Generic
+
+@{
+  ViewData["Title"] = "Paquetes Insumos";
+  List<PaqueteInsumo> paquetesInsumos = ViewData["paquetesInsumo"] as List<PaqueteInsumo>;
+  Dictionary<int, int> cantInsumosXpq = ViewData["cantInsumosPaq"] as Dictionary<int, int>;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Paquetes Insumos</h2>
+        </div>
+        <div class="col align-self-center text-right">
+            @if(!User.IsInRole("Operador") && !User.IsInRole("Ventas")) {
+                <a class="btn bg-blue margR-30px float" href='@Url.Action("Index", "Insumos")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+                <a href='@Url.Action("CreatePaquete", "Insumos")' class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Agregar" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a>
+            }
+            else if(User.IsInRole("Operador")){
+                <a class="btn bg-yellow marg-Float float" href='@Url.Action("Index", "Operador")' data-toggle="tooltip" data-placement="bottom" title="Calendario" data-original-title="Tooltip on bottom"><i class="fas fa-calendar-alt"></i></a>
+            } 
+            else if (User.IsInRole("Ventas")){
+                <a class="btn bg-yellow marg-Float float" href='@Url.Action("Index", "Ventas")' data-toggle="tooltip" data-placement="bottom" title="Calendario" data-original-title="Tooltip on bottom"><i class="fas fa-calendar-alt"></i></a>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col margBott4em">
+            <table id="tablePaqInsumos" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="descripcion">
+                <thead>
+                    <tr>
+                        <th data-field="id" data-visible="false">ID</th>
+                        <th data-field="descripcion" data-sortable="true" data-width="10%">Descripción</th>
+                        <th data-field="fecha" data-sortable="true" data-sorter="dateSort" data-width="5%" data-filter-control="input">Fecha/Hora</th>
+                        <th data-field="insumo" data-sortable="true" data-width="13%" data-filter-control="select">Insumo/Kit</th>
+                        <th data-field="minimo" data-sortable="true" data-width="15%" data-filter-control="select">Mínimo</th>
+                        <th data-field="maximo" data-sortable="true" data-width="15%" data-filter-control="select">Máximo</th>
+                        <th data-field="estatus" data-sortable="true" data-width="5%" data-filter-control="select">Estatus</th>
+                        <th data-field="creadoPor" data-sortable="true" data-width="15%" data-filter-control="select">Creado por</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(paquetesInsumos != null && paquetesInsumos.Count > 0){
+                        @for(int idx = 0; idx < paquetesInsumos.Count; idx++){
+                            <tr>
+                                <td>@paquetesInsumos[idx].Id</td>
+                                <td>@CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(paquetesInsumos[idx].Paquete.Descripcion != null ? paquetesInsumos[idx].Paquete.Descripcion.ToLower() : "sin descripción")</td>
+                                <td>@(paquetesInsumos[idx].Paquete.FechaAdmin != null ? ((DateTime)(paquetesInsumos[idx].Paquete.FechaAdmin)).ToString("G", CultureInfo.CreateSpecificCulture("es-ES")) : "Sin fecha registrada" )</td>
+                                <td>@CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(paquetesInsumos[idx].Insumo.Descripcion != null ? paquetesInsumos[idx].Insumo.Descripcion.ToLower() : "sin descripción")</td>
+                                <td>@paquetesInsumos[idx].Insumo.Opcional1</td>
+                                <td>@paquetesInsumos[idx].Insumo.Opcional2</td>
+                                <td>@(paquetesInsumos[idx].Estatus == true ? "Activo" : "")</td>
+                                <td>@CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(paquetesInsumos[idx].Paquete.Crea.Nombre != null ? paquetesInsumos[idx].Paquete.Crea.Nombre.ToLower() : "sin descripción")</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Modals {
+<div id="deleteOrdenModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Eliminar &oacute;rden de servicio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>¿Estas seguro de que deseas eliminar el paquete de insumos con descripción <span id="delNo"></span>?</p>
+      </div>
+      <div class="modal-footer">
+        <button id="delBtn" type="button" class="btn btn-danger">S&iacute;</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if(User.IsInRole("Operador")){
+<!-- Cambiar Estado Modal -->
+<div class="modal fade" id="CambiarEstadoModal" tabindex="-1" role="dialog" aria-labelledby="CambiarEstadoModalTitulo" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="CambiarEstadoModalTitulo">Seleccionar servicio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="jumbotron jumbotron-fluid">
+          <div class="container">
+            <form id="CambiarEstadoForm" action="@Url.Action("CambiarEstado","Operador")" method="post">
+              <div class="form-group">
+                <h5 class="display-4">Folio</h5>
+                <select multiple class="form-control" id="cambiarEstadoFolio" name="OrdenServicioId" required>
+                  @foreach(var ordenServicio in ViewData["OrdenServicioEnTiempo"] as List<OrdenPersona>){
+                  <option class="d-flex justify-content-center p-2" value="@ordenServicio.OrdenServicio.Id">@ordenServicio.OrdenServicio.Folio</option>
+                  }
+                  @*@foreach (var ordenPersona in ViewData["ordenesPersona"] as List<OrdenPersona>) {
+                  <option class="d-flex justify-content-center p-2" value="@ordenPersona.OrdenServicio.Id">@ordenPersona.OrdenServicio.Folio</option>
+                  }*@
+                </select>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-success">Cambiar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+}
+}
+
+@section scripts {
+<script src="~/js/listPaqueteInsumo.js"></script>
+}

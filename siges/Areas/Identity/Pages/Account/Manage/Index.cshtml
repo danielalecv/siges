@@ -1,0 +1,177 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Datos Personales";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<link href="~/lib/Parsley-2.8.1/parsley.css" rel="stylesheet" />
+
+<h4>@ViewData["Title"]</h4>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="Generales-tab" data-toggle="tab" href="#Generales" role="tab" aria-controls="Generales" aria-selected="true">Generales</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="Direccion-tab" data-toggle="tab" href="#Direccion" role="tab" aria-controls="Direccion" aria-selected="false">Direcci&oacute;n</a>
+    </li>
+   @*<li class="nav-item">
+      <a class="nav-link" id="Laborales-tab" data-toggle="tab" href="#Laborales" role="tab" aria-controls="Laborales" aria-selected="false">Laborales</a>
+    </li>*@
+</ul>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+
+    <form class="margTop40" id="profile-form" method="post" data-parsley-validate="">
+        <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="Generales" role="tabpanel" aria-labelledby="Generales-tab">
+           <div class="form-row mb-3">
+                <div class="col-6">
+                    <label asp-for="Input.Datos.Nombre">Nombre(s) *</label>
+                    <input asp-for="Input.Datos.Nombre" class="form-control" required />
+                    <span asp-validation-for="Input.Datos.Nombre" class="text-danger"></span>
+                </div>
+           </div>
+           <div class="form-row mb-3">
+                <div class="col-6">
+                    <label asp-for="Input.Datos.Paterno">Apellido Paterno *</label>
+                    <input asp-for="Input.Datos.Paterno" class="form-control" required />
+                    <span asp-validation-for="Input.Datos.Paterno" class="text-danger"></span>
+                </div>
+           </div>
+           <div class="form-row mb-3">
+                <div class="col-6">
+                    <label asp-for="Input.Datos.Materno">Apellido Materno *</label>
+                    <input asp-for="Input.Datos.Materno" class="form-control" required />
+                    <span asp-validation-for="Input.Datos.Materno" class="text-danger"></span>
+                </div>
+           </div>
+           <div class="form-row mb-3">
+                <div class="col-6">
+                    <label asp-for="Input.Datos.Telefono"></label>
+                    <input asp-for="Input.Datos.Telefono" class="form-control" id="txtTelefono" type="text" minlength="10" maxlength="10" />
+                    <span asp-validation-for="Input.Datos.Telefono" class="text-danger"></span>
+                </div>
+           </div>
+           <div class="form-row mb-3">
+                <div class="col-6">
+                    <label asp-for="Input.Datos.TelefonoContacto"></label>
+                    <input asp-for="Input.Datos.TelefonoContacto" class="form-control" id="txtCel" type="text" minlength="10" maxlength="10" />
+                    <span asp-validation-for="Input.Datos.TelefonoContacto" class="text-danger"></span>
+                </div>
+                
+           </div>
+           <div class="form-row mb-3">
+               <div class="col-3">
+                    <label asp-for="Input.Datos.RFC">RFC *</label>
+                    <input asp-for="Input.Datos.RFC" class="form-control" required />
+                    <span asp-validation-for="Input.Datos.RFC" class="text-danger"></span>
+                </div>
+                <div class="col-3">
+                    <label asp-for="Input.Datos.CURP">CURP *</label>
+                    <input asp-for="Input.Datos.CURP" class="form-control" required />
+                    <span asp-validation-for="Input.Datos.CURP" class="text-danger"></span>
+                </div>
+           </div>
+           @*
+           <div class="form-row">
+               <div class="col-6">
+                    <label asp-for="Input.Datos.Fotografia"></label>
+                    <input asp-for="Input.Datos.Fotografia" type="file" class="form-control-file" />
+                </div>                
+           </div>*@
+        </div>
+        <div class="tab-pane fade" id="Direccion" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="form-row mb-3">
+                <div class="col-6">
+                    <label asp-for="Input.Datos.Direccion"></label>
+                    <input asp-for="Input.Datos.Direccion" class="form-control" />
+                    <span asp-validation-for="Input.Datos.Direccion" class="text-danger"></span>
+                </div>
+           </div>
+           <div class="form-row mb-3">
+                <div class="col-6">
+                    <label asp-for="Input.Datos.Municipio"></label>
+                    <input asp-for="Input.Datos.Municipio" class="form-control" />
+                    <span asp-validation-for="Input.Datos.Municipio" class="text-danger"></span>
+                </div>
+           </div>
+           <div class="form-row mb-3">
+                <div class="col-6">
+                    <label asp-for="Input.Datos.EntidadFederativa"></label>
+                    <input asp-for="Input.Datos.EntidadFederativa" class="form-control" />
+                    <span asp-validation-for="Input.Datos.EntidadFederativa" class="text-danger"></span>
+                </div>
+           </div>
+        </div>
+        <div class="form-row justify-content-start">
+          <small>* Campos obligatorios</small>                            
+        </div>
+        @*<div class="tab-pane fade" id="Laborales" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="form-row mb-3">
+                <div class="col-6">
+                    <label asp-for="Input.Datos.ClaveEmpleado"></label>
+                    <input asp-for="Input.Datos.ClaveEmpleado" class="form-control" readonly/>
+                    <span asp-validation-for="Input.Datos.ClaveEmpleado" class="text-danger"></span>
+                </div>
+           </div>
+           <div class="form-row mb-3">
+                <div class="col-6">
+                    <label asp-for="Input.Datos.Adscripcion"></label>
+                    <input asp-for="Input.Datos.Adscripcion" class="form-control" readonly/>
+                    <span asp-validation-for="Input.Datos.Adscripcion" class="text-danger"></span>
+                </div>
+           </div>
+           <div class="form-row mb-3">
+               <div class="col-6">
+                    <label asp-for="Input.Datos.Puesto"></label>
+                    <input asp-for="Input.Datos.Puesto" class="form-control" readonly/>
+                    <span asp-validation-for="Input.Datos.Puesto" class="text-danger"></span>
+                </div>
+           </div>
+           <div class="form-row mb-3">
+               <div class="col-6">
+                    <label asp-for="Input.Datos.Sueldo"></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                            </div>
+                        <input asp-for="Input.Datos.Sueldo" class="form-control" readonly/>
+                    </div>
+                    <span asp-validation-for="Input.Datos.Sueldo" class="text-danger"></span>
+                </div>
+           </div>*@
+        </div>
+           <div class="form-row margBott4em">
+                <div class="col-6">
+                    <button id="update-profile-button" type="submit" class="btn btn-primary btn-block margTop40"><h5>Guardar</h5></button>
+                </div>
+           </div>
+        </div>
+    </form>
+
+
+ @section scripts{
+    <script src="~/lib/Parsley-2.8.1/parsley.min.js"></script>
+    <script src="~/lib/Parsley-2.8.1/i18n/es.js"></script>
+    <script>
+    document.getElementById("txtTelefono").addEventListener("keypress", function (evt) {
+      if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+          evt.preventDefault();
+      }
+    });
+    document.getElementById("txtCel").addEventListener("keypress", function (evt) {
+      if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+          evt.preventDefault();
+      }
+    });
+    $(function () {
+        $('#profile-form').parsley().on('field:validated', function() {
+            var ok = $('.parsley-error').length === 0;
+            $('.bs-callout-info').toggleClass('hidden', !ok);
+            $('.bs-callout-warning').toggleClass('hidden', ok);
+            $('#pills-one-tab').tab('show')
+        })
+    });
+    </script>
+}

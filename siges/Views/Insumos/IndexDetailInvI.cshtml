@@ -1,0 +1,103 @@
+@using System
+@using siges.Models
+@using System.Globalization
+@{
+@*ActivoFijo activoFijo = ViewData["activoFijo"] as ActivoFijo;
+List<InventarioAF> invAF = ViewData["invAF"] as List<InventarioAF>;
+List<OrdenServicio> ordenServicio = ViewData["ordenServicio"] as List<OrdenServicio>;*@
+
+Insumo insumo = ViewData["insumo"] as Insumo;
+List<InventarioI> invI = ViewData["invI"] as List<InventarioI>;
+List<OrdenServicio> ordenServicio = ViewData["ordenServicio"] as List<OrdenServicio>;
+}
+<div class="container">
+  <div class="col">
+    <div class="jumbotron">
+      <h1 class="display-4">@insumo.Descripcion</h1>
+      <p class="lead">@insumo.Marca</p>
+      <hr class="my-4">
+      <div class="row">
+        <div class="col-lg-6 offset-md-8 offset-lg-9 offset-xl-9">
+          <button class="btn btn-success btn-lg" role="button" onclick="location.href='@Url.Action( "InventarioAF", "ActivoFijos")'">Regresar</button>
+        </div>
+      </div>
+
+      <div class="row col-12">
+
+        <div class="col-md-3">
+          <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+              <h1 class="display-4">Salida</h1>
+
+              @if(ordenServicio != null && ordenServicio.Count > 0){
+              @foreach(OrdenServicio os in ordenServicio){
+              <div class="card text-center my-3">
+                <div class="card-header">Servicio @os.Folio</div>
+                <div class="card-body">
+                  <h5 class="card-title">@os.Cliente.RazonSocial</h5>
+                  <p class="card-text">@os.Ubicacion.Nombre</p>
+                  <button onclick="location.href='@Url.Action("IndexDetailOS", "Servicio", new{ordenId = @os.Id})'" class="btn btn-primary">Detalle del Servicio</button>
+                </div>
+                <div class="card-footer text-muted">@os.Servicio.Nombre</div>
+              </div>
+              }
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+              <h1 class="display-4">Entrada</h1>
+
+              @if(ordenServicio != null && ordenServicio.Count > 0){
+              @foreach(OrdenServicio os in ordenServicio){
+              <div class="card text-center my-3">
+                <div class="card-header">Servicio @os.Folio</div>
+                <div class="card-body">
+                  <h5 class="card-title">@os.Cliente.RazonSocial</h5>
+                  <p class="card-text">@os.Ubicacion.Nombre</p>
+                  <button onclick="location.href='@Url.Action("IndexDetailOS", "Servicio", new{ordenId = @os.Id})'" class="btn btn-primary">Detalle del Servicio</button>
+                </div>
+                <div class="card-footer text-muted">@os.Servicio.Nombre</div>
+              </div>
+              }
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+              <h4 class="display-4">Inventario inicial</h4>
+
+              @if(invI != null & invI.Count > 0){
+              @foreach(InventarioI iaf in invI){
+              <div class="card text-center my-3">
+                <div class="card-header">Capturado por @iaf.Persona.Nombre @iaf.Persona.Paterno </div>
+                <div class="card-body">
+                  <h5 class="card-title">@iaf.Cantidad</h5>
+                  <h5 class="card-title">Valorizado $@(iaf.Cantidad * iaf.Insumo.Precio)</h5>
+                  <p class="card-text">@iaf.Observaciones</p>
+                  <button onclick="location.href='@Url.Action("Details", "ActivoFijos", new{id = @iaf.Insumo.Id})'" class="btn btn-primary">Detalle del insumo</button>
+                </div>
+                <div class="card-footer text-muted">@iaf.FechaAlta.ToString("D", null)</div>
+              </div>
+              }
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="my-4">
+      <div class="row">
+        <div class="col-lg-6 offset-md-8 offset-lg-9 offset-xl-9">
+          <button class="btn btn-success btn-lg" role="button" onclick="location.href='@Url.Action( "InventarioAF", "ActivoFijos")'">Regresar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

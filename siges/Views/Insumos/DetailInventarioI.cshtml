@@ -1,0 +1,95 @@
+@using System
+@using siges.Models
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Detalle Inventario";
+    List<OrdenInsumo> oiList = ViewData["oiList"] as List<OrdenInsumo>;
+    List<Lote> lotes = ViewData["lotes"] as List<Lote>;
+    Insumo insumo = ViewData["insumo"] as Insumo;
+    Dictionary<string,int> salidas = ViewData["salidaXlote"] as Dictionary<string,int>;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>@CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(insumo.Descripcion.ToLower())</h2>
+            <p class="lead">@insumo.Marca</p>
+        </div>
+        <div class="col align-self-center text-right">
+            <a class="btn bg-blue marg-Float float" href='@Url.Action("InventarioI", "Insumos")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col margBott4em">
+            <h3>Salidas</h3>
+            <table data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="folio">
+                <thead>
+                    <th data-field="id" data-visible="false">ID</th>
+                    <th data-field="folio" data-sortable="true" >Orden de Servicio</th>
+                    <th data-field="cantidad" data-sortable="true" >Cantidad</th>
+                    <th data-field="lote" data-sortable="true" >Lote</th>
+                    <th data-field="estatus" data-sortable="true" >Estado del servicio</th>
+                </thead>
+                <tbody>
+                    @if(oiList != null && oiList.Count > 0){
+                        @foreach (OrdenInsumo oi in oiList){
+                            <tr>
+                                <td>@oi.Id</td>
+                                <td>@oi.OrdenServicio.Folio</td>
+                                <td>@oi.Cantidad</td>
+                                <td>@(oi.Lote != null ? oi.Lote : "Lote sin descripción")</td>
+                                <td style="text-transform: capitalize;">@CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(oi.OrdenServicio.EstatusServicio)</td>
+                            </tr>
+                        }
+                    } 
+                    else {
+                        <tr>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3>Inventario por lote</h3>
+            <table data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="lote">
+                <thead>
+                    <tr>
+                        <th data-field="id" data-visible="false">ID</th>
+                        <th data-field="lote" data-sortable="true" >Lote</th>
+                        <th data-field="entrada" data-sortable="true" >Entrada</th>
+                        <th data-field="salida" data-sortable="true" >Salida</th>
+                        <th data-field="existencia" data-sortable="true" >Existencia</th>
+                        <th data-field="caducidad" data-sortable="true" >Caducidad</th>
+                        <th data-field="estatus" data-sortable="true" >Estatus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(oiList != null && oiList.Count > 0){
+                        @foreach (Lote l in lotes){
+                            <tr>
+                                <td>@l.Id</td>
+                                <td>@l.Descripcion</td>
+                                <td>@l.Cantidad</td>
+                                <td>@salidas[l.Descripcion]</td>
+                                <td>@(l.Cantidad - salidas[l.Descripcion])</td>
+                                <td>@l.Caducidad.ToString("D", CultureInfo.CreateSpecificCulture("es-ES"))</td>
+                                <td style="text-transform: capitalize;">@(l.Estatus == true ? "Activo" : "Inactivo")</td>
+                            </tr>
+                        }
+                    }
+                    else{
+                        <tr>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+

@@ -1,0 +1,627 @@
+@using siges.Models
+@using System
+@using System.Globalization
+
+@{
+  ViewData["Title"] = "Detalle orden de servicio";
+  var eOS = ((OrdenServicio)ViewData["orden"]);
+  var osafTotal = 0;
+  var osiTotal = 0;
+  var evidencias = ViewData["evidencias"] as List<Operador>;
+  var personasDictionary = ViewData["personas"] as Dictionary<int, Persona>;
+  var osPrevia = ViewData["osPrevia"];
+  var faceapiuso = (bool)ViewData["faceapiuso"];
+  List<BitacoraEstatus> cambiosEstado = ViewData["cambiosEstado"] as List<BitacoraEstatus>;
+  var OrdenServicioEnTiempoL = ViewData["OrdenServicioEnTiempo"] as List<OrdenPersona>;
+ }
+
+@section css {
+  <link href="~/lib/Parsley-2.8.1/parsley.css" rel="stylesheet" />
+  <link href="~/lib/tempusdominus-5.0.0/build/css/tempusdominus-bootstrap-4.css" rel="stylesheet" />
+}
+
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h2>Detalle &Oacute;rden de Servicio</h2>
+    </div>
+    <div class="col align-self-center text-right">
+      @if(User.IsInRole("Supervisor")){
+        <a class="btn bg-blue marg-Float float" href='@Url.Action("IndexListOS", "Servicio")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+      }
+      else if(User.IsInRole("Cliente")){
+        <a class="btn bg-blue marg-Float float" href='@Url.Action("Services", "Client")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+      }    
+    </div>
+  </div>
+  <div class="row margTop40">
+    <div class="col">
+      <div id="tab-lists" class="row">
+        <div class="col">
+          <div class="list-group" role="tablist">
+            <a id="stepOne" class="list-group-item list-group-item-action flex-column align-items-start active" href="#infoGral" role="tab">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Informaci&oacute;n general</h5>
+              </div>
+              <small>Informaci&oacute;n general de la orden</small>
+            </a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="list-group" role="tablist">
+            <a id="stepTwo" class="list-group-item list-group-item-action" href="#infoResponsable" role="tab">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Responsable</h5>
+              </div>
+              <small>Informaci&oacute;n sobre el responsable que recibe el servicio</small>
+            </a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="list-group" role="tablist">
+            <a id="stepThree" class="list-group-item list-group-item-action" href="#infoPersonal" role="tab">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Personal</h5>
+              </div>
+              <small>Detalle del personal que brinda el servicio</small>
+            </a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="list-group" role="tablist">
+            <a id="stepFour" class="list-group-item list-group-item-action" href="#infoActivosFijos" role="tab">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Activos fijos/productos</h5>
+              </div>
+              <small>Detalle de los activos fijos/productos asignados</small>
+            </a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="list-group" role="tablist">
+            <a id="stepFive" class="list-group-item list-group-item-action" href="#infoInsumos" role="tab">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Insumos a utilizar</h5>
+              </div>
+              <small>Detalle del los insumos utilizados en un servicio</small>
+            </a>
+          </div>
+        </div>
+        <div class="col">
+          <div class="list-group" role="tablist">
+            <a id="stepSix" class="list-group-item list-group-item-action" href="#evidencias" role="tab">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Bitácora</h5>
+              </div>
+              <small>Observaciones y evidencias generadas en la atención del servicio</small>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="row py-4">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="25" aria-valuemin="25" aria-valuemax="100" style="width: 25%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <form id="fEditOS" action="@Url.Action( "EditOS", "Servicio")" method="post">
+        <div class="card">
+          <div class="card-body">
+            <div class="tab-content">
+              <div id="infoGral" class="tab-pane fade show active form-section" role="tabpanel">
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="iFolio">Folio</label>
+                    <input class="form-control" type="text" name="Folio" value="@eOS.Folio" readonly>
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="iCliente">Cliente</label>
+                    <input type="text" class="form-control" name="Cliente" value="@(eOS.Cliente.RazonSocial)" readonly />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="iContrato">Contrato</label>
+                    <input type="text" class="form-control" name="Contrato" value="@(eOS.Contrato.Nombre)" readonly />
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="iUbicacion">Ubicaci&oacute;n</label>
+                    <input type="text" class="form-control" name="Ubicacion" value="@(eOS.Ubicacion.Nombre)" readonly />
+                  </div>                  
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="iLineaNegocio">L&iacute;nea de negocio</label>
+                    <input type="text" class="form-control" name="LineaNegocio" value="@(eOS.LineaNegocio.Nombre)" readonly />
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="iServicio">Servicio</label>
+                    <input type="text" class="form-control" name="Servicio" value="@(eOS.Servicio.Nombre)" readonly />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="iEstatus">Estatus</label>
+                    <input type="text" class="form-control" style="text-transform: capitalize;" name="EstatusServicio" value="@(eOS.EstatusServicio)" readonly />
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="iTipo">Tipo</label>
+                    <input type="text" class="form-control" name="Tipo" value="@(eOS.Tipo)" readonly />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="iFechaInicio">Fecha de inicio</label>
+                    <div class="input-group date" id="iFechaInicio" data-target-input="nearest">
+                      <input type="text" class="form-control datetimepicker-input" data-target="#iFechaInicio" name="FechaInicio" value="@(eOS.FechaInicio.HasValue ? ((DateTime) eOS.FechaInicio).ToString("g", CultureInfo.CreateSpecificCulture("es-ES")) : null)"readonly />
+                      <div class="input-group-append" data-target="#iFechaInicio" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                      </div>
+                    </div>
+                    <div id="eiFechaInicio"></div>
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="iFechaFin">Fecha de fin</label>
+                    <div class="input-group date" id="iFechaFin" data-target-input="nearest">
+                      <input type="text" class="form-control datetimepicker-input" data-target="#iFechaFin" name="FechaFin" value="@(eOS.FechaFin.HasValue ? ((DateTime) eOS.FechaFin).ToString("g", CultureInfo.CreateSpecificCulture("es-ES")) : null)"readonly />
+                      <div class="input-group-append" data-target="#iFechaFin" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
+                      </div>
+                    </div>
+                    <div id="eiFechaFin"></div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-12">
+                    <label for="iObs">Observaciones</label>
+                    <textarea class="form-control" id="iObs" rows="3" name="Observaciones" readonly>@eOS.Observaciones</textarea>
+                  </div>
+                </div>
+              </div>
+              <div id="infoResponsable" class="tab-pane fade show form-section" role="tabpanel">
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="iNombre">Nombre</label>
+                    <input id="iNombre" type="text" class="form-control" name="ContactoNombre" value="@eOS.ContactoNombre" readonly>
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="iAp">Apellido paterno</label>
+                    <input id="iAp" type="text" class="form-control" name="ContactoAP" value="@eOS.ContactoAP" readonly>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="iAm">Apellido materno</label>
+                    <input id="iAm" type="text" class="form-control" name="ContactoAM" value="@eOS.ContactoAM" readonly>
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="iEm">Correo electrónico</label>
+                    <input id="iEm" type="email" class="form-control" name="ContactoEmail" value="@eOS.ContactoEmail" readonly>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="iTel">Tel&eacute;fono de contacto</label>
+                    <input id="iTel" type="text" class="form-control" name="ContactoTelefono" value="@eOS.ContactoTelefono" readonly>
+                  </div>
+                  @if (eOS.EmailCC1 != null && eOS.EmailCC1.Length > 1){
+                  <div class="form-check form-group col-6 mb-6 text-center align-self-end">
+                    <input class="form-check-input" type="checkbox" value="" id="ccCheck1" checked>
+                    <label class="form-check-label m-1" for="ccCheck1">¿Enviar copia de la notificación al cliente?</label>
+                  </div>
+                  }
+                </div>
+                @if (eOS.EmailCC1 != null && eOS.EmailCC1.Length > 1){
+                <div class="form-row" id="Cc1">
+                  <div class="form-group col-4">
+                    <label for="iCC1nombre">Nombre completo:</label>
+                    <input id="iCC1nombre" class="form-control m-1" type="text" name="NombreCompletoCC1" value="@eOS.NombreCompletoCC1" readonly>
+                  </div>
+                  <div class="form-group col-4">
+                    <label for="iCC1email">Correo electrónico:</label>
+                    <input id="iCC1email" class="form-control m-1" type="email" name="EmailCC1" value="@eOS.EmailCC1" readonly>
+                  </div>
+                  <div class="form-check form-group col-4 text-center align-self-center" id="ccCheck2">
+                    <input class="form-check-input" type="checkbox" value="" id="ccCheck2" checked>
+                    <label class="form-check-label" for="ccCheck2">¿Otra persona?</label>
+                  </div>
+                </div>
+                }
+                @if (eOS.EmailCC2 != null && eOS.EmailCC2.Length > 1){
+                <div class="form-row" id="Cc2">
+                  <div class="form-group col-6">
+                    <label for="iCC2nombre">Nombre completo:</label>
+                    <input id="iCC2nombre" class="form-control m-1" type="text" name="NombreCompletoCC2" value="@eOS.NombreCompletoCC2" readonly>
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="iCC2email">Correo electrónico:</label>
+                    <input id="iCC2email" class="form-control m-1" type="email" name="EmailCC2" value="@eOS.EmailCC2" readonly >
+                  </div>  
+                </div>
+                }
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="iOp2">OS Relacionada</label>
+                    @if(osPrevia != null){
+                      <a href="@Url.Action( "IndexDetailOS", "Servicio" , new { ordenId=@osPrevia})">Ver detalle de la Orden de Servicio</a>
+                    }
+                    <input id="iOp2" type="text" class="form-control" name="Opcional2" value="@eOS.Opcional2" readonly>
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="iOp3">Horario de servicio</label>
+                    <input id="iOp3" type="text" class="form-control" name="Opcional3" value="@eOS.Opcional3" readonly>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-6">
+                    <label for="iOp1">Campo Opcional</label>
+                    <input id="iOp1" type="text" class="form-control" name="Opcional1" value="@eOS.Opcional1" readonly>
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="iOp4">Campo Opcional</label>
+                    <input id="iOp4" type="text" class="form-control" name="Opcional4" value="@eOS.Opcional4" readonly>
+                  </div>
+                </div>
+              </div>
+              <div id="infoPersonal" class="tab-pane fade show form-section" role="tabpanel">
+                <div class="row">
+                  <div class="col">
+                    <h4 class="text-uppercase">Personal Asignado</h4>
+                    <table id="tPersonal" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th data-field="id" data-visible="false">ID</th>
+                          <th data-field="idpersona" data-visible="false">IdPersona</th>
+                          <th data-field="idordper" data-visible="false">IdOrdPer</th>
+                          <th data-field="nombre">Nombre</th>
+                          <th data-field="puesto">Puesto</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @{ int i = 1; }
+                        @foreach (var persona in eOS.Personal as List<OrdenPersona>){
+                          if (persona.Estatus){
+                            <tr>
+                              <td>@i</td>
+                              <td>@persona.Persona.Id</td>
+                              <td>@persona.Id</td>
+                              <td>@persona.Persona.Nombre @persona.Persona.Paterno @persona.Persona.Materno</td>
+                              <td>@persona.Persona.Categoria</td>
+                            </tr>
+                            i++;
+                          }
+                        }
+                      </tbody>
+                    </table>
+                    <br />
+                    <div class="form-group row">
+                      <label for="osTotal" class="col-sm-2 col-form-label">Total</label>
+                      <div class="col-sm-10">
+                        <input id="osTotal" type="text" class="form-control-plaintext" readonly value="@eOS.Personal.Count">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
+                      <div id="aPCont"></div>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="infoActivosFijos" class="tab-pane fade show form-section" role="tabpanel">
+                <div class="row">
+                  <div class="col">
+                    <h4 class="text-uppercase">Activo Fijo/Productos</h4>
+                    <table id="tActivoFijo" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th data-field="idaf" data-visible="false">ID</th>
+                          <th data-field="idactivofijo" data-visible="false">IdActivoFijo</th>
+                          <th data-field="idordact" data-visible="false">IdOrdAct</th>
+                          <th data-field="activo">Nombre</th>
+                          <th data-field="clave">No. Serie</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @{ i = 1; }
+                        @foreach (var activo in eOS.Activos as List<OrdenActivoFijo>){
+                          if (activo.Estatus){
+                            <tr>
+                              <td>@i</td>
+                              <td>@activo.ActivoFijo.Id</td>
+                              <td>@activo.Id</td>
+                              <td>@activo.ActivoFijo.Descripcion</td>
+                              <td>@activo.ActivoFijo.Tipo</td>
+                            </tr>
+                            i++;
+                            osafTotal++;
+                          }
+                        }
+                      </tbody>
+                    </table>
+                    <br />
+                    <div class="form-group row">
+                      <label for="osafTotal" class="col-sm-2 col-form-label">Total</label>
+                      <div class="col-sm-10">
+                        <input id="osafTotal" type="text" class="form-control-plaintext" readonly value="@osafTotal">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
+                      <div id="aAFCont"></div>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="infoInsumos" class="tab-pane fade show form-section" role="tabpanel">
+                <div class="row">
+                  <div class="col">
+                    <h4 class="text-uppercase">Insumos Utilizados</h4>
+                    <table id="tInsumos" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th data-field="idi" data-visible="false">ID</th>
+                          <th data-field="idinsumo" data-visible="false">IdInsumo</th>
+                          <th data-field="idordins" data-visible="false">IdOrdIns</th>
+                          <th data-field="insumo">Insumo</th>
+                          <th data-field="cantidad">Cantidad</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @{ i = 1; }
+                        @foreach (var insumo in eOS.Insumos as List<OrdenInsumo>){
+                          if (insumo.Estatus){
+                            <tr>
+                              <td>@i</td>
+                              <td>@insumo.Insumo.Id</td>
+                              <td>@insumo.Id</td>
+                              <td>@insumo.Insumo.Descripcion</td>
+                              <td>@insumo.Cantidad</td>
+                            </tr>
+                            i++;
+                            osiTotal++;
+                          }
+                        }
+                      </tbody>
+                    </table>
+                    <br />
+                    <div class="form-group row">
+                      <label for="osiTotal" class="col-sm-2 col-form-label">Total</label>
+                      <div class="col-sm-10">
+                        <input id="osiTotal" type="text" class="form-control-plaintext" readonly value="@osiTotal">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
+                      <div id="aICont"></div>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="evidencias" class="tab-pane fade show form-section" role="tabpanel">
+                <div class="row">
+                  <div class="col">
+                    <h4 class="text-uppercase">Bitácora</h4>
+                    <!-- Inicia Despliegue de evidencias - jumbotron -->
+                    <h1 class="display-4">@eOS.Cliente.RazonSocial</h1>
+                    <p class="lead">@eOS.Ubicacion.Nombre</p>
+                    <hr class="my-4" />
+                    <p>@eOS.Servicio.Nombre</p>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12 col-md-5 col-lg-4">
+                    @if(cambiosEstado != null && cambiosEstado.Count > 0){
+                      @foreach(BitacoraEstatus be in cambiosEstado){
+                        <div class="p-3">
+                          <div class="card text-center">
+                            <div class="card-header">
+                              @be.FechaAdministrativa.ToString("f", CultureInfo.CreateSpecificCulture("es-ES"))
+                            </div>
+                            <div class="card-body">
+                              <h5 class="card-title">@(CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(be.De.ToLower())) -> @(CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(be.A.ToLower()))</h5>
+                              <p class="card-text">@be.Description</p>
+                            </div>
+                            <div class="card-footer text-muted">@be.QuienCambia.Nombre @be.QuienCambia.Paterno</div>
+                          </div>
+                        </div>
+                      }
+                    }
+                  </div>
+                  <div class="col-xs-12 col-md-7 col-lg-8">
+                    <!-- Inicia iteración de las evidencias - Centered Card -->
+                    @if (evidencias != null && evidencias.Count > 0){
+                      @foreach (var operador in evidencias){
+                        <div class="p-3">
+                          <div class="card text-center">
+                            <div class="card-header">@operador.Hora.ToString("f", CultureInfo.CreateSpecificCulture("es-ES"))</div>
+                            <div class="card-body">
+                              @if (operador.EstadoN != null && operador.EstadoN.Count > 0){
+                                @foreach (var estado in operador.EstadoN as List<Operador.Estado>){
+                                  <h5 class="card-title">@(estado.NuevoEstado == "sitio" ? "En sitio:" : estado.NuevoEstado == "noatendido" ? "Reporte actividad" : estado.NuevoEstado == "atendido" ? "Atendido" : estado.NuevoEstado == "reporteInterno" ? "Reporte interno" : estado.NuevoEstado == "asistencia" ? "Asistencia" : "Indefinido")</h5>
+                                  <p class="card-text">@estado.ComentarioNuevoEstado</p>
+                                  @if (estado.ArchivosEvidencia != null && estado.ArchivosEvidencia.Count > 0){
+                                    @foreach (var archivo in estado.ArchivosEvidencia as List<Operador.Estado.Archivo>){
+                                      <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action( "MostrarArchivo", "Servicio", new{@osId=@operador.OrdenServicio.Id, @operadorEstadoId=@estado.Id, @operadorEstadoArchivoId = @archivo.Id})'">@archivo.Name</button>
+                                    }
+                                  }
+                                }
+                              }
+                            </div>
+                            @try{
+                              <div class="card-footer text-muted">@personasDictionary[@operador.Id].Nombre @personasDictionary[@operador.Id].Paterno</div>
+                            }
+                            catch (KeyNotFoundException){
+                              <div class="card-footer text-muted">Indefinido</div>
+                            }
+                          </div>
+                        </div>
+                      }
+                    }
+                  </diV>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6 offset-lg-6 col-xl-9 offset-xl-5">
+                    @if(evidencias != null && evidencias.Count > 0){
+                      <button id="btnDescargarZip" class="btn btn-primary" type="button" onclick="location.href='@Url.Action( "DescargarZip", "Servicio", new {osId=eOS.Id})'">Descargar evidencias</button>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+@* @if(User.IsInRole("Operador")){
+<!-- Cambiar Estado Modal -->
+<div class="modal fade" id="CambiarEstadoModal" tabindex="-1" role="dialog" aria-labelledby="CambiarEstadoModalTitulo" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="CambiarEstadoModalTitulo">Seleccionar servicio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <form id="CambiarEstadoForm" action="@Url.Action("CambiarEstado","Operador")" method="post">
+            <div class="form-group">
+              <h5 class="display-4">Folio</h5>
+              <select multiple class="form-control" id="cambiarEstadoFolio" name="OrdenServicioId" required>
+                @if(OrdenServicioEnTiempoL != null){
+                  @foreach(var ordenServicio in OrdenServicioEnTiempoL){
+                  <option class="d-flex justify-content-center p-2" value="@ordenServicio.OrdenServicio.Id">@ordenServicio.OrdenServicio.Folio</option>
+                }
+                }
+                
+              </select>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-success">Reportar</button>
+      </div>
+    </div>
+  </div>
+</div>
+} *@
+
+
+      
+@section scripts {
+<script>
+  //var eosFechaInicio = '@(eOS.FechaInicio.HasValue ? eOS.FechaInicio.Value.Date.ToString("g") : "")';
+  //var eosFechaFin = '@(eOS.FechaFin.HasValue ? eOS.FechaFin.Value.Date.ToString("yyyy-MM-dd") : "")';
+  $(document).ready( function () {
+
+    $('#iFechaInicio').datetimepicker({
+      locale: 'es',
+      focusOnShow: false,
+      inline: true,
+      sideBySide: true
+    });
+
+    $('#iFechaFin').datetimepicker({
+      locale: 'es',
+      focusOnShow: false,
+      inline: true,
+      sideBySide: true
+    });
+
+    $('#iOp3').datetimepicker({
+      locale: 'es',
+      focusOnShow: false,
+      inline: true,
+      sideBySide: true
+    });
+  });
+</script>
+@if(User.IsInRole("Operador") || User.IsInRole("Ventas")){
+  <script>
+$("#MenuCambiarEstadoOperador").on("click", ()=>{
+    const listOS = @Html.Raw(ViewData["OrdenServicioEnTiempo"]);
+    Swal.fire({
+      title: `Seleccionar Servicio`,
+      confirmButtonColor: "#67E7CF",
+      confirmButtonText:"Reportar",
+      cancelButtonText:"Cancelar",
+      reverseButtons: true,
+      showCancelButton: true,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showCloseButton: true,
+      closeButtonHtml: '<i class="fas fa-times"></i>',
+      html:`
+      <form id="CambiarEstadoForm" action="@Url.Action("CambiarEstado","Operador")" method="post">
+        <div class="form-group text-left">
+          <label class="control-label" for="slcOS">Folios *</label>
+          <select class="form-control" id="slcOS" name="OrdenServicioId" >
+            <option value="null" selected disabled>Selecciona un Folio</option>
+          </select>   
+        </div>
+        <div class="form-group text-right">
+          <small>* Campos obligatorios</small>
+        </div>
+      </form>
+      `,
+      onRender: ()=>{
+        console.log(listOS)
+        for (const list of listOS){
+          $("#slcOS").append(`<option value="${list.OrdenServicio.Id}">${list.OrdenServicio.Folio}</option>`);
+        }
+      },
+      preConfirm: () =>{
+        if($("#slcOS").val() === null){
+          $("#slcOS").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+        }
+        else{
+          $("#slcOS").removeAttr("style");
+        }
+        if($("#slcOS").val() === null){
+          Swal.showValidationMessage("Algún campo obligatorio está vacío");
+        }
+      }
+    }).then(result => {
+      if(result.value){
+        $("#CambiarEstadoForm").submit();
+      }
+      else{
+        Swal.close();
+      }
+    });
+  });
+  </script>
+}
+
+<script src="~/lib/Parsley-2.8.1/parsley.min.js"></script>
+<script src="~/lib/Parsley-2.8.1/i18n/es.js"></script>
+<script src="~/js/moment-2.22.2/min/moment-with-locales.js"></script>
+<script src="~/lib/tempusdominus-5.0.0/build/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="~/js/detailOrdenServicio.js"></script>
+}

@@ -1,0 +1,167 @@
+@using siges.Models
+@using siges.Repository
+@using System.Collections.Generic
+@{
+  ViewData["Title"] = "Inventario Activo Fijo";
+  Dictionary<int,int> movimientos = ViewData["movimientos"] as Dictionary<int,int>;
+  Dictionary<int,int> invAFDict = ViewData["invAFDict"] as Dictionary<int,int>;
+  List<ActivoFijo> activoFijo = ViewData["activoFijo"] as List<ActivoFijo>;
+}
+
+@Html.AntiForgeryToken()
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h2>Inventario Activo Fijo</h2>
+    </div>
+    <div class="col align-self-center text-right">
+      <a onclick="btnAdd()" class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Registrar" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col margBott4em">
+      <table id="tInventarioAF" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="activoFijo">
+        <thead>
+          <tr>
+            <th data-field="id" data-visible="false">ID</th>
+            <th data-field="activoFijo" data-sortable="true">Activo Fijo</th>
+            <th data-field="marca" data-sortable="true">Marca</th>
+            <th data-field="teorico" data-sortable="true">Teórico</th>
+            <th data-field="fisico" data-sortable="true">Físico</th>
+            <th data-field="estatus" data-sortable="true">Estatus</th>
+            <th class="mobileHidden">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if(ViewData["inventarioAF"] != null && movimientos.Count > 0){
+            @foreach (ActivoFijo af in activoFijo){
+            <tr>
+              <td>@af.Id</td>
+              <td>@af.Descripcion</td>
+              <td>@af.Marca</td>
+              <td>@(invAFDict[af.Id] - movimientos[af.Id])</td>
+              <td>@invAFDict[af.Id]</td>
+              <td style="text-transform: capitalize;">@(af.Estatus == true ? "Activo" : "Inactivo")</td>
+              <td class="mobileHidden">
+                <a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Salidas" data-original-title="Tooltip on bottom"><i class="fas fa-external-link-alt"></i></a>
+              </td>
+            </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+@section scripts{
+<script>
+  const btnAdd = () => {
+    let token = $("[name='__RequestVerificationToken']").val();
+    const activoFijo = @Html.Raw(Json.Serialize(activoFijo));
+    Swal.fire({
+      title: "Registrar Activo Fijo",
+      confirmButtonColor: "#67E7CF",
+      confirmButtonText:"Guardar",
+      cancelButtonText:"Cancelar",
+      reverseButtons: true,
+      showCancelButton: true,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showCloseButton: true,
+      closeButtonHtml: '<i class="fas fa-times"></i>',
+      html:`
+        <div class="form-group text-left">
+          <label class="control-label" for="slcActFijo">Activo Fijo *</label>
+          <select class="form-control" id="slcActFijo" >
+            <option value="null" selected disabled>Selecciona Activo Fijo</option>
+          </select>
+        </div>
+        <div class="form-group text-left">
+            <label class="control-label">Cantidad *</label>
+            <input id="txtCantidad" type="text" class="form-control" />
+        </div>
+        <div class="form-group text-left">
+          <label class="control-label">Observaciones</label>
+          <input id="txtObservaciones" type="text" class="form-control"  />
+        </div>
+        <div class="form-group text-right">            
+          <small>* Campos obligatorios</small>
+        </div>
+      `,
+      onOpen: () => {
+          $("#txtCantidad").keypress((evt) => {
+              if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                  evt.preventDefault();
+              }
+          });
+          $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();');
+      },
+      onRender: ()=>{
+        for (const actFijo of activoFijo) {
+          $("#slcActFijo").append(`<option value="${actFijo.id}">${actFijo.descripcion}</option>`);
+        }
+      },
+      preConfirm: () =>{
+        if($("#slcActFijo").val() === null){
+          $("#slcActFijo").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+        }
+        else{
+          $("#slcActFijo").removeAttr("style");
+        }
+        if($("#txtCantidad").val().length === 0){
+          $("#txtCantidad").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+        }
+        else{
+          $("#txtCantidad").removeAttr("style");
+        }
+
+        if($("#slcActFijo").val() === null || $("#txtCantidad").val().length === 0){
+          Swal.showValidationMessage("Algún campo obligatorio está vacío");
+        }
+      }
+    }).then( result => {
+      if(result.value){
+        $.ajax({
+          url: '@Url.Action("SaveInventarioAF","ActivoFijos")',
+          method: "POST",
+          data: {
+            __RequestVerificationToken: token,
+            invAF:{
+              ActivoFijoId: $("#slcActFijo").val(),
+              Cantidad: $("#txtCantidad").val(),
+              Observaciones: $("#txtObservaciones").val()
+            }
+          },
+          async: true,
+          dataType: "json",
+          success: function (res){
+            Swal.fire({
+              icon: 'success',
+              title: '¡Éxito!',
+              confirmButtonColor: "#67E7CF",
+              confirmButtonText:"Aceptar",
+              text: `El Activo Fijo se registró con éxito`,
+              onClose: ()=>{
+                location.reload(true);
+              }
+            }).then((result) => {
+              if (result.value) {
+                location.reload(true);
+              }
+            });
+          }
+        });
+      }
+      else{
+        Swal.close();
+      }
+    });
+  }
+
+  $('#tInventarioAF').on('click-row.bs.table', (row, element, field) => {
+    location.href = `${apihost}/ActivoFijos/IndexDetailInvAF?afId=${element.id}`;
+  });
+</script>
+}

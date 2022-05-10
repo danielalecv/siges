@@ -1,0 +1,323 @@
+@using siges.Models;
+@model Settings
+
+@{
+    ViewData["Title"] = "Configuración Plataforma";
+}
+
+@section css {
+    <link href="~/lib/Parsley-2.8.1/parsley.css" rel="stylesheet" />
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Configuración de la plataforma</h2>
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col-3">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="v-pills-email-tab" data-toggle="pill" href="#v-pills-email" role="tab" aria-controls="v-pills-email" aria-selected="true">Correo Electrónico</a>
+                <a class="nav-link" id="v-pills-packages-tab" data-toggle="pill" href="#v-pills-packages" role="tab" aria-controls="v-pills-packages" aria-selected="false">Paquetes en Insumos</a>
+                <a class="nav-link" id="v-pills-FaceApi-tab" data-toggle="pill" href="#v-pills-FaceApi" role="tab" aria-controls="v-pills-FaceApi" aria-selected="false">FaceApi</a>
+                <a class="nav-link" id="v-pills-Custom-tab" data-toggle="pill" href="#v-pills-Custom" role="tab" aria-controls="v-pills-Custom" aria-selected="false">Custom Vision</a>
+                @* <a class="nav-link" id="v-pills-CataloguesTemplates-tab" data-toggle="pill" href="#v-pills-CataloguesTemplates" role="tab" aria-controls="v-pills-CataloguesTemplates" aria-selected="false">Carga Masiva Catalogos</a> *@
+            </div>
+        </div>
+        <div class="col-9">
+            <form class="margTop40" id="profile-form" method="post" asp-controller="Admin" asp-action="PSsave" data-parsley-validate="">
+                <div class="tab-content" id="v-pills-tabContent">
+                    <div class="tab-pane fade show active" id="v-pills-email" role="tabpanel" aria-labelledby="v-pills-email-tab">
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label asp-for="EmailHost">Host *</label>
+                                <input asp-for="EmailHost" class="form-control platformSettings" value="@Model.EmailHost" required />
+                                <span asp-validation-for="EmailHost" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label asp-for="EmailPort">Puerto *</label>
+                                <input asp-for="EmailPort" class="form-control platformSettings" value="@Model.EmailPort" required/>
+                                <span asp-validation-for="EmailPort" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label asp-for="EmailUser">Usuario *</label>
+                                <input type="email" asp-for="EmailUser" class="form-control platformSettings" value="@Model.EmailUser" required/>
+                                <span asp-validation-for="EmailUser" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label asp-for="EmailPass">Contraseña *</label>
+                                <input asp-for="EmailPass" class="form-control platformSettings" value="@Model.EmailPass" required />
+                                <span asp-validation-for="EmailPass" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label >Habilitar SSL *</label> 
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="EnableSSL" id="sissl" required=""/>
+                                    <label class="d-flex align-items-center" for="sissl">Si</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="nossl" class="form-check-input" type="radio" name="EnableSSL" required="">
+                                    <label class="d-flex align-items-center" for="nossl">No</label>
+                                </div>
+                                <span asp-validation-for="EmailEnableSSL" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col mb-3">
+                                <div class="form-row justify-content-start">
+                                    <small>* Campos obligatorios</small>                            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-packages" role="tabpanel" aria-labelledby="v-pills-packages-tab">
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label >Habilitar Paquetes *</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="EnablePackage" id="yesPackage" required=""/>
+                                    <label class="d-flex align-items-center" for="yesPackage">Si</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="noPackage" class="form-check-input" type="radio" name="EnablePackage" required="">
+                                    <label class="d-flex align-items-center" for="noPackage">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-FaceApi" role="tabpanel" aria-labelledby="v-pills-FaceApi-tab">
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label>Habilitar FaceApi *</label>
+                                <div class="form-check">
+                                    <input id="faceApiTrue" class="form-check-input" type="radio" name="FaceApiUso" value="true" @Html.Raw(Model.FaceApiUso?"checked":"") required />
+                                    <label class="d-flex align-items-center" for="faceApiTrue">Si</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="faceApiFalse" class="form-check-input" type="radio" name="FaceApiUso" value="false" @Html.Raw(Model.FaceApiUso?"":"checked") required />
+                                    <label class="d-flex align-items-center" for="faceApiFalse">No</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label for="faceApiMinCantEntrenamiento">N&uacute;mero de Fotos Min. para Entrenar Api *</label>
+                                <input class="form-control" type="number" name="faceApiMinCantEntrenamiento" id="faceApiMinCantEntrenamiento" value="@Model.FaceApiMinCantEntrenamiento" min="0" step="1" onkeydown="return event.keyCode !== 69" required />    
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-Custom" role="tabpanel" aria-labelledby="v-pills-Custom-tab">
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label>Habilitar Custom Vision *</label>
+                                <div class="form-check">
+                                    <input id="CustomTrue" class="form-check-input" type="radio" name="CustomVisionUso" value="true" @Html.Raw(Model.CustomVisionUso?"checked":"") required />
+                                    <label class="d-flex align-items-center" for="CustomTrue">Si</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="CustomFalse" class="form-check-input" type="radio" name="CustomVisionUso" value="false" @Html.Raw(Model.CustomVisionUso?"":"checked") required />
+                                    <label class="d-flex align-items-center" for="CustomFalse">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-CataloguesTemplates" role="tabpanel" aria-labelledby="v-pills-CataloguesTemplates-tab">
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label>Plantilla para Carga Masiva de Catalogos</label>
+                            </div>
+                        </div>
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label for="slcCatalogue">Cat&aacute;logo</label>
+                                <select class="form-control" id="slcCatalogue">
+                                    <option value="null" selected disabled>Selecciona Catalogo</option>
+                                    <option value="Clientes">Clientes</option>
+                                    <option value="Ubicaciones">Sucursales / Ubicaciones</option>
+                                    <option value="Contratos">Contratos</option>
+                                    <option value="LineasNegocio">L&iacute;neas de Negocio</option>
+                                    <option value="TiposServicio">Tipos de Servicio</option>
+                                    <option value="Personas">Personas</option>
+                                    <option value="Marcas">Marcas</option>
+                                    <option value="TipoProducto">Tipo de Producto</option>
+                                    <option value="ActivoFijo">Activo Fijo/Producto</option>
+                                    <option value="Insumos">Insumos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label for="txtVersion">Versi&oacute;n de Platilla</label>
+                                <input class="form-control" id="txtVersion" />    
+                            </div>
+                        </div>
+                        <div class="form-row mb-3">
+                            <div class="col-6">
+                                <label for="iptTemplate" class="control-label">Plantilla</label>
+                                <input id="iptTemplate" type="file" class="form-control-file" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-6">
+                        <button id="update-profile-button" type="submit" class="btn btn-primary btn-block margTop40"><h5>Guardar</h5></button>
+                    </div>
+                </div>
+            </form>
+            <div class="form-row">
+                <div class="col-6">
+                    <button id="btnTemplate" class="btn btn-primary btn-block margTop40" style="visibility: hidden;"><h5>Guardar Plantilla</h5></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+<script src="~/lib/Parsley-2.8.1/parsley.min.js"></script>
+<script src="~/lib/Parsley-2.8.1/i18n/es.js"></script>
+<script>
+    const ssl = @Html.Raw(Json.Serialize(Model.EmailEnableSSL));
+    const paquete = @Html.Raw(Json.Serialize(Model.UsoDePaquetes)); 
+
+    if(paquete){
+        document.getElementById('yesPackage').checked = true;
+        document.getElementById('noPackage').checked = false;
+    }else{
+        document.getElementById('yesPackage').checked = false;
+        document.getElementById('noPackage').checked = true;
+    }
+
+    if(ssl){
+        document.getElementById('sissl').checked = true;
+        document.getElementById('nossl').checked = false;
+    } else {
+        document.getElementById('sissl').checked = false;
+        document.getElementById('nossl').checked = true;
+    }
+
+    var inputPackage = document.createElement('input');
+    inputPackage.setAttribute('name', 'UsoDePaquetes');
+    inputPackage.setAttribute('type', 'hidden');
+    document.getElementById('profile-form').appendChild(inputPackage);
+
+    var inputSSL = document.createElement('input');
+    inputSSL.setAttribute('name', 'EmailEnableSSL');
+    inputSSL.setAttribute('type', 'hidden');
+    document.getElementById('profile-form').appendChild(inputSSL);
+
+    document.getElementById('yesPackage').addEventListener('change', e => {
+        if(document.getElementById('yesPackage').checked){
+            inputPackage.value = true;
+        }
+    });
+
+    document.getElementById('noPackage').addEventListener('change', e => {
+        if(document.getElementById('noPackage').checked){
+            inputPackage.value = false;
+        }
+    });
+
+    document.getElementById('sissl').addEventListener('change', e => {
+        if(document.getElementById('sissl').checked){
+            inputSSL.value = true;
+        }
+    });
+
+    document.getElementById('nossl').addEventListener('change', e => {
+        if(document.getElementById('nossl').checked){
+            inputSSL.value = false;
+        }
+    });
+
+    $(function () {
+      $('#profile-form').parsley().on('field:validated', function() {
+        var ok = $('.parsley-error').length === 0;
+        $('.bs-callout-info').toggleClass('hidden', !ok);
+        $('.bs-callout-warning').toggleClass('hidden', ok);
+        $('#pills-one-tab').tab('show')
+      })
+    });
+
+    $("#v-pills-CataloguesTemplates-tab").on('shown.bs.tab', () => {
+        $("#update-profile-button").css("visibility", "hidden");
+        $("#btnTemplate").css("visibility", "visible");
+    });
+
+    $("#v-pills-CataloguesTemplates-tab").on('hidden.bs.tab', () => {
+        $("#update-profile-button").css("visibility", "visible");
+        $("#btnTemplate").css("visibility", "hidden");
+    });
+
+    $("#btnTemplate").on('click', ()=>{
+        const VALID_EXT = ["xlsx", "xls", "csv"];
+        const slcCatalogue = $("#slcCatalogue").val(); 
+        const txtVersion = $("#txtVersion").val();
+        const iptTemplate = $("#iptTemplate").prop('files')[0];
+        const sweetError = (error) => {
+            Swal.fire({
+                icon: 'error',
+                title: '¡Error!',
+                confirmButtonColor: "#67E7CF",
+                confirmButtonText:"Aceptar",
+                text: error
+            });
+        }
+        const valid = () =>{
+            const EXTEN = $("#iptTemplate").prop('files')[0].name.split('.');
+            return VALID_EXT.includes(EXTEN[EXTEN.length - 1]);
+        }
+        const sweetSucces = () =>{
+            const EXTEN = $("#iptTemplate").prop('files')[0].name.split('.');
+            Swal.queue([{
+                title: `Confirmar Datos`,
+                text: `Catálogo ${slcCatalogue} - Versión: ${txtVersion} - Plantilla: ${EXTEN[0]}`,
+                confirmButtonColor: "#67E7CF",
+                confirmButtonText:"Aceptar",
+                cancelButtonText:"Cancelar",
+                reverseButtons: true,
+                showCancelButton: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showCloseButton: true,
+                closeButtonHtml: '<i class="fas fa-times"></i>',
+                showLoaderOnConfirm: true,
+                icon: 'question',
+                preConfirm: () => {
+                    const formData = new FormData();
+                    formData.append('Tipo', `${slcCatalogue}`);
+                    formData.append('Version', `${txtVersion}`);
+                    formData.append('Archivo', iptTemplate);
+                    return fetch('@Url.Action("SaveBulkLoaderTemplate","Admin")', {
+                        method: "POST",
+                        blt: formData,
+                        headers: {
+                           "Content-Type": 'multipart/form-data',
+                        }
+                    }).then(response => response.json())
+                    .then(response => {
+                        console.log(response)
+                    }).catch(error => console.log(`Error: ${error}`))
+                }
+            }]);
+        }
+        (!slcCatalogue)?
+            sweetError("Debes seleccionar un catálogo"):(!txtVersion)?
+            sweetError("Debes ingresar una versión"):(!iptTemplate)?
+            sweetError("Debes seleccionar un archivo"):(!valid())?
+            sweetError("El archivo seleccionado no es valido"):sweetSucces();
+    });
+
+</script>
+}

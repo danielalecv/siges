@@ -1,0 +1,205 @@
+@using siges.Models;
+@using System;
+@using System.Collections.Generic;
+
+@{
+  ViewData["Title"] = "Inventario Insumos";
+  Dictionary<int, int> movI = ViewData["movI"] as Dictionary<int, int>;
+  Dictionary<int, int> entI = ViewData["entI"] as Dictionary<int, int>;
+  List<Lote> lotes = ViewData["lotes"] as List<Lote>;
+  List<Insumo> iList = ViewData["iList"] as List<Insumo>;
+}
+@Html.AntiForgeryToken()
+
+@section css {
+  <link href="~/lib/tempusdominus-5.0.0/build/css/tempusdominus-bootstrap-4.css" rel="stylesheet" />
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Inventario Insumos</h2>
+        </div>
+        <div class="col align-self-center text-right">
+            <a onclick="btnAdd()" class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Añadir" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a> 
+        </div>
+    </div>
+    <div class="row">
+        <div class="col margBott4em">
+            <table id="tInventarioInsu" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="insumo">
+                <thead>
+                    <tr>
+                        <th data-field="id" data-visible="false"></th>
+                        <th data-field="insumo" data-sortable="true">Insumo</th>
+                        <th data-field="marca" data-sortable="true">Marca</th>
+                        <th data-field="minimo" data-sortable="true">Mínimo</th>
+                        <th data-field="maximo" data-sortable="true">Máximo</th>
+                        <th data-field="entradas" data-sortable="true">Entradas</th>
+                        <th data-field="salidas" data-sortable="true">Salidas</th>
+                        <th data-field="inventario" data-sortable="true">Inventario final</th>
+                        <th data-field="estatus" data-sortable="true">Estatus</th>
+                        <th class="mobileHidden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(iList != null && iList.Count > 0){
+                        @foreach (Insumo i in iList){
+                            <tr>
+                                <td>@i.Id</td>
+                                <td>@i.Descripcion</td>
+                                <td>@i.Marca</td>
+                                <td>@i.Opcional1</td>
+                                <td>@i.Opcional2</td>
+                                <td>@entI[i.Id]</td>
+                                <td>@movI[i.Id]</td>
+                                <td>@(entI[i.Id] - movI[i.Id])</td>
+                                <td style="text-transform: capitalize;">@(i.Estatus == true ? "Activo" : "Inactivo")</td>
+                                <td class="mobileHidden">
+                                  <a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Salidas" data-original-title="Tooltip on bottom"><i class="fas fa-external-link-alt"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+<script src="~/js/moment-2.22.2/min/moment-with-locales.js"></script>
+<script src="~/lib/tempusdominus-5.0.0/build/js/tempusdominus-bootstrap-4.min.js"></script>
+<script>
+    const btnAdd = () => {
+        const listInsumo = @Html.Raw(Json.Serialize(iList));
+        let token = $("[name='__RequestVerificationToken']").val();
+        Swal.fire({
+            title: "Registrar Insumo",
+            confirmButtonColor: "#67E7CF",
+            confirmButtonText:"Guardar",
+            cancelButtonText:"Cancelar",
+            reverseButtons: true,
+            showCancelButton: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-group text-left">
+                  <label class="control-label" for="slcInsumo">Insumo *</label>
+                  <select class="form-control" id="slcInsumo" >
+                    <option value="null" selected disabled>Selecciona Insumo</option>
+                  </select>
+                </div>
+                <div class="form-group text-left">
+                  <label class="control-label">Cantidad *</label>
+                  <input id="txtCantidad" type="text" class="form-control"  />
+                </div>
+                <div class="form-group text-left">
+                  <label class="control-label">Descripción/Lote</label>
+                  <input id="txtLote" type="text" class="form-control"  />
+                </div>
+                <div class="form-group text-left">
+                  <label class="control-label">Caducidad</label>
+                  <input id="txtCaducidad" type="text" class="form-control" />
+                </div>
+                <div class="form-group text-left">
+                  <label class="control-label">Observaciones</label>
+                  <input id="txtObservaciones" type="text" class="form-control"  />
+                </div>
+                <div class="form-group text-right">            
+                  <small>* Campos obligatorios</small>
+                </div>
+            `,
+            onOpen: () => {
+                $("#txtCantidad").keypress((evt) => {
+                    if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                        evt.preventDefault();
+                    }
+                });
+                $("#txtCaducidad").keypress((evt) => {
+                    if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                        evt.preventDefault();
+                    }
+                });
+                $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();');
+            },
+            onRender: ()=>{
+                for (const insumo of listInsumo) {
+                  $("#slcInsumo").append(`<option value="${insumo.id}">${insumo.descripcion}</option>`);
+                }
+                $(function () {
+                    $('#txtCaducidad').datetimepicker({
+                        locale: 'es',
+                        inline: true,
+                        format: 'L'
+                    });
+                });
+            },
+            preConfirm: () =>{
+                if($("#slcInsumo").val() === null){
+                  $("#slcInsumo").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                  $("#slcInsumo").removeAttr("style");
+                }
+                if($("#txtCantidad").val().length === 0){
+                  $("#txtCantidad").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                  $("#txtCantidad").removeAttr("style");
+                }
+
+                if($("#slcInsumo").val() === null || $("#txtCantidad").val().length === 0){
+                  Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                }
+            }
+        }).then(result => {
+            if(result.value){
+                $.ajax({
+                    url: '@Url.Action("SaveInventarioI","Insumos")',
+                    method: "POST",
+                    data: {
+                        __RequestVerificationToken: token,
+                        loteDto:{
+                            Descripcion: $("#txtLote").val(),
+                            InsumoId: $("#slcInsumo").val(),
+                            Caducidad: $("#txtCaducidad").val(),
+                            Cantidad: $("#txtCantidad").val(),
+                            Observaciones: $("#txtObservaciones").val(),
+                        }
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        if(res.success){
+                            Swal.fire({
+                              icon: 'success',
+                              title: '¡Éxito!',
+                              confirmButtonColor: "#67E7CF",
+                              confirmButtonText:"Aceptar",
+                              text: `El Insumo se registró con éxito`,
+                              onClose: ()=>{
+                                location.reload(true);
+                              }
+                            }).then((result) => {
+                              if (result.value) {
+                                location.reload(true);
+                              }
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+    $('#tInventarioInsu').on('click-row.bs.table', (row, element, field) => {
+       location.href = `${apihost}/Insumos/IndexDetailInvI?iId=${element.id}`;
+    });
+</script>
+}

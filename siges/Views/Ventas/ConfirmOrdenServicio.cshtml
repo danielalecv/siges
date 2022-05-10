@@ -1,0 +1,23 @@
+@using System;
+@using siges.Models;
+@using System.Globalization;
+@{
+OrdenServicio os = ViewData["ordenServicio"] as OrdenServicio;
+}
+<div class="jumbotron">
+  <h1 class="display-4">@os.Folio</h1>
+  <p class="lead">Folio de la nueva orden de servicio</p>
+  <hr class="my-4">
+  <p>Cliente: <b>@os.Cliente.RazonSocial</b></p>
+  <p>Ubicación: <b>@os.Ubicacion.Nombre</b></p>
+  <p>Linea de negocio: <b>@os.LineaNegocio.Nombre</b></p>
+  <p>Servicio: <b>@os.Servicio.Nombre</b></p>
+  <p>Fecha inicio: <b>@(((DateTime)(os.FechaInicio)).ToString("D", CultureInfo.CreateSpecificCulture("es-ES")))</b></p>
+  <p>Fecha fin: <b>@(((DateTime)(os.FechaFin)).ToString("D", CultureInfo.CreateSpecificCulture("es-ES")))</b></p>
+
+  <div class="row">
+    <div class="col-md-6 offset-md-8 col-lg-10 offset-lg-6">
+      <button id="btnBack" class="btn btn-warning" type="button" onclick="location.href='@Url.Action( "IndexListOS", "Servicio")'">Volver al listado</button>
+    </div>
+  </div>
+</div>

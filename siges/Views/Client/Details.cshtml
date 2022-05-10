@@ -1,0 +1,39 @@
+﻿@using System.Data
+@model DataTable
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+
+<div>
+    <h4>Class</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @*//@row["Id"].ToString()*@
+            Var1
+        </dt>
+        <dd>
+            Var2
+        </dd>
+        <dt>
+            Var3
+        </dt>
+        <dd>
+            Var4
+        </dd>
+        <dt>
+            Var5
+        </dt>
+        <dd>
+            Var6
+        </dd>
+    </dl>
+</div>
+<div>
+    @*<a asp-action="Edit" asp-route-id="@row["Id"]">Edit</a> |*@
+    <a asp-action="Index">Back to List</a>
+</div>

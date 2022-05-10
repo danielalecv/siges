@@ -1,0 +1,478 @@
+@model IEnumerable<siges.Models.Persona>
+
+@{
+    ViewData["Title"] = "Contactos";
+}
+@Html.AntiForgeryToken()
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Contactos de @ViewData["Cliente"]</h2>
+        </div>
+        <div class="col align-self-center text-right">
+            <a class="btn bg-blue margR-30px float" href='@Url.Action("Index", "Clientes")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+            <a onclick="btnAdd()" class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Agregar" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col margBott4em">
+            <table id="tableContactsClients" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true"  data-sort-name="name">
+                <thead>
+                    <tr>
+                        <th data-visible="false" data-field="id"></th>
+                        <th data-sortable="true" data-field="name">Contacto</th>
+                        <th data-sortable="true" >Correo Electr&oacute;nico</th> 
+                        <th data-sortable="true" >Tel&eacute;fono</th> 
+                        <th class="mobileHidden">Acciones</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                    if(item.Estatus == true){
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Nombre) @Html.DisplayFor(modelItem => item.Paterno) @Html.DisplayFor(modelItem => item.Materno)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Telefono)</td>
+                        <td class="mobileHidden">
+                            <a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Acciones" data-original-title="Tooltip on bottom"><i class="fab fa-elementor"></i></a>
+
+                        </td>
+                    </tr>
+                    }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+    const btnAdd = () => {
+        const id = @Html.Raw(Json.Serialize(ViewData["ID"]));
+        const token = $("[name='__RequestVerificationToken']").val();
+        Swal.fire({
+            title: "Nuevo Contacto",
+            confirmButtonColor: "#67E7CF",
+            confirmButtonText:"Guardar",
+            cancelButtonText:"Cancelar",
+            reverseButtons: true,
+            showCancelButton: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-group text-left">
+                    <label class="control-label">Nombre *</label>
+                    <input id="txtNombre" type="text" class="form-control" maxlength="30" />
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-6 text-left">
+                        <label class="control-label">Apellido Paterno *</label>
+                        <input id="txtPaterno" type="text" class="form-control" maxlength="30" />
+                    </div>
+                    <div class="form-group col-6 text-left">
+                        <label class="control-label">Apellido Materno *</label>
+                        <input id="txtMaterno" type="text" class="form-control" maxlength="30" />
+                    </div>
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Correo Electrónico *</label>
+                    <input id="txtEmail" type="email" class="form-control" />
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-6 text-left">
+                        <label class="control-label">Teléfono *</label>
+                        <input id="txtTelefono" type="text" class="form-control" maxlength="10" placeholder="Ej: 5556058941" />
+                    </div>
+                    <div class="form-group col-6 text-left">
+                        <label class="control-label">Teléfono Opcional</label>
+                        <input id="txtTelefonoOp" type="text" class="form-control" maxlength="10" placeholder="Ej: 5556058941" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-6 text-left">
+                        <label class="control-label">Campo Opcional</label>
+                        <input id="txtOp1" type="text" class="form-control" maxlength="100" />
+                    </div>
+                    <div class="form-group col-6 text-left">
+                        <label class="control-label">Campo Opcional</label>
+                        <input id="txtOp2" type="text" class="form-control" maxlength="100" />
+                    </div>
+                </div>
+            `,
+            onOpen: () => {
+                $("#txtTelefono").keypress(evt => {
+                  if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                    evt.preventDefault();
+                  }
+                });
+                $("#txtTelefonoOp").keypress(evt => {
+                  if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                    evt.preventDefault();
+                  }
+                });
+                $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();');
+            },
+            preConfirm: () =>{
+                if($("#txtNombre").val().length === 0){
+                    $("#txtNombre").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtNombre").removeAttr("style");
+                }
+                if($("#txtPaterno").val().length === 0){
+                    $("#txtPaterno").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtPaterno").removeAttr("style");
+                }
+                if($("#txtMaterno").val().length === 0){
+                    $("#txtMaterno").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtMaterno").removeAttr("style");
+                }
+                if($("#txtEmail").val().length === 0){
+                    $("#txtEmail").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else if(!$("#txtEmail").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                    $("#txtEmail").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtEmail").removeAttr("style");
+                }
+                if($("#txtTelefono").val().length === 0 || !$("#txtTelefono").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/)){
+                    $("#txtTelefono").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtTelefono").removeAttr("style");
+                }
+                
+                if($("#txtTelefono").val().length === 0 || $("#txtTelefono").val().length < 10){
+                    Swal.showValidationMessage("El teléfono es incorrecto");
+                }
+                if(!$("#txtEmail").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                    Swal.showValidationMessage("El correo electrónico es incorrecto");
+                }
+                if($("#txtNombre").val().length === 0 || $("#txtPaterno").val().length === 0 || $("#txtMaterno").val().length === 0 || $("#txtEmail").val().length === 0 || $("#txtTelefono").val().length === 0){
+                    Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                }
+            }
+        }).then(result => {
+                    dataCompleta1 = {
+                        __RequestVerificationToken: token,
+                        ccDTO:{
+                            clienteId: id,
+                            contactos: [{
+                                Nombre:$("#txtNombre").val(),
+                                Paterno: $("#txtPaterno").val(),
+                                Materno: $("#txtMaterno").val(),
+                                Email: $("#txtEmail").val(),
+                                Telefono: $("#txtTelefono").val(),
+                                TelefonoContacto: $("#txtTelefonoOp").val(),
+                                Opcional1: $("#txtOp1").val(),
+                                Opcional2: $("#txtOp2").val(),
+                            }]
+                        }
+                    }
+            if(result.value){
+                $.ajax({
+                    url: '@Url.Action("Create","ContactoCliente")',
+                    method: "POST",
+                    data: dataCompleta1,
+                    async: true,
+                    dataType: "json",
+                    success: res => {
+                        if(res.success){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `El contacto se registro con éxito`,
+                                onClose: ()=>{
+                                    location.reload(true);
+                                }
+                            }).then( result  => {
+                                if (result.value) {
+                                    location.reload(true);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+        const btnEdit = element => {
+        const id = @Html.Raw(Json.Serialize(ViewData["ID"]));
+        const token = $("[name='__RequestVerificationToken']").val();
+        $.ajax({
+                url: '@Url.Action("ccDetail","ContactoCliente")',
+                method: "GET",
+                data: {
+                    Contactoid: element.id
+                },
+                async: true,
+                dataType: "json",
+                success: data => {
+                    console.log(data);
+                    if(data.success){
+                        Swal.fire({
+                            title: "Editar Contacto",
+                            confirmButtonColor: "#67E7CF",
+                            confirmButtonText:"Guardar",
+                            cancelButtonText:"Cancelar",
+                            reverseButtons: true,
+                            showCancelButton: true,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            showCloseButton: true,
+                            closeButtonHtml: '<i class="fas fa-times"></i>',
+                            html:`
+                                <div class="form-group text-left">
+                                    <label class="control-label">Nombre </label>
+                                    <input id="txtNombre" type="text" class="form-control" value="${data.data.nombre}" maxlength="30" />
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Apellido Paterno </label>
+                                        <input id="txtPaterno" type="text" class="form-control" value="${data.data.paterno}" maxlength="30" />
+                                    </div>
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Apellido Materno </label>
+                                        <input id="txtMaterno" type="text" class="form-control" value="${data.data.materno}" maxlength="30" />
+                                    </div>
+                                </div>
+                                <div class="form-group text-left">
+                                    <label class="control-label">Correo Electrónico </label>
+                                    <input id="txtEmail" type="email" class="form-control" value="${data.data.email}" />
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Teléfono *</label>
+                                        <input id="txtTelefono" type="text" class="form-control" value="${data.data.telefono}" maxlength="10" placeholder="Ej: 5556058941" />
+                                    </div>
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Teléfono Opcional</label>
+                                        <input id="txtTelefonoOp" type="text" class="form-control" value="${(data.data.telefonoContacto === null)?"":data.data.telefonoContacto}" maxlength="10" placeholder="Ej: 5556058941" />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Campo Opcional</label>
+                                        <input id="txtOp1" type="text" class="form-control" value="${(data.data.opcional1 === null)?"":data.data.opcional1}" maxlength="100" />
+                                    </div>
+                                    <div class="form-group col-6 text-left">
+                                        <label class="control-label">Campo Opcional</label>
+                                        <input id="txtOp2" type="text" class="form-control" value="${(data.data.opcional2 === null)?"":data.data.opcional2}" maxlength="100" />
+                                    </div>
+                                </div>
+                            `,
+                            onOpen: () => {
+                                $("#txtTelefono").keypress(evt => {
+                                if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                                    evt.preventDefault();
+                                }
+                                });
+                                $("#txtTelefonoOp").keypress(evt => {
+                                if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                                    evt.preventDefault();
+                                }
+                                });
+                                $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();');
+                            },
+                            preConfirm: () =>{
+                                if($("#txtNombre").val().length === 0){
+                                    $("#txtNombre").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                                }
+                                else{
+                                    $("#txtNombre").removeAttr("style");
+                                }
+                                if($("#txtPaterno").val().length === 0){
+                                    $("#txtPaterno").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                                }
+                                else{
+                                    $("#txtPaterno").removeAttr("style");
+                                }
+                                if($("#txtMaterno").val().length === 0){
+                                    $("#txtMaterno").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                                }
+                                else{
+                                    $("#txtMaterno").removeAttr("style");
+                                }
+                                if($("#txtEmail").val().length === 0){
+                                    $("#txtEmail").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                                }
+                                else if(!$("#txtEmail").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                                    $("#txtEmail").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                                }
+                                else{
+                                    $("#txtEmail").removeAttr("style");
+                                }
+                                if($("#txtTelefono").val().length === 0 || !$("#txtTelefono").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/)){
+                                    $("#txtTelefono").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                                }
+                                else{
+                                    $("#txtTelefono").removeAttr("style");
+                                }
+                                
+                                if($("#txtTelefono").val().length === 0 || $("#txtTelefono").val().length < 10){
+                                    Swal.showValidationMessage("El teléfono es incorrecto");
+                                }
+                                if(!$("#txtEmail").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                                    Swal.showValidationMessage("El correo electrónico es incorrecto");
+                                }
+                                if($("#txtNombre").val().length === 0 || $("#txtPaterno").val().length === 0 || $("#txtMaterno").val().length === 0 || $("#txtEmail").val().length === 0 || $("#txtTelefono").val().length === 0){
+                                    Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                                }
+                            }
+                        }).then(result => {
+                            if(result.value){
+                                $.ajax({
+                                    url: '@Url.Action("Edit","ContactoCliente")',
+                                    method: "POST",
+                                    data: {
+                                        __RequestVerificationToken: token,
+                                        id: element.id,
+                                        ccDTO:{
+                                            clienteId: id,
+                                            contactos: [{
+                                                Nombre:$("#txtNombre").val(),
+                                                Paterno: $("#txtPaterno").val(),
+                                                Materno: $("#txtMaterno").val(),
+                                                Email: $("#txtEmail").val(),
+                                                Telefono: $("#txtTelefono").val(),
+                                                TelefonoContacto: $("#txtTelefonoOp").val(),
+                                                Opcional1: $("#txtOp1").val(),
+                                                Opcional2: $("#txtOp2").val(),
+                                            }]
+                                        }
+                                    },
+                                    async: true,
+                                    dataType: "json",
+                                    success: res => {
+                                        console.log({res});
+                                        if(res){
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: '¡Éxito!',
+                                                confirmButtonColor: "#67E7CF",
+                                                confirmButtonText:"Aceptar",
+                                                text: `El contacto se modificó con éxito`,
+                                                onClose: ()=>{
+                                                    location.reload(true);
+                                                }
+                                            }).then( result  => {
+                                                if (result.value) {
+                                                    location.reload(true);
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                            else{
+                                Swal.close();
+                            }
+                        });
+                    }
+                }, error: error =>{
+                    console.log(error);
+                }
+            });    
+        }
+
+            const btnDelete = element =>{
+                const token = $("[name='__RequestVerificationToken']").val();
+                    Swal.fire({
+                        icon: 'error',
+                        title: `${element.name} se eliminará`,
+                        text: `¿Seguro que deseas eliminarlo?`,
+                        reverseButtons: true,
+                        showCancelButton: true,
+                        confirmButtonText:"Si, Eliminar",
+                        cancelButtonText:"No, Cancelar",
+                        confirmButtonColor:"#E74C3C",
+                        cancelButtonColor: "#67E7CF",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showCloseButton: true,
+                        closeButtonHtml: '<i class="fas fa-times"></i>'
+                    }).then( result => {
+                        if(result.value){
+                            $.ajax({
+                                url: '@Url.Action("Delete","ContactoCliente")',
+                                method: "POST",
+                                data: {
+                                    __RequestVerificationToken: token,
+                                    id: element.id
+                                },
+                                async: true,
+                                dataType: "json",
+                                success: res => {
+                                    if(res){
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Éxito!',
+                                            confirmButtonColor: "#67E7CF",
+                                            confirmButtonText:"Aceptar",
+                                            text: `El cliente ${element.name} ha sido eliminado`,
+                                            onClose: () => { location.reload(true); }
+                                        }).then(result => {
+                                            if (result.value) {
+                                                location.reload(true);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                        else{
+                            Swal.close();
+                        }
+                    });
+                }
+
+
+    $('#tableContactsClients').on('click-row.bs.table', (row, element, field) => {
+        const token = $("[name='__RequestVerificationToken']").val();
+            Swal.fire({
+            title: `Contacto: ${element.name}`,
+            text: ` Seleccione una acción`,
+            showCancelButton: true,
+            cancelButtonText:"Cancelar",
+            cancelButtonColor: "#67E7CF",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-row margTop40">
+                        <div class="form-group col">
+                            <a onclick="btnEdit({'id':'${element.id}', 'name':'${element.name}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a>
+                            <label class="d-block margTop5px">Editar</label>
+                        </div>
+                        @if (!User.IsInRole("Ventas")){
+                        <div class="form-group col">
+                            <a onclick="btnDelete({'id':'${element.id}', 'name':'${element.name}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Eliminar" data-original-title="Tooltip on bottom"><i class="fas fa-trash"></i></a>
+                            <label class="d-block margTop5px">Eliminar</label>
+                        </div>
+                        }
+                </div>
+                ` 
+              });
+        });
+
+    </script>
+}
+
+

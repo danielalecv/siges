@@ -1,0 +1,239 @@
+@model IEnumerable<siges.Models.SemaphoreParams>
+
+@{
+    ViewData["Title"] = "Parámetros Semáforo";
+ }
+
+@Html.AntiForgeryToken()
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Configuración Par&aacute;metros Sem&aacute;foro</h2>
+        </div>
+    </div>
+    <div class="row margTop40">
+        <div class="col">
+            <table id="tableLlegada" data-toggle="table" data-search="false" data-show-columns="false" data-pagination="false" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
+                <thead>
+                    <tr>
+                        <th data-visible="false"></th>
+                        <th>Hora de Llegada</th>
+                        <th>Minutos</th>
+                        <th></th>
+                        <th class="mobileHidden">Acciones</th>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        <tr>
+                        <td>llegadaVerde</td>
+                        <td>Tolerancia Verde</td>
+                        <td>@Html.DisplayFor(modelItem => item.LlegadaVerde) min</td>
+                        <td><i class="fas fa-circle" style="color: green;"></i></td>
+                        <td><a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a></td>
+                        </tr>
+                        <tr>
+                        <td>llegadaAmarillo</td>
+                        <td>Tolerancia Amarillo</td>
+                        <td>@Html.DisplayFor(modelItem => item.LlegadaAmarillo) min</td>
+                        <td><i class="fas fa-circle" style="color: yellow;"></i></td>
+                        <td><a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a></td>
+                        </tr>
+                        <tr>
+                        <td>llegadaRojo</td>
+                        <td>Tolerancia Rojo</td>
+                        <td>@Html.DisplayFor(modelItem => item.LlegadaRojo) min</td>
+                        <td><i class="fas fa-circle" style="color: red;"></i></td>
+                        <td class="mobileHidden"><a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col">
+            <table id="tableSalida" data-toggle="table" data-search="false" data-show-columns="false" data-pagination="false" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
+                <thead>
+                    <tr>
+                        <th data-visible="false"></th>
+                        <th>Hora de Salida</th>
+                        <th>Porcentaje</th>
+                        <th></th>
+                        <th class="mobileHidden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        <tr>
+                        <td>salidaVerde</td>
+                        <td>Tolerancia Verde</td>
+                        <td>@Html.DisplayFor(modelItem => item.SalidaVerde)%</td>
+                        <td><i class="fas fa-circle" style="color: green;"></i></td>
+                        <td><a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a></td>
+                        </tr>
+                        <tr>
+                        <td>salidaAmarillo</td>
+                        <td>Tolerancia Amarillo</td>
+                        <td>@Html.DisplayFor(modelItem => item.SalidaAmarillo)%</td>
+                        <td><i class="fas fa-circle" style="color: yellow;"></i></td>
+                        <td><a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a></td>
+                        </tr>
+                        <tr>
+                        <td>salidaRojo</td>
+                        <td>Tolerancia Rojo</td>
+                        <td>@Html.DisplayFor(modelItem => item.SalidaRojo)%</td>
+                        <td><i class="fas fa-circle" style="color: red;"></i></td>
+                        <td class="mobileHidden"><a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        const Model = @Html.Raw(Json.Serialize(Model));
+        const token = $("[name='__RequestVerificationToken']").val();
+        $('#tableLlegada').on('click-row.bs.table', async (row, $element, field) => {
+            let num = null;
+            let col = null;
+            switch ($element[0]) {
+                case 'llegadaVerde':
+                    num = Model[0].llegadaVerde;
+                    col = 'llegadaVerde';
+                break
+                case 'llegadaAmarillo':
+                    num = Model[0].llegadaAmarillo;
+                    col = 'llegadaAmarillo';
+                break
+                case 'llegadaRojo':
+                    num = Model[0].llegadaRojo;
+                    col = 'llegadaRojo';
+                break
+            }
+            const { value } = await Swal.fire({
+                title: "Hora Llegada " + $element[1],
+                confirmButtonColor: "#67E7CF",
+                confirmButtonText:"Guardar",
+                cancelButtonText:"Cancelar",
+                input: 'text',
+                inputValue: num,
+                reverseButtons: true,
+                showCancelButton: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showCloseButton: true,
+                closeButtonHtml: '<i class="fas fa-times"></i>',
+                inputValidator: (value) => {
+                  if (!value) {
+                    return 'Se necesita escribir una cantidad'
+                  }
+                  else if(!value.match(/^([0-9][0-9])$/)){
+                    return 'Algún caracter no es aceptado'
+                  }
+                }
+            });
+            if(value){
+                $.ajax({
+                    url: '@Url.Action("Admin","SemaphoreParams")',
+                    method: "POST",
+                    data: {
+                        __RequestVerificationToken: token,
+                        "ID":"1",
+                        "key":`${col}`,
+                        "value":`${value}`
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            confirmButtonColor: "#67E7CF",
+                            confirmButtonText:"Aceptar",
+                            text: `Se ha sido modificado correctamente`,
+                            onClose: ()=>{
+                                location.reload(true);
+                            }
+                        }).then((result) => {
+                            if (result.value) {
+                                location.reload(true);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        $('#tableSalida').on('click-row.bs.table', async (row, $element, field) => {
+            let num = null;
+            let col = null;
+            switch ($element[0]) {
+                case 'salidaVerde':
+                    num = Model[0].salidaVerde;
+                    col = 'salidaVerde';
+                break
+                case 'salidaAmarillo':
+                    num = Model[0].salidaAmarillo;
+                    col = 'salidaAmarillo';
+                break
+                case 'salidaRojo':
+                    num = Model[0].salidaRojo;
+                    col = 'salidaRojo';
+                break
+            }
+            const { value } = await Swal.fire({
+                title: "Hora Salida " + $element[1],
+                confirmButtonColor: "#67E7CF",
+                confirmButtonText:"Guardar",
+                cancelButtonText:"Cancelar",
+                input: 'text',
+                inputValue: num,
+                reverseButtons: true,
+                showCancelButton: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showCloseButton: true,
+                closeButtonHtml: '<i class="fas fa-times"></i>',
+                inputValidator: (value) => {
+                  if (!value) {
+                    return 'Se necesita escribir una cantidad'
+                  }
+                  else if(!value.match(/^([0-9][0-9])$/)){
+                    return 'Algún caracter no es aceptado'
+                  }
+                }
+            });
+            if(value){
+                $.ajax({
+                    url: '@Url.Action("Admin","SemaphoreParams")',
+                    method: "POST",
+                    data: {
+                        __RequestVerificationToken: token,
+                        "ID":"1",
+                        "key":`${col}`,
+                        "value":`${value}`
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            confirmButtonColor: "#67E7CF",
+                            confirmButtonText:"Aceptar",
+                            text: `Se ha sido modificado correctamente`,
+                            onClose: ()=>{
+                                location.reload(true);
+                            }
+                        }).then((result) => {
+                            if (result.value) {
+                                location.reload(true);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+}

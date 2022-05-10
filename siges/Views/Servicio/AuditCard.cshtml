@@ -1,0 +1,148 @@
+@model List<String>
+
+@{
+    var imgSrcSitio = "";
+    var imgSrcAsistencia = "";
+    var imgSrcRevEquipoSeg = "";
+    var comentarioNuevoEstado = "";
+    var asistenciacomentario = "";
+    var revequiposeguridadcomentario = "";
+    ViewData["Title"] = "Ficha Auditoría";
+    if(ViewData["sitio"] != null){
+      var base64 = Convert.ToBase64String((byte[])ViewData["sitio"]);
+      imgSrcSitio = String.Format("data:image/jpeg;base64,{0}",base64);
+      comentarioNuevoEstado = (string)ViewData["comentario"];
+    }
+    bool customvisionuso = (bool)ViewData["customvisionuso"];
+    if(customvisionuso){
+      if(ViewData["revequiposeguridad"] != null){
+        var base64 = Convert.ToBase64String((byte[])ViewData["revequiposeguridad"]);
+        imgSrcRevEquipoSeg = String.Format("data:image/jpeg;base64,{0}",base64);
+        revequiposeguridadcomentario = (string)ViewData["revequiposeguridadcomentario"];
+      }
+    }
+    bool faceApiUso = (bool)ViewData["faceApiUso"];
+    if(faceApiUso){
+      if(ViewData["asistencia"] != null){
+       var base64 = Convert.ToBase64String((byte[])ViewData["asistencia"]);
+       imgSrcAsistencia = String.Format("data:image/jpeg;base64,{0}",base64);
+       asistenciacomentario = (string)ViewData["asistenciacomentario"];
+      }
+    }
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Ficha de Auditor&iacute;a</h2>
+        </div>
+        <div class="col align-self-center text-right">
+            <a class="btn bg-blue marg-Float float" href='@Url.Action("IndexListOS", "Servicio")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table id="tableAuditCard" data-toggle="table" data-show-columns="false" data-locale="es-MX" data-classes="table table-hover" data-page-size="6" data-show-footer="true">
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+      @*<div class="col col-lg-2"></div>*@
+      @if(faceApiUso){
+      <div class="col-md-auto">
+        <div class="card text-center" style="width: 18rem;">
+          <img src="@imgSrcAsistencia" class="card-img-top rounded" alt="Asistencia">
+          <div class="card-body text-center">
+            <p class="card-text">@asistenciacomentario</p>
+          </div>
+        </div>
+      </div>
+      }
+      <div class="col-md-auto">
+        <div class="card text-center" style="width: 18rem;">
+          <img src="@imgSrcSitio" class="card-img-top rounded" alt="En sitio">
+          <div class="card-body text-center">
+            <p class="card-text">@comentarioNuevoEstado</p>
+          </div>
+        </div>
+      </div>
+      @if(customvisionuso){
+      <div class="col-md-auto">
+        <div class="card text-center" style="width: 18rem;">
+          <img src="@imgSrcRevEquipoSeg" class="card-img-top rounded" alt="Revisión equipo seguridad">
+          <div class="card-body text-center">
+            <p class="card-text">@revequiposeguridadcomentario</p>
+          </div>
+        </div>
+      </div>
+      }
+      @*<div class="col col-lg-2"></div>*@
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        const Model = @Html.Raw(Json.Serialize(Model));
+        const Data = JSON.parse(Model[0]);
+
+        const data = [{
+            'Rubro': 'Fecha de Programación',
+            'Programado': (Data.FechaDeProgramacion.InicioProgramado === null)?"Sin Captura":Data.FechaDeProgramacion.InicioProgramado.substr(0,10),
+            'Real': (Data.FechaDeProgramacion.InicioReal=== null || Data.FechaDeProgramacion.InicioReal === '')?"Sin Captura":Data.FechaDeProgramacion.InicioReal.substr(0,10),
+            'Minutos': (Data.FechaDeProgramacion.InicioReal === null)?"Sin Captura":(Data.FechaDeProgramacion.InicioReal == Data.FechaDeProgramacion.InicioProgramado ? 'En el día' : 'Error'),
+        },{
+            'Rubro': 'Hora de Llegada',
+            'Programado': (Data.HoraDeLlegada.Programado === null)?"Sin Captura":(Data.HoraDeLlegada.Programado.split(':')[0] + ':' + Data.HoraDeLlegada.Programado.split(':')[1]), 
+            'Real': (Data.HoraDeLlegada.Real === '')?"Sin Captura":(Data.HoraDeLlegada.Real.split(':')[0] + ':' + Data.HoraDeLlegada.Real.split(':')[1]), 
+            'Minutos': (Data.HoraDeLlegada.Minutos === null)?"Sin Captura":Math.round(parseInt(Data.HoraDeLlegada.Minutos), -1) + ' minutos',
+        },{
+            'Rubro': 'Hora de Salida',
+            'Programado': (Data.HoraDeSalida.Programado === null)?"Sin Captura":(Data.HoraDeSalida.Programado.split(':')[0] + ':' + Data.HoraDeSalida.Programado.split(':')[1]), 
+            'Real': (Data.HoraDeSalida.Real === '')?"Sin Captura":(Data.HoraDeSalida.Real.split(':')[0] + ':' + Data.HoraDeSalida.Real.split(':')[1]), 
+            'Minutos': (Data.HoraDeSalida.Minutos === null)?"Sin Captura":Math.round(parseInt(Data.HoraDeSalida.Minutos), -1) + ' minutos',
+        },{
+            'Rubro': 'Tiempo Laborado', 
+            'Programado': (Data.TiempoLaboradoProgramado.Minutos===null?"Sin Captura":Math.round(parseInt(Data.TiempoLaboradoProgramado.Minutos), -1)),
+            'Real': (Data.TiempoLaboradoReal.Minutos===null?"Sin Captura":Math.round(parseInt(Data.TiempoLaboradoReal.Minutos), -1)),
+            'Minutos': (Data.TiempoLaboradoDiff.Minutos===null?"Sin Captura":(Math.round(parseInt(Data.TiempoLaboradoDiff.Minutos), -1)) + ' minutos'),
+        },{
+            'Rubro': 'Lugar',
+            'Programado': (Data.Direccion === null)?"Sin Captura":Data.Direccion,
+            'Real': (Data.Lugar.Real === null || Data.Lugar.Real.Latitude.description === '')?"Sin Captura":(Data.Lugar.Programado.Longitude.substring(0,5) + Data.Lugar.Programado.Latitude.substring(0,5)) == (Data.Lugar.Real.Longitude.description.toString().substring(0,5) + Data.Lugar.Real.Latitude.description.toString().substring(0,5))?Data.Direccion:'', 
+            'Minutos': (Data.Lugar.Real === null || Data.Lugar.Real.Latitude.description === '')?"Sin Captura":(Data.Lugar.Programado.Longitude.substring(0,5) + Data.Lugar.Programado.Latitude.substring(0,5)) == (Data.Lugar.Real.Longitude.description.toString().substring(0,5) + Data.Lugar.Real.Latitude.description.toString().substring(0,5))?'En el lugar':'Error', 
+        },{
+            'Rubro': 'Coordenadas',
+            'Programado': (Data.Lugar.Programado.Latitude === null)?"Sin Captura":`Lat: ${Data.Lugar.Programado.Latitude} - Lon: ${Data.Lugar.Programado.Longitude}`,
+            'Real': (Data.Lugar.Real === null || Data.Lugar.Real.Latitude.description === '')?"Sin Captura":`Lat: ${Data.Lugar.Real.Latitude.description} - Lon: ${Data.Lugar.Real.Longitude.description}`, 
+            'Minutos': (Data.Lugar.Real === null || Data.Lugar.Real.Latitude.description === '')?"Sin Captura" : (parseFloat(Data.UbicacionDistancia) - parseFloat(Data.EstructuraExifBiDistancia)) < 0 ? "Error" : "En el lugar",
+            //'Minutos': (Data.Lugar.Real === null || Data.Lugar.Real.Latitude.description === '')?"Sin Captura":(Data.Lugar.Programado.Longitude.substring(0,5) + Data.Lugar.Programado.Latitude.substring(0,5)) == (Data.Lugar.Real.Longitude.description.toString().substring(0,5) + Data.Lugar.Real.Latitude.description.toString().substring(0,5))?'En el lugar':'Error',
+        }]
+
+@* (((Data.Lugar.Programado.Latitude.substring(0,6) + Data.Lugar.Programado.Longitude.substring(0,6)) == (Data.Lugar.Real.Latitude.description.substring(0,6)+Data.Lugar.Real.Longitude.description.toString().substring’(0,6))) ? 'En el lugar' : 'Error') *@
+
+        const initTable = (() =>{
+            $("#tableAuditCard").bootstrapTable('destroy').bootstrapTable({
+                data: data,
+                columns: [
+                    [{
+                      title: 'Rubro',
+                      field: 'Rubro',
+                      width: 150
+                    }, {
+                      title: 'Programado',
+                      field: 'Programado',
+                      width: 350
+                    }, {
+                      title: 'Real',
+                      field: 'Real',
+                      width: 350
+                    },{
+                      title: 'Cálculo',
+                      field: 'Minutos',
+                      width: 100
+                    }]
+                ],
+            });
+        })();
+    </script>
+}

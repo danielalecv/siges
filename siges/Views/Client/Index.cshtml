@@ -1,0 +1,84 @@
+﻿@using System.Data
+
+@model DataTable
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index Cliente</h2>
+
+Mi nombre es
+@ViewData["dataTable"]
+ y puedes seguirme en
+@ViewData["test"]
+-@ViewData["apellido"]
+/@ViewData["edad"]
+
+
+<h2>Grid</h2>
+
+@foreach (DataRow row in Model.Rows)
+{
+    /*Hacer algo ...*/
+    <a>@row["Id"].ToString()</a><br />
+    <a>@row["UserName"].ToString()</a><br />
+}
+
+@foreach (DataRow row in Model.Rows)
+{
+    <table>
+        <tr>
+            <td>
+                @row["Id"].ToString()
+            </td>
+            @row["UserName"].ToString()
+        </tr>
+        ....
+    </table>
+}
+    <p>
+    <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+    <thead>
+        <tr>
+                <th>
+                    Nombre
+                </th>
+                <th>
+                    Puesto
+                </th>
+                <th>
+                    Ubicación
+                </th>
+                <th>
+                    + Info
+                </th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (DataRow row in Model.Rows) {
+        <tr>
+            <td>
+                @row["Id"].ToString()
+            </td>
+            <td>
+                @row["UserName"].ToString()
+            </td>
+            <td>
+                @row["UserName"].ToString()
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@row["Id"]">Details</a>
+                @*<a asp-action="Edit" asp-route-id="@row["Id"]">Edit</a>
+                <a asp-action="Details" asp-route-id="@row["Id"]">Details</a>
+                <a asp-action="Delete" asp-route-id="@row["Id"]">Delete</a>*@
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+
+}

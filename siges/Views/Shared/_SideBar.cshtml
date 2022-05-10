@@ -1,0 +1,255 @@
+@using Microsoft.AspNetCore.Identity
+@using siges.Areas.Identity.Data;
+@inject SignInManager<RoatechIdentityUser> SignInManager
+@inject UserManager<RoatechIdentityUser> UserManager
+
+<!-- Sidebar -->
+@if (SignInManager.IsSignedIn(User)){
+<nav id="sidebar" class="@Html.Raw(User.IsInRole("Admin")?"sideBarAdmin":User.IsInRole("Supervisor")?"sideBarSupervisor":User.IsInRole("Operador")?"sideBarOperador":User.IsInRole("Cliente")?"sideBarCliente":"sideBarAdmin")">
+    <div class="sidebar-header">
+       <div class="box-simple">
+            <div id="ImgDivSideBar" class="icon-outlined"></div>
+            <h3 class="h4 borderNameSideBar">Bienvenido</h3>
+            <p id="nameSideBar" style="color:#FFFFFF; font-size:1.2em"></p>
+            @if (User.IsInRole("Cliente")){
+                <p id="clientSideBar" style="color:#FFFFFF"></p>
+            }
+        </div>
+    </div>
+    <ul class="list-unstyled components listSide">
+        <li>
+            <a  class="nav-link" asp-controller="Home" asp-action="Index">Inicio</a>
+        </li>
+        @if (User.IsInRole("Admin")){
+            <li>
+                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Administraci&oacute;n</a>
+                <ul class="collapse list-unstyled" id="homeSubmenu">
+                    <li>
+                        <a asp-controller="Admin" asp-action="AdminUsers">Usuarios</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Admin" asp-action="AdminRoles">Roles de Usuario</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Admin" asp-action="ClienteIdentity">Cuentas de Clientes</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Admin" asp-action="SemaphoreParams">Par&aacute;metros Sem&aacute;foro</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#CataloguesSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Cat&aacute;logos</a>
+                <ul class="collapse list-unstyled" id="CataloguesSubmenu">
+                    <li>
+                        <a asp-controller="Admin" asp-action="CatalogueRoles">Roles</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Clientes" asp-action="Index">Clientes</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Ubicaciones" asp-action="Index">Sucursales / Ubicaciones</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Admin" asp-action="TrainModelFaceApi" >FaceApi</a>
+                    </li>
+                </ul>
+            </li>
+        <li>
+          <a  class="nav-link" asp-controller="Admin" asp-action="PlatformSettings">Configuraciones</a>
+        </li>
+        }
+        else if (User.IsInRole("Administración")){
+        <li>
+          <a  class="nav-link" asp-controller="Administracion" asp-action="IndexListOS">Órdenes de servicio</a>
+        </li>
+        <li>
+            <li>
+                <a href="#reportsSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Reportes</a>
+                <ul class="collapse list-unstyled" id="reportsSubmenu">
+                    <li>
+                        <a asp-controller="Reports" asp-action="ServiciosInsumos">Reportes-Insumos</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="BitacoraDeServicios">Bitácora de servicios</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="CuentasPorPagarExternos">Cuentas por pagar a externos</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="CuentasPorCobrar">Cuentas por cobrar</a>
+                    </li>
+                </ul>
+            </li>       
+        </li>
+        }
+        else if (User.IsInRole("Cliente")){
+            <li>
+                <a  class="nav-link" asp-controller="Client" asp-action="Staff">Consultar Personal</a>
+            </li>
+            <li>
+                <a  class="nav-link" asp-controller="Client" asp-action="Services">Consultar Servicios</a>
+            </li>
+            <li>
+                <a  class="nav-link" asp-controller="Client" asp-action="Summary">Resumen</a>
+            </li>
+        }
+        else if (User.IsInRole("Operador")){
+            <li>
+                <a  id="MenuCambiarEstadoOperador" class="nav-link" data-toggle="modal" >Reportar Servicio</a>
+            </li>
+            <li>
+                <a  id="MenuOrdenesServicio" class="nav-link" asp-controller="Servicio" asp-action="IndexListOS">Órdenes de servicio</a>
+            </li>
+            <li>
+                <a href="#reportsSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Reportes</a>
+                <ul class="collapse list-unstyled" id="reportsSubmenu">
+                    <li>
+                        <a asp-controller="Reports" asp-action="ServiciosInsumos">Reportes-Insumos</a>
+                    </li>
+                </ul>
+            </li>
+        }
+        else if (User.IsInRole("Ventas")){
+        <li>
+          <a href="#catalogueSubmenuVenta" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Cat&aacute;logos</a>
+          <ul class="collapse list-unstyled" id="catalogueSubmenuVenta">
+            <li>
+              <a asp-controller="Contratos" asp-action="Index">Contratos</a>
+            </li>
+            <li>
+              <a asp-controller="Clientes" asp-action="Index">Clientes</a>
+            </li>
+            <li>
+              <a asp-controller="Ubicaciones" asp-action="Index">Ubicaciones</a>
+            </li>
+            <li>
+              <a asp-controller="ActivoFijos" asp-action="Index">ActivoFijo/Producto</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#serviciosSubmenuVenta" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Servicios</a>
+          <ul class="collapse list-unstyled" id="serviciosSubmenuVenta">
+            <li>
+              <a asp-controller="Servicio" asp-action="IndexListOS">Órdenes de servicio</a>
+            </li>
+            <li>
+              <a asp-controller="Ventas" asp-action="SolicitarServicio">Solicitar servicio</a>
+            </li>
+          </ul>
+        </li>
+        }
+        else if (User.IsInRole("Supervisor")){
+            <li>
+                <a href="#catalogueSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Cat&aacute;logos</a>
+                <ul class="collapse list-unstyled" id="catalogueSubmenu">
+                    <li>
+                        <a asp-controller="Clientes" asp-action="Index">Clientes</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Ubicaciones" asp-action="Index">Sucursales / Ubicaciones</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Contratos" asp-action="Index">Contratos</a>
+                    </li>
+                    <li>
+                        <a asp-controller="LineaNegocios" asp-action="Index">L&iacute;neas de Negocio</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Servicios" asp-action="Index">Tipos de Servicio</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Personas" asp-action="Index">Personas</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Marca" asp-action="Index">Marcas</a>
+                    </li>
+                    <li>
+                        <a asp-controller="TipoProducto" asp-action="Index">Tipo de Producto</a>
+                    </li> 
+                    <li>
+                        <a asp-controller="ActivoFijos" asp-action="Index">Activo Fijo/Producto</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Insumos" asp-action="Index">Insumos</a>
+                    </li> 
+                </ul>
+            </li>
+            <li>
+                <a href="#inventarioSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Inventarios</a>
+                <ul class="collapse list-unstyled" id="inventarioSubmenu">
+                    <li>
+                        <a asp-controller="ActivoFijos" asp-action="InventarioAF">Activo Fijo/Producto</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Insumos" asp-action="InventarioI">Insumos</a>
+                    </li>
+                </ul>
+            </li>       
+            <li>
+                <a href="#servicesSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Servicios</a>
+                <ul class="collapse list-unstyled" id="servicesSubmenu">
+                    @* <li>
+                        <a asp-controller="Servicio" asp-action="IndexListCS">Configuraci&oacute;n de contratos</a>
+                    </li> *@
+                    <li>
+                        <a asp-controller="Servicio" asp-action="IndexListOS">&Oacute;rdenes de servicio</a>
+                    </li>
+                </ul>
+            </li>       
+            <li>
+                <a href="#reportsSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Reportes</a>
+                <ul class="collapse list-unstyled" id="reportsSubmenu">
+                    <li>
+                        <a asp-controller="Reports" asp-action="ServiciosInsumos">Reportes-Insumos</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="BitacoraDeServiciosPorCliente">Bitácora de servicios por cliente</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="BitacoraDeServicios">Bitácora de servicios</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="CuentasPorPagarExternos">Cuentas por pagar a externos</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="RegistroDesempenoPorEmpleado">Registro de desempeño por empleado</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="Semaforo">Semáforo</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="CuentasPorCobrar">Cuentas por cobrar</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="Asistencia">Asistencia</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Reports" asp-action="Cumplimiento">Cumplimiento</a>
+                    </li>
+                    @*<li>
+                        <a asp-controller="Reports" asp-action="Marketing">Marketing</a>
+                    </li>*@
+                </ul>
+            </li>       
+        }
+        @if (!User.IsInRole("Cliente")){
+        <li>
+            <a  class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Configurar Mi Cuenta</a>
+        </li>
+        }
+        <li>
+            <a  class="nav-link text-light bg-dark" asp-controller="Home" asp-action="SoporteTecnico">Soporte técnico</a>
+        </li>
+    </ul>
+    @if (SignInManager.IsSignedIn(User)){
+        <form id="btnCloseSideBar" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" hidden>
+            <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+        </form>
+    }
+    <footer class="mb-2" style="position: fixed; bottom: 0;">
+        <a class="btn" onclick="btnVersion()">Plataforma SIGES - Versión 1.0.0</a>
+    </footer>
+</nav>
+}

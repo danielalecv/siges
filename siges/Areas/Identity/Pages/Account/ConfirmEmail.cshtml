@@ -1,0 +1,19 @@
+@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirmación de Correo";
+}
+
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="card text-center">
+          <img src="~/img/siges700px.png" class="card-img-top rounded" alt="SIGES - Roatech Services">
+            <div class="card-header">
+                <h2>Confirmación de Correo</h2>
+            </div>
+            <div class="card-body">
+                <partial name="_StatusMessage" model="Model.StatusMessage" />
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,129 @@
+@using siges.Areas.Identity.Data;
+@using System.Collections.Generic;
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<RoatechIdentityUser> UserManager
+@model RoatechIdentityUser
+
+@{
+    ViewData["Title"] = "Editar Usuario";
+    RoatechIdentityUser riu = ViewData["usuario"] as RoatechIdentityUser;
+ }
+
+@section css {
+<link href="~/lib/Parsley-2.8.1/parsley.css" rel="stylesheet" />
+}
+
+ <div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Editar Usuario</h2>
+        </div>
+        <div class="col align-self-center text-right">
+          <a class="btn bg-blue marg-Float float" href='@Url.Action("AdminUsers", "Admin")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3">
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a id="profile" class="nav-link active" href="#">Datos Personales</a></li>
+      </ul>
+    </div>
+    <div class="col-md-9">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="Generales-tab" data-toggle="tab" href="#Generales" role="tab" aria-controls="Generales" aria-selected="true">Generales</a>
+        </li>
+      </ul>
+      <form class="margTop40" id="profile-form" method="post" asp-controller="Admin" asp-action="SaveRIU" data-parsley-validate="">
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="Generales" role="tabpanel" aria-labelledby="Generales-tab">
+            <div class="form-row mb-3">
+              <div class="col-6">
+                <label asp-for="per.Nombre">Nombre(s) *</label>
+                <input asp-for="per.Nombre" class="form-control" value="@riu.per.Nombre" required />
+                <span asp-validation-for="per.Nombre" class="text-danger"></span>
+              </div>
+            </div>
+            <div class="form-row mb-3">
+              <div class="col-6">
+                <label asp-for="per.Paterno">Apellido Paterno *</label>
+                <input asp-for="per.Paterno" class="form-control" value="@riu.per.Paterno" required/>
+                <span asp-validation-for="per.Paterno" class="text-danger"></span>
+              </div>
+            </div>
+            <div class="form-row mb-3">
+              <div class="col-6">
+                <label asp-for="per.Materno">Apellido Materno *</label>
+                <input asp-for="per.Materno" class="form-control" value="@riu.per.Materno" required/>
+                <span asp-validation-for="per.Materno" class="text-danger"></span>
+              </div>
+            </div>
+            <div class="form-row mb-3">
+              <div class="col-6">
+                <label asp-for="per.CURP">CURP *</label>
+                <input asp-for="per.CURP" class="form-control" value="@riu.per.CURP" required />
+                <span asp-validation-for="per.CURP" class="text-danger"></span>
+              </div>
+            </div>
+            <div class="form-row mb-3">
+              <div class="col-6">
+                <label asp-for="per.RFC">RFC *</label>
+                <input asp-for="per.RFC" class="form-control" value="@riu.per.RFC" required />
+                <span asp-validation-for="per.RFC" class="text-danger"></span>
+              </div>
+
+            </div>
+            <div class="form-row mb-3">
+              <div class="col-6">
+                <label asp-for="per.Telefono"></label>
+                <input id="txtTelefono" asp-for="per.Telefono" class="form-control" value="@riu.per.Telefono" type="text" maxlength="10" />
+                <span asp-validation-for="per.Telefono" class="text-danger"></span>
+              </div>
+              @*<div class="col-3">
+                <label asp-for="per.TelefonoContacto"></label>
+                <input asp-for="per.TelefonoContacto" class="form-control" value="@riu.per.TelefonoContacto" type="number" min="0"/>
+                <span asp-validation-for="per.TelefonoContacto" class="text-danger"></span>
+              </div>*@
+            </div>
+            <div class="form-row justify-content-start">
+              <small>* Campos obligatorios</small>                            
+            </div>
+            <input type="hidden" asp-for="per.Email" value="@riu.per.Email">
+          </div>
+          <div class="form-row">
+            <div class="col-6">
+              <button id="update-profile-button" type="submit" class="btn btn-primary btn-block margTop40"><h5>Guardar</h5></button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+ @section scripts{
+    <script src="~/lib/Parsley-2.8.1/parsley.min.js"></script>
+    <script src="~/lib/Parsley-2.8.1/i18n/es.js"></script>
+ <script>
+    //const listRoles = @Html.Raw(Json.Serialize(ViewData["riu"]));
+    //console.log({listRoles});
+    document.getElementById("txtTelefono").addEventListener("keypress", function (evt) {
+      if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+          evt.preventDefault();
+      }
+    });
+    $(function () {
+      $('#profile-form').parsley().on('field:validated', function() {
+        var ok = $('.parsley-error').length === 0;
+        $('.bs-callout-info').toggleClass('hidden', !ok);
+        $('.bs-callout-warning').toggleClass('hidden', ok);
+        $('#pills-one-tab').tab('show')
+      })
+    });
+ </script>
+ }

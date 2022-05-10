@@ -1,0 +1,702 @@
+@model IEnumerable<siges.Models.Ubicacion>
+
+@{
+    ViewData["Title"] = "Sucursales/Ubicaciones";
+    List<siges.Models.Cliente> clientes = ViewData["ClienteId"] as List<siges.Models.Cliente>;
+}
+
+@Html.AntiForgeryToken()
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Sucursales/Ubicaciones</h2>
+        </div>
+            <div class="col align-self-center text-right">
+                <a id="btnAdd" onclick="btnAdd()" class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Agregar" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a>
+            </div>
+    </div>
+    <div class="row">
+        <div class="col margBott4em">
+                <table id="tableIndexUbicaciones" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="client">
+                <thead>
+                    <tr>
+                        <th data-visible="false" data-field="id"></th>
+                        <th data-sortable="true" data-field="client">@Html.DisplayNameFor(model => model.Cliente)</th>
+                        <th data-sortable="true">Nombre</th> 
+                        <th data-sortable="true">@Html.DisplayNameFor(model => model.Direccion)</th> 
+                        <th class="mobileHidden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Cliente.RazonSocial)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Direccion)</td>
+                        <td class="mobileHidden">
+                            <a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Acciones" data-original-title="Tooltip on bottom"><i class="fab fa-elementor"></i></a>
+                        </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALHbPavhgf4RlNrLnG3GTO_1lrw0fCQ4Y&libraries=places"></script>
+<script>
+    const btnAdd = () => {
+        const token = $("[name='__RequestVerificationToken']").val();
+        const clientes = @Html.Raw(Json.Serialize(clientes));
+        const coordinates = {lat:"", long:""};
+        Swal.fire({
+            title: "Nueva Ubicación",
+            confirmButtonColor: "#67E7CF",
+            confirmButtonText:"Guardar",
+            cancelButtonText:"Cancelar",
+            reverseButtons: true,
+            showCancelButton: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            width: "40rem",
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-group text-left">
+                    <label class="control-label" for="slcCliente">Cliente *</label>
+                    <select class="form-control" id="slcCliente" >
+                        <option value="null" selected disabled>Selecciona Cliente</option>
+                    </select>   
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Ubicación *</label>
+                    <input id="txtNombre" type="text" class="form-control" maxlength="30" />
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Dirección *</label>
+                    <input id="txtDireccion" type="text" class="form-control"  />
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Rango "En Sitio" (Utilice flechas &UpArrowDownArrow;) *</label>
+                    <input id="txtRange" type="number" step="0.001" min="1" class="form-control"  />
+                    <small>Unidad de distancia en metros.</small>
+                </div>
+                <div id=imgMap class="form-row"></div>
+                <div class="form-group text-left">
+                    <label class="control-label">Contacto *</label>
+                    <input id="txtContacto" type="text" class="form-control" maxlength="30" />
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-6 text-left">
+                        <label class="control-label">Teléfono *</label>
+                        <input id="txtTelefono" type="text" class="form-control" maxlength="10"  placeholder="Ej: 5556058941" />
+                    </div>
+                    <div class="form-group col-6 text-left">
+                       <label class="control-label">Correo Electrónico *</label>
+                        <input id="txtEmail" type="email" class="form-control"  />
+                    </div>
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Contacto Opcional</label>
+                    <input id="txtOpcional" type="text" class="form-control" maxlength="50" />
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-6 text-left">
+                        <label class="control-label">Teléfono Opcional</label>
+                        <input id="txtTelOP" type="text" class="form-control" maxlength="10" placeholder="Ej: 5556058941" />
+                    </div>
+                    <div class="form-group col-6 text-left">
+                        <label class="control-label">Correo Electrónico Opcional</label>
+                        <input id="txtEmailOP" type="email" class="form-control"  />
+                    </div>
+                </div>
+                <div class="form-group text-right">
+                    <small>* Campos obligatorios</small>
+                </div>
+            `,
+            onOpen: () => {
+                const autocomplete = new google.maps.places.Autocomplete(document.getElementById('txtDireccion'));
+                google.maps.event.addListener(autocomplete, 'place_changed', () => {
+                    const place = autocomplete.getPlace();
+                    coordinates.lat = place.geometry.location.lat().toString();
+                    coordinates.long = place.geometry.location.lng().toString();
+                    //console.log(place.formatted_address);
+                    const imgURL = `https://maps.googleapis.com/maps/api/staticmap?center=${coordinates.lat},${coordinates.long}&size=600x200&markers=color:red%7C${coordinates.lat},${coordinates.long}&key=AIzaSyALHbPavhgf4RlNrLnG3GTO_1lrw0fCQ4Y`;
+                    $("#imgMap").html(`<img src="${imgURL}" alt="imgMap" />`);
+                });
+                $("#txtTelefono").keypress(evt => {
+                    if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                        evt.preventDefault();
+                    }
+                });
+                $("#txtTelOP").keypress(evt => {
+                    if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                        evt.preventDefault();
+                    }
+                });
+                $("#txtRange").keypress(evt => {
+                    if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                        evt.preventDefault();
+                    }
+                });
+                $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();')
+            },
+            onRender: ()=>{
+                for (const cliente of clientes) {
+                    $("#slcCliente").append(`<option value="${cliente.id}">${cliente.razonSocial}</option>`);
+                }
+            },
+            preConfirm: () =>{
+                if($("#slcCliente").val() === null){
+                    $("#slcCliente").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#slcCliente").removeAttr("style");
+                }
+
+                if($("#txtNombre").val().length === 0){
+                    $("#txtNombre").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtNombre").removeAttr("style");
+                }
+
+                if($("#txtDireccion").val().length === 0 || coordinates.lat === ""){
+                    $("#txtDireccion").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtDireccion").removeAttr("style");
+                }
+
+                if($("#txtRange").val().length === 0){
+                    $("#txtRange").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtRange").removeAttr("style");
+                }
+
+                if($("#txtContacto").val().length === 0){
+                    $("#txtContacto").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtContacto").removeAttr("style");
+                }
+
+                if($("#txtTelefono").val().length === 0){
+                    $("#txtTelefono").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else if(!$("#txtTelefono").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/)){
+                    $("#txtTelefono").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtTelefono").removeAttr("style");
+                }
+
+                if($("#txtEmail").val().length === 0){
+                    $("#txtEmail").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else if(!$("#txtEmail").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                    $("#txtEmail").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtEmail").removeAttr("style");
+                }
+
+                if($("#txtTelOP").val().length > 0 && !$("#txtTelOP").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/)){
+                    $("#txtTelOP").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtTelOP").removeAttr("style");
+                }
+            
+                if($("#txtEmailOP").val().length > 0 && !$("#txtEmailOP").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                    $("#txtEmailOP").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                     $("#txtEmailOP").removeAttr("style");
+                }
+
+                if($("#txtEmailOP").val().length > 0 && !$("#txtEmailOP").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                    Swal.showValidationMessage("El correo electrónico es incorrecto");
+                }
+                if($("#txtTelOP").val().length > 0 && !$("#txtTelOP").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/)){
+                    Swal.showValidationMessage("El teléfono es incorrecto");
+                }
+                if(!$("#txtEmail").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                    Swal.showValidationMessage("El correo electrónico es incorrecto");
+                }
+                if(!$("#txtTelefono").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/)){
+                    Swal.showValidationMessage("El teléfono es incorrecto");
+                }
+                if($("#slcCliente").val() === null || $("#txtNombre").val().length === 0 || $("#txtDireccion").val().length === 0 || $("#txtRange").val().length === 0 || $("#txtContacto").val().length === 0 || $("#txtTelefono").val().length === 0 || $("#txtEmail").val().length === 0 || coordinates.lat === ""){
+                    Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                }
+            }
+        }).then((result) => {
+            if(result.value){
+                $.ajax({
+                    url: '@Url.Action("Create","Ubicaciones")',
+                    method: "POST",
+                    data: {
+                        __RequestVerificationToken: token,
+                        ubicacion:{
+                            Nombre: $("#txtNombre").val(),
+                            Direccion: $("#txtDireccion").val(),
+                            Distancia: $("#numRango").val(),
+                            Contacto: $("#txtContacto").val(),
+                            ContactoTelefono: $("#txtTelefono").val(),
+                            ContactoEmail: $("#txtEmail").val(),
+                            Latitude: coordinates.lat,
+                            Longitude:coordinates.long, 
+                            ContactoOpcional: $("#txtOpcional").val(),
+                            ContactoOpcionalTelefono: $("#txtTelOP").val(),
+                            ContactoOpcionalEmail: $("#txtEmailOP").val(),
+                            Estatus: true,
+                            ClienteId: $("#slcCliente").val()
+                        }
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        if(res.success){
+                            Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            confirmButtonColor: "#67E7CF",
+                            confirmButtonText:"Aceptar",
+                            text:"La ubicación se registro con éxito",
+                            onClose: ()=>{
+                                location.reload(true);
+                            }
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.reload(true);
+                                }
+                            });
+                        }
+                        else{
+                            Swal.fire({
+                                icon: 'error',
+                                title: '¡Error!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: res.message
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+    const  btnDetails = element => {
+        $.ajax({
+            url: '@Url.Action("Details","Ubicaciones")',
+            method: "GET",
+            data: {
+                id: element.id
+            },
+            async: true,
+            dataType: "json",
+            success: function (data){
+                if(data.success){
+                    Swal.fire({
+                        title:"Detalles",
+                        confirmButtonColor: "#67E7CF",
+                        confirmButtonText:"Aceptar",
+                        width: "40rem",
+                        html:`
+                            <div class="form-group text-left">
+                                <label class="control-label">Cliente</label>
+                                <input type="text" class="form-control" value="${(data.data.cliente.razonSocial=== null)?"":data.data.cliente.razonSocial}" readonly/>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Ubicación</label>
+                                <input type="text" class="form-control" value="${(data.data.nombre=== null)?"":data.data.nombre}" readonly/>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Dirección</label>
+                                <input type="text" class="form-control" value="${(data.data.direccion=== null)?"":data.data.direccion}" readonly/>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Latitud</label>
+                                    <input type="text" class="form-control" value="${(data.data.latitude===null)?"":data.data.latitude}" readonly/>
+                                </div>
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Longitud</label>
+                                    <input type="text" class="form-control" value="${(data.data.longitude===null)?"":data.data.longitude}" readonly/>
+                                </div>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Rango "En Sitio"</label>
+                                <input type="number" class="form-control" value="${(data.data.distancia=== null)?"":data.data.distancia}" readonly/>
+                                <small>Unidad de distancia en metros.</small>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Contacto</label>
+                                <input type="text" class="form-control" value="${(data.data.contacto=== null)?"":data.data.contacto}" readonly/>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Teléfono</label>
+                                    <input type="number" min="0" class="form-control" value="${(data.data.contactoTelefono=== null)?"":data.data.contactoTelefono}" readonly/>
+                                </div>
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Correo Electrónico</label>
+                                    <input type="email" class="form-control" value="${(data.data.contactoEmail=== null)?"":data.data.contactoEmail}" readonly/>
+                                </div>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Contacto Opcional</label>
+                                <input type="text" class="form-control" value="${(data.data.contactoOpcional=== null)?"":data.data.contactoOpcional}" readonly/>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Teléfono Opcional</label>
+                                    <input type="number" min="0" class="form-control" value="${(data.data.contactoOpcionalTelefono=== null)?"":data.data.contactoOpcionalTelefono}" readonly/>
+                                </div>
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Correo Electrónico Opcional</label>
+                                    <input type="email" class="form-control" value="${(data.data.contactoOpcionalEmail=== null)?"":data.data.contactoOpcionalEmail}" readonly/>
+                                </div>
+                            </div>
+                        `
+                    });
+                }
+            }
+        });
+    }
+
+    const btnEdit = element => {
+        const clientes = @Html.Raw(Json.Serialize(clientes));
+        const token = $("[name='__RequestVerificationToken']").val();
+        const coordinates = {lat:"", long:""};
+        $.ajax({
+            url: '@Url.Action("Details","Ubicaciones")',
+            method: "GET",
+            data: {
+                id: element.id
+            },
+            async: true,
+            dataType: "json",
+            success: function (data){
+                if(data.success){
+                    coordinates.lat = data.data.latitude;
+                    coordinates.long = data.data.longitude;
+                    Swal.fire({
+                        title:"Editar Ubicación",
+                        confirmButtonColor: "#67E7CF",
+                        confirmButtonText:"Guardar",
+                        cancelButtonText:"Cancelar",
+                        reverseButtons: true,
+                        showCancelButton: true,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showCloseButton: true,
+                        closeButtonHtml: '<i class="fas fa-times"></i>',
+                        width: "40rem",
+                        html:`
+                            <div class="form-group text-left">
+                                <label class="control-label" for="slcCliente">Cliente *</label>
+                                <select class="form-control" id="slcCliente" >
+                                </select>   
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Ubicación *</label>
+                                <input id="txtNombre" type="text" class="form-control" value="${(data.data.nombre=== null)?"":data.data.nombre}"  maxlength="30" />
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Dirección *</label>
+                                <input id="txtDireccion" type="text" class="form-control" value="${(data.data.direccion=== null)?"":data.data.direccion}" />
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Rango "En Sitio" (Utilice flechas &UpArrowDownArrow;) *</label>
+                                <input id="numRango" type="number" step="0.001" min="1" class="form-control" value="${(data.data.distancia=== null)?"":data.data.distancia}" />
+                                <small>Unidad de distancia en metros.</small>
+                            </div>
+                            <div id=imgMap class="form-row">                                     
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Contacto *</label>
+                                <input id="txtContacto" type="text" class="form-control" value="${(data.data.contacto=== null)?"":data.data.contacto}"  maxlength="50" />
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Teléfono *</label>
+                                    <input id="txtTelefono" type="text" class="form-control" maxlength="10" value="${(data.data.contactoTelefono=== null)?"":data.data.contactoTelefono}" />
+                                </div>
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Correo Electrónico *</label>
+                                    <input id="txtEmail" type="email" class="form-control" value="${(data.data.contactoEmail=== null)?"":data.data.contactoEmail}" />
+                                </div>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Contacto Opcional</label>
+                                <input id="txtOpcional" type="text" class="form-control" value="${(data.data.contactoOpcional=== null)?"":data.data.contactoOpcional}"  maxlength="50" />
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Teléfono Opcional</label>
+                                    <input id="txtTelOP"type="text" class="form-control" maxlength="10" value="${(data.data.contactoOpcionalTelefono=== null)?"":data.data.contactoOpcionalTelefono}" />
+                                </div>
+                                <div class="form-group col-6 text-left">
+                                    <label class="control-label">Correo Electrónico Opcional</label>
+                                    <input id="txtEmailOP" type="email" class="form-control" value="${(data.data.contactoOpcionalEmail=== null)?"":data.data.contactoOpcionalEmail}" />
+                                </div>
+                            </div>
+                            <div class="form-group text-right">
+                                <small>* Campos obligatorios</small>
+                            </div>
+                        `,
+                        onOpen: () => {
+                            const autocomplete = new google.maps.places.Autocomplete(document.getElementById('txtDireccion'));
+                            google.maps.event.addListener(autocomplete, 'place_changed', () => {
+                                const place = autocomplete.getPlace();
+                                coordinates.lat = place.geometry.location.lat().toString();
+                                coordinates.long = place.geometry.location.lng().toString();
+                                //console.log(place.formatted_address);
+                                const imgURL = `https://maps.googleapis.com/maps/api/staticmap?center=${coordinates.lat},${coordinates.long}&size=600x200&markers=color:red%7C${coordinates.lat},${coordinates.long}&key=AIzaSyALHbPavhgf4RlNrLnG3GTO_1lrw0fCQ4Y`;
+                                $("#imgMap").html(`<img src="${imgURL}" alt="imgMap" />`);
+                            });
+                            document.getElementById("txtTelefono").addEventListener("keypress", function (evt) {
+                                if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                                    evt.preventDefault();
+                                }
+                            });
+                            document.getElementById("txtTelOP").addEventListener("keypress", function (evt) {
+                                if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                                    evt.preventDefault();
+                                }
+                            });
+                            $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();')
+                        },
+                        onRender: ()=>{
+                            for (const cliente of clientes) {
+                                $("#slcCliente").append(`<option value="${cliente.id}" ${(data.data.cliente.id === cliente.id)?"selected":""}>${cliente.razonSocial}</option>`);      
+                            }
+                        },
+                        preConfirm: () =>{
+                            if($("#slcCliente").val() === null){
+                                $("#slcCliente").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#slcCliente").removeAttr("style");
+                            }
+
+                            if($("#txtNombre").val().length === 0){
+                                $("#txtNombre").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtNombre").removeAttr("style");
+                            }
+
+                            if($("#txtDireccion").val().length === 0 || coordinates.lat === ""){
+                                $("#txtDireccion").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtDireccion").removeAttr("style");
+                            }
+
+                            if($("#txtContacto").val().length === 0){
+                                $("#txtContacto").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtContacto").removeAttr("style");
+                            }
+
+                            if($("#txtTelefono").val().length === 0){
+                                $("#txtTelefono").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else if(!$("#txtTelefono").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/)){
+                                $("#txtTelefono").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtTelefono").removeAttr("style");
+                            }
+
+                            if($("#txtEmail").val().length === 0){
+                                $("#txtEmail").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else if(!$("#txtEmail").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                                $("#txtEmail").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtEmail").removeAttr("style");
+                            }
+
+                            if($("#txtTelOP").val().length > 0 && !$("#txtTelOP").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|         \.]?){2})?)?)$/)){
+                                $("#txtTelOP").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtTelOP").removeAttr("style");
+                            }
+
+                            if($("#txtEmailOP").val().length > 0 && !$("#txtEmailOP").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                                $("#txtEmailOP").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                 $("#txtEmailOP").removeAttr("style");
+                            }
+
+                            if($("#txtEmailOP").val().length > 0 && !$("#txtEmailOP").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                               Swal.showValidationMessage("El correo electrónico es incorrecto");
+                            }
+                            if($("#txtTelOP").val().length > 0 && !$("#txtTelOP").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|         \.]?){2})?)?)$/)){
+                                Swal.showValidationMessage("El teléfono es incorrecto");
+                            }
+                            if(!$("#txtEmail").val().match(/^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/)){
+                                Swal.showValidationMessage("El correo electrónico es incorrecto");
+                            }
+                            if(!$("#txtTelefono").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/)){
+                                Swal.showValidationMessage("El teléfono es incorrecto");
+                            }
+                            if($("#slcCliente").val() === null || $("#txtNombre").val().length === 0 || $("#txtDireccion").val().length === 0 || $("#txtContacto").val().length === 0 || $("#txtTelefono").val().length === 0 || $("#txtEmail").val().length === 0 || coordinates.lat === ""){
+                                Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                            }
+                        }
+                    }).then( result => { 
+                        if(result.value){
+                            $.ajax({
+                                url: '@Url.Action("Edit","Ubicaciones")',
+                                method: "POST",
+                                data: {
+                                    __RequestVerificationToken: token,
+                                    id: element.id,
+                                    ubicacion:{
+                                        Id:element.id,
+                                        Nombre: $("#txtNombre").val(),
+                                        Direccion: $("#txtDireccion").val(),
+                                        Distancia: $("#numRango").val(),
+                                        Contacto: $("#txtContacto").val(),
+                                        ContactoTelefono: $("#txtTelefono").val(),
+                                        ContactoEmail: $("#txtEmail").val(),
+                                        Latitude: coordinates.lat,
+                                        Longitude:coordinates.long,
+                                        ContactoOpcional: $("#txtOpcional").val(),
+                                        ContactoOpcionalTelefono: $("#txtTelOP").val(),
+                                        ContactoOpcionalEmail: $("#txtEmailOP").val(),
+                                        Estatus: true,
+                                        ClienteId: $("#slcCliente").val()
+                                    }
+                                },
+                                async: true,
+                                dataType: "json",
+                                success: function (res){
+                                    if(res.success){
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Éxito!',
+                                            confirmButtonColor: "#67E7CF",
+                                            confirmButtonText:"Aceptar",
+                                            text: `La ubicación ha sido modificada`,
+                                            onClose: ()=>{
+                                                location.reload(true);
+                                            }
+                                        }).then((result) => {
+                                            if (result.value) {
+                                                location.reload(true);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                        else{
+                            Swal.close();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    const btnDelete = element => {
+        const token = $("[name='__RequestVerificationToken']").val();
+        Swal.fire({
+            icon: 'error',
+            title: `${element.name} se eliminará`,
+            text: `¿Seguro que deseas eliminarlo?`,
+            reverseButtons: true,
+            showCancelButton: true,
+            confirmButtonText:"Si, Eliminar",
+            cancelButtonText:"No, Cancelar",
+            confirmButtonColor:"#E74C3C",
+            cancelButtonColor: "#67E7CF",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>'
+        }).then( result => {
+            if(result.value){
+                $.ajax({
+                    url: '@Url.Action("Delete","Ubicaciones")',
+                    method: "POST",
+                    data: {
+                        __RequestVerificationToken: token,
+                        id: element.id
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        if(res){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `La ubicación ${element.name} ha sido eliminada`,
+                                onClose: ()=>{
+                                    location.reload(true);
+                                }
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.reload(true);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+    $('#tableIndexUbicaciones').on('click-row.bs.table', (row, element, field) => {
+        Swal.fire({
+            title: `${element.client}`,
+            showConfirmButton:false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-row margTop40">
+                    <div class="form-group col">
+                        <a onclick="btnDetails({'id':'${element.id}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Detalles" data-original-title="Tooltip on bottom"><i class="fas fa-search"></i></a>
+                        <label class="d-block margTop5px">Detalles</label>
+                    </div>
+                    <div class="form-group col">
+                        <a onclick="btnEdit({'id':'${element.id}', 'name':'${element.client}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a>
+                        <label class="d-block margTop5px">Editar</label>
+                    </div>
+                    @if (!User.IsInRole("Ventas")){
+                    <div class="form-group col">
+                        <a onclick="btnDelete({'id':'${element.id}', 'name':'${element.client}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Eliminar" data-original-title="Tooltip on bottom"><i class="fas fa-trash"></i></a>
+                        <label class="d-block margTop5px">Eliminar</label>
+                    </div>
+                    }
+                </div>
+            `
+        });
+    });
+</script>
+}

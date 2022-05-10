@@ -1,0 +1,459 @@
+﻿@model IEnumerable<siges.Models.Cliente>
+
+@{
+    ViewData["Title"] = "Clientes";
+}
+@Html.AntiForgeryToken()
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Clientes</h2>
+        </div>
+            <div class="col align-self-center text-right">
+                <a onclick="btnAdd()" class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Agregar" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a>
+            </div>
+    </div>
+    <div class="row">
+        <div class="col margBott4em">
+                <table id="tableIndexClientes" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true"  data-sort-name="client">
+                <thead>
+                    <tr>
+                        <th data-visible="false" data-field="id"></th>
+                        <th data-sortable="true" data-field="client">@Html.DisplayNameFor(model => model.RazonSocial)</th>
+                        <th data-sortable="true">@Html.DisplayNameFor(model => model.RFC)</th>
+                        <th data-sortable="true">@Html.DisplayNameFor(model => model.Telefono)</th>
+                        <th class="mobileHidden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                        <td>@Html.DisplayFor(modelItem => item.RazonSocial)</td>
+                        <td>@Html.DisplayFor(modelItem => item.RFC)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Telefono)</td>
+                        <td class="mobileHidden">
+                            <a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Acciones" data-original-title="Tooltip on bottom"><i class="fab fa-elementor"></i></a>
+                        </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        const btnAdd = () => {
+            const token = $("[name='__RequestVerificationToken']").val();
+            Swal.fire({
+                title: "Nuevo Cliente",
+                confirmButtonColor: "#67E7CF",
+                confirmButtonText:"Guardar",
+                cancelButtonText:"Cancelar",
+                reverseButtons: true,
+                showCancelButton: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showCloseButton: true,
+                closeButtonHtml: '<i class="fas fa-times"></i>',
+                html:`
+                    <div class="form-group text-left">
+                        <label class="control-label">Razón Social *</label>
+                        <input id="txtRazonSocial" type="text" class="form-control" maxlength="50" />
+                    </div>
+                    <div class="form-group text-left">
+                        <label class="control-label">RFC *</label>
+                        <input id="txtRFC" type="text" class="form-control" maxlength="13" />
+                    </div>
+                    <div class="form-group text-left">
+                        <label class="control-label">Teléfono</label>
+                        <input id="txtTelefono" type="text" class="form-control" maxlength="10" placeholder="Ej: 5556058941"/>
+                    </div>
+                    <div class="form-group text-left">
+                        <label class="control-label">Campo Opcional</label>
+                        <input id="txtOp1" type="text" class="form-control" maxlength="100" />
+                    </div>
+                    <div class="form-group text-left">
+                        <label class="control-label">Campo Opcional</label>
+                        <input id="txtOp2" type="text" class="form-control" maxlength="100" />
+                    </div>
+                    <div class="form-group text-right">
+                        <small>* Campos obligatorios</small>
+                    </div>
+                `,
+                onOpen: () => {
+                    $("#txtTelefono").keypress(evt => {
+                        if(evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                            evt.preventDefault();
+                        }
+                    });
+                    $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();');
+                },
+                preConfirm: () =>{
+                    if($("#txtRazonSocial").val().length === 0){
+                        $("#txtRazonSocial").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                    }
+                    else{
+                        $("#txtRazonSocial").removeAttr("style");
+                    }
+
+                    if($("#txtRFC").val().length === 0){
+                        $("#txtRFC").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;")
+                    }
+                    else if(!$("#txtRFC").val().match(/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/)){
+                        $("#txtRFC").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                    }
+                    else{
+                        $("#txtRFC").removeAttr("style");
+                    }
+
+                    if($("#txtTelefono").val().length > 0 && !$("#txtTelefono").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/)){
+                        $("#txtTelefono").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                    }
+                    else{
+                         $("#txtTelefono").removeAttr("style");
+                    }
+
+                    if($("#txtTelefono").val().length > 0 && !$("#txtTelefono").val().match(/^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/)){
+                        Swal.showValidationMessage("El teléfono es incorrecto");
+                    }
+                    if(!$("#txtRFC").val().match(/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/)){
+                        Swal.showValidationMessage("El RFC es incorrecto, ingresar un RFC correcto");
+                    }
+                    if($("#txtRazonSocial").val().length === 0 || $("#txtRFC").val().length === 0){
+                        Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                    }
+                }
+            }).then(result => {
+                dataCompleta1 = {
+                    __RequestVerificationToken: token,
+                    cliente: {
+                        RazonSocial: $("#txtRazonSocial").val(),
+                        RFC:$("#txtRFC").val(),
+                        Telefono: $("#txtTelefono").val(),
+                        Opcional1: $("#txtOp1").val(),
+                        Opcional2: $("#txtOp2").val(),
+                        Estatus: true
+                    }
+                }
+                if(result.value){
+                    $.ajax({
+                        url: '@Url.Action("IfClienteExist","Rest")',
+                        method: "GET",
+                        data: {
+                            rfc: $("#txtRFC").val()
+                        },
+                        async: true,
+                        dataType: "json",
+                        success: res => {
+                            if(res){
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: '¡Error!',
+                                    confirmButtonColor: "#67E7CF",
+                                    confirmButtonText:"Aceptar",
+                                    text: `El cliente ya existe`
+                                });
+                            }
+                            else{
+                                $.ajax({
+                                    url: '@Url.Action("Create","Clientes")',
+                                    method: "POST",
+                                    data: dataCompleta1,
+                                    async: true,
+                                    dataType: "json",
+                                    success: res => {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Éxito!',
+                                            confirmButtonColor: "#67E7CF",
+                                            confirmButtonText:"Aceptar",
+                                            text: `El cliente ${res.data.razonSocial} se registro con éxito`,
+                                            onClose: ()=>{
+                                                location.reload(true);
+                                            }
+                                        }).then( result  => {
+                                            if (result.value) {
+                                                location.reload(true);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+                else{
+                    Swal.close();
+                }
+            });
+        }
+
+        const  btnDetails = element => {
+            $.ajax({
+                url: '@Url.Action("Details","Clientes")',
+                method: "GET",
+                data: {
+                    id: element.id
+                },
+                async: true,
+                dataType: "json",
+                success: data => {
+                    if(data.success){
+                        Swal.fire({
+                            title:"Detalles", 
+                            confirmButtonColor: "#67E7CF",
+                            confirmButtonText:"Aceptar",
+                            html:`
+                                <div class="form-group text-left">
+                                    <label class="control-label">Razón Social</label>
+                                    <input type="text" class="form-control" value="${data.data.razonSocial}" readonly/>
+                                </div>
+                                <div class="form-group text-left">
+                                    <label class="control-label">RFC</label>
+                                    <input type="text" class="form-control" value="${data.data.rfc}" readonly/>
+                                </div>
+                                <div class="form-group text-left">
+                                    <label class="control-label">Teléfono</label>
+                                    <input type="text" class="form-control" value="${(data.data.telefono===null)?"":data.data.telefono}" readonly/>
+                                </div>
+                                <div class="form-group text-left">
+                                    <label class="control-label">Campo Opcional</label>
+                                    <input type="text" class="form-control" value="${(data.data.opcional1 === null)?"":data.data.opcional1}" readonly/>
+                                </div>
+                                <div class="form-group text-left">
+                                    <label class="control-label">Campo Opcional</label>
+                                    <input type="text" class="form-control" value="${(data.data.opcional2 === null)?"":data.data.opcional2}" readonly/>
+                                </div>
+                            `
+                        });
+                    }
+                }
+            });
+        }
+
+        const btnEdit = element => {
+            const token = $("[name='__RequestVerificationToken']").val();
+            $.ajax({
+                url: '@Url.Action("Details","Clientes")',
+                method: "GET",
+                data: {
+                    id: element.id
+                },
+                async: true,
+                dataType: "json",
+                success: data => {
+                    if(data.success){
+                        Swal.fire({
+                            title:"Editar Cliente",
+                            confirmButtonColor: "#67E7CF",
+                            confirmButtonText:"Guardar",
+                            cancelButtonText:"Cancelar",
+                            reverseButtons: true,
+                            showCancelButton: true,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            showCloseButton: true,
+                            closeButtonHtml: '<i class="fas fa-times"></i>',
+                            html:`
+                                <div class="form-group text-left">
+                                    <label class="control-label">Razón Social *</label>
+                                    <input id="txtRazonSocial" type="text" class="form-control" value="${data.data.razonSocial}" maxlength="50" />
+                                </div>
+                                <div class="form-group text-left">
+                                    <label class="control-label">RFC *</label>
+                                    <input id="txtRFC" type="text" class="form-control" maxlength="13" value="${data.data.rfc}" />
+                                </div>
+                                <div class="form-group text-left">
+                                    <label class="control-label">Teléfono</label>
+                                    <input id="txtTelefono" type="text" class="form-control" maxlength="10" value="${(data.data.telefono===null)?"":data.data.telefono}" />
+                                </div>
+                                <div class="form-group text-left">
+                                    <label class="control-label">Campo Opcional</label>
+                                    <input id="txtOp1" type="text" class="form-control" value="${(data.data.opcional1 === null)?"":data.data.opcional1}" maxlength="100" />
+                                </div>
+                                <div class="form-group text-left">
+                                    <label class="control-label">Campo Opcional</label>
+                                    <input id="txtOp2" type="text" class="form-control" value="${(data.data.opcional2 === null)?"":data.data.opcional2}" maxlength="100" />
+                                </div>
+                                <div class="form-group text-right">
+                                    <small>* Campos obligatorios</small>
+                                </div>
+                            `,
+                            onOpen: () =>{
+                                $("#txtTelefono").keypress( evt => {
+                                    if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
+                                        evt.preventDefault();
+                                    }
+                                });
+                                $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();');
+                            },
+                            preConfirm: () =>{
+                                if($("#txtRazonSocial").val().length === 0){
+                                    $("#txtRazonSocial").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;")
+                                }
+                                else{
+                                    $("#txtRazonSocial").removeAttr("style")
+                                }
+
+                                if($("#txtRFC").val().length === 0){
+                                    $("#txtRFC").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;")
+                                }
+                                else if(!$("#txtRFC").val().match(/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/)){
+                                    $("#txtRFC").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;")
+                                }
+                                else{
+                                    $("#txtRFC").removeAttr("style")
+                                }
+
+                                if($("#txtTelefono").val().length > 0 && $("#txtTelefono").val().length < 10){
+                                    $("#txtTelefono").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                                }
+                                else{
+                                    $("#txtTelefono").removeAttr("style")
+                                }
+
+                                if($("#txtTelefono").val().length > 0 && $("#txtTelefono").val().length < 10){
+                                    Swal.showValidationMessage("El teléfono es incorrecto");
+                                }
+                                if(!$("#txtRFC").val().match(/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/)){
+                                    Swal.showValidationMessage("El RFC es incorrecto, ingresar un RFC correcto");
+                                }
+                                if($("#txtRazonSocial").val().length === 0 || $("#txtRFC").val().length === 0){
+                                    Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                                }
+                            }
+                        }).then( result => {
+                            if(result.value){
+                                $.ajax({
+                                    url: '@Url.Action("Edit","Clientes")',
+                                    method: "POST",
+                                    data: {
+                                        __RequestVerificationToken: token,
+                                        id: element.id,
+                                        cliente: {
+                                            Id: element.id,
+                                            RazonSocial: $("#txtRazonSocial").val(),
+                                            RFC: $("#txtRFC").val(),
+                                            Telefono: $("#txtTelefono").val(),
+                                            Opcional1: $("#txtOp1").val(),
+                                            Opcional2: $("#txtOp2").val(),
+                                            Estatus: true
+                                        }
+                                    },
+                                    async: true,
+                                    dataType: "json",
+                                    success: res => {
+                                        if(res){
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: '¡Éxito!',
+                                                confirmButtonColor: "#67E7CF",
+                                                confirmButtonText:"Aceptar",
+                                                text: `El cliente ${element.name} ha sido modificado`,
+                                                onClose: () => { location.reload(true); }
+                                            }).then(result => {
+                                                if (result.value){
+                                                    location.reload(true);
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                            else{
+                                Swal.close();
+                            }
+                        });
+                    }
+                }
+            });    
+        }
+
+        const btnDelete = element =>{
+            const token = $("[name='__RequestVerificationToken']").val();
+            Swal.fire({
+                icon: 'error',
+                title: `${element.name} se eliminará`,
+                text: ` Al confirmar, eliminarás los contactos asociados a este cliente \n ¿Seguro que deseas eliminarlo? `,
+                reverseButtons: true,
+                showCancelButton: true,
+                confirmButtonText:"Si, Eliminar",
+                cancelButtonText:"No, Cancelar",
+                confirmButtonColor:"#E74C3C",
+                cancelButtonColor: "#67E7CF",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showCloseButton: true,
+                closeButtonHtml: '<i class="fas fa-times"></i>'
+            }).then( result => {
+                if(result.value){
+                    $.ajax({
+                        url: '@Url.Action("Delete","Clientes")',
+                        method: "POST",
+                        data: {
+                            __RequestVerificationToken: token,
+                            id: element.id
+                        },
+                        async: true,
+                        dataType: "json",
+                        success: res => {
+                            if(res){
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '¡Éxito!',
+                                    confirmButtonColor: "#67E7CF",
+                                    confirmButtonText:"Aceptar",
+                                    text: `El cliente ${element.name} ha sido eliminado`,
+                                    onClose: () => { location.reload(true); }
+                                }).then(result => {
+                                    if (result.value) {
+                                        location.reload(true);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+                else{
+                    Swal.close();
+                }
+            });
+        }
+
+        $('#tableIndexClientes').on('click-row.bs.table', (row, element, field) => {
+            Swal.fire({
+                title: `${element.client}`,
+                showConfirmButton:false,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showCloseButton: true,
+                closeButtonHtml: '<i class="fas fa-times"></i>',
+                html:`
+                    <div class="form-row margTop40">
+                        <div class="form-group col">
+                            <a onclick="btnDetails({'id':'${element.id}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Detalles" data-original-title="Tooltip on bottom"><i class="fas fa-search"></i></a>
+                            <label class="d-block margTop5px">Detalles</label>
+                        </div>
+                        <div class="form-group col">
+                            <a onclick="btnEdit({'id':'${element.id}', 'name':'${element.client}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a>
+                            <label class="d-block margTop5px">Editar</label>
+                        </div>
+                        <div class="form-group col">
+                            <a href="@Url.Action("Details", "ContactoCliente")?id=${element.id}" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Contactos" data-original-title="Tooltip on bottom"><i class="fas fa-address-book"></i></a>
+                            <label class="d-block margTop5px">Contactos</label>
+                        </div>
+                        @if (!User.IsInRole("Ventas")){
+                        <div class="form-group col">
+                            <a onclick="btnDelete({'id':'${element.id}', 'name':'${element.client}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Eliminar" data-original-title="Tooltip on bottom"><i class="fas fa-trash"></i></a>
+                            <label class="d-block margTop5px">Eliminar</label>
+                        </div>
+                        }
+                    </div>
+                `
+            });
+        });
+    </script>
+}

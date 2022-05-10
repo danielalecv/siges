@@ -1,0 +1,146 @@
+@using siges.Areas.Identity.Data;
+@using System.Collections.Generic;
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<RoatechIdentityUser> UserManager
+@model List<RoatechIdentityUser>;
+
+@{
+    ViewData["Title"] = "Administración Clientes";
+    List<Cliente> clientes = ViewData["clientes"] as List<Cliente>;
+    Dictionary <RoatechIdentityUser, Cliente> clientesIdentities = ViewData["clientesIdentities"] as Dictionary <RoatechIdentityUser, Cliente>;
+ }
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Administración Cuentas de Clientes</h2>
+        </div>
+        <div class="col align-self-center text-right">
+            @*<a asp-area="Identity" asp-page="/Account/Register" class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Agregar" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a>*@
+        </div>
+    </div>
+    <div class="row">
+        <table id="tableAdminClients" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="name">
+            <thead>
+                <tr>
+                    <th data-sortable="true" data-field="name">Nombre</th>
+                    <th data-sortable="true" data-field="cliente">Cliente asociado</th>
+                    <th data-sortable="true" data-field="email">Correo Electr&oacute;nico</th>
+                    <th>N&uacute;mero Telef&oacute;nico</th>
+                    <th data-sortable="true">¿Confirmado?</th>
+                    <th data-sortable="true">¿Bloqueado?</th>
+                    <th class="mobileHidden">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+              @foreach (var item in Model) {
+              var c = "";
+              try{
+              c = clientesIdentities[item].RazonSocial;
+              } catch {
+              c = "-- Sin asignación --";
+              }
+              var nombre = item.per.Nombre + " " + item.per.Paterno + " " + item.per.Materno;
+              var resp1 = UserManager.IsEmailConfirmedAsync(item).Result ? "Si" : "No";
+              var resp2 = UserManager.IsLockedOutAsync (item).Result ? "Si" : "No";
+              <tr>
+                <td>@Html.DisplayFor(modelItem => nombre)</td>
+                <td>@Html.DisplayFor(modelItem => c)</td>
+                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>@Html.DisplayFor(modelItem => item.per.Telefono)</td>
+                <td>@Html.DisplayFor(modelItem => resp1)</td>
+                <td>@Html.DisplayFor(modelItem => resp2)</td>
+                <td class="mobileHidden">
+                    <a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Acciones" data-original-title="Tooltip on bottom"><i class="fab fa-elementor"></i></a>
+                </td>
+              </tr>
+              }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts{
+<script>
+  $('#tableAdminClients').on('click-row.bs.table', (row, element, field) => {
+    const token = $("[name='__RequestVerificationToken']").val();
+    const listClientes = @Html.Raw(Json.Serialize(clientes));
+    Swal.fire({
+      title: `${element.name}`,
+      confirmButtonColor: "#67E7CF",
+      confirmButtonText:"Guardar",
+      cancelButtonText:"Cancelar",
+      reverseButtons: true,
+      showCancelButton: true,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showCloseButton: true,
+      closeButtonHtml: '<i class="fas fa-times"></i>',
+      html:`
+        <div class="form-group text-left">
+          <label class="control-label" for="slcClienteAsc">Cliente Asociado *</label>
+          <select class="form-control" id="slcClienteAsc" >
+              <option value="null" selected disabled>Selecciona un Cliente Asociado</option>
+          </select>   
+        </div>
+        <div class="form-group text-right">
+          <small>* Campos obligatorios</small>
+        </div>
+      `,
+      onRender: ()=>{
+        for (const listCliente of listClientes){
+          $("#slcClienteAsc").append(`<option value="${listCliente.id}">${listCliente.razonSocial}</option>`);
+        }
+      },
+      preConfirm: () =>{
+        if($("#slcClienteAsc").val() === null){
+          $("#slcClienteAsc").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+        }
+        else{
+          $("#slcClienteAsc").removeAttr("style");
+        }
+        if($("#slcClienteAsc").val() === null){
+          Swal.showValidationMessage("Algún campo obligatorio está vacío");
+        }
+      }
+    }).then(result => {
+      if(result.value){
+        $.ajax({
+          url: '@Url.Action("CISave","Admin")',
+          method: "POST",
+          data: {
+            __RequestVerificationToken: token,
+            cid:{
+              email: element.email,
+              clienteId: $("#slcClienteAsc").val()
+            }
+          },
+          async: true,
+          dataType: "json",
+          success: function (res){
+            if(res.success){
+              Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                confirmButtonColor: "#67E7CF",
+                confirmButtonText:"Aceptar",
+                text: `${element.name} se modificó`,
+                onClose: ()=>{
+                  location.reload(true);
+                }
+              }).then((result) => {
+                if (result.value) {
+                  location.reload(true);
+                }
+              });
+            }
+          }
+        });
+      }
+      else{
+        Swal.close();
+      }
+    });
+  });
+</script>
+}

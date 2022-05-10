@@ -1,0 +1,652 @@
+@model IEnumerable<siges.Models.Insumo>
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Insumos";
+    bool paquete = Boolean.Parse(((bool)ViewData["siPaquete"]).ToString());
+}
+
+@Html.AntiForgeryToken()
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Insumos</h2>
+        </div>
+        <div class="col align-self-center text-right">
+            @if(paquete.ToString() == "True") {
+                <a class="btn bg-yellow margR-30px float" href='@Url.Action("Paquetes", "Insumos")' data-toggle="tooltip" data-placement="bottom" title="Paquetes" data-original-title="Tooltip on bottom"><i class="fas fa-archive"></i></a>
+            } 
+            <a class="btn bg-purple margR-30px float" onclick="btnMassiveLoad()" data-toggle="tooltip" data-placement="bottom" title="Carga Masiva" data-original-title="Tooltip on bottom"><i class="fas fa-file-upload"></i></a>
+            <a onclick="btnAdd()" class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Agregar" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col margBott4em">
+                <table id="tableIndexInsumos" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5"  data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="supplie">
+                <thead>
+                    <tr>
+                        <th data-visible="false" data-field="id"></th>
+                        <th data-sortable="true" data-field="supplie">Insumo</th>
+                        <th data-sortable="true">@Html.DisplayNameFor(model => model.Clave)</th>
+                        <th data-sortable="true">@Html.DisplayNameFor(model => model.Marca)</th>
+                        <th data-sortable="true">@Html.DisplayNameFor(model => model.Precio)</th>
+                        <th class="mobileHidden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                    var precio = item.Precio.ToString("c",CultureInfo.CreateSpecificCulture("en-US"));
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Clave)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Marca)</td>
+                            <td>@Html.DisplayFor(modelItem => precio)</td>
+                            <td class="mobileHidden">
+                                <a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Acciones" data-original-title="Tooltip on bottom"><i class="fab fa-elementor"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+<script src="~/js/ReadExcel/read-excel-file.min.js"></script>
+<script>
+    const btnAdd = () => {
+        const token = $("[name='__RequestVerificationToken']").val();
+        const marcas = @Html.Raw(Json.Serialize(ViewData["Marcas"]));
+        const tipos = @Html.Raw(Json.Serialize(ViewData["Tipos"]));
+        Swal.fire({
+            title: "Nuevo Insumo",
+            confirmButtonColor: "#67E7CF",
+            confirmButtonText:"Guardar",
+            cancelButtonText:"Cancelar",
+            reverseButtons: true,
+            showCancelButton: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-group text-left">
+                    <label class="control-label">Insumo *</label>
+                    <input id="txtDescripcion" type="text" class="form-control"  />
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Clave *</label>
+                    <input id="txtClave" type="text" class="form-control"   />
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label" for="slcMarca">Marca *</label>
+                    <select class="form-control" id="slcMarca" >
+                        <option value="null" selected disabled>Selecciona Marca</option>
+                    </select>
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label" for="slcTipo">Tipo de Producto *</label>
+                    <select class="form-control" id="slcTipo" >
+                        <option value="null" selected disabled>Selecciona Tipo</option>
+                    </select>
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Precio</label>
+                    <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                            </div>
+                            <input id="txtPrecio" type="text" class="form-control"  />
+                        </div>
+                    </div>               
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Campo Opcional</label>
+                    <input id="txtOp1" type="text" class="form-control"  />
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Campo Opcional</label>
+                    <input id="txtOp2" type="text" class="form-control"  />
+                </div>
+                <div class="form-group text-right">
+                    <small>* Campos obligatorios</small>
+                </div>
+            `,
+            onOpen: () => {
+                $("#txtPrecio").keypress(evt => {
+                    if (evt.which != 8 && evt.which != 0 && evt.which != 44 && evt.which != 46 && evt.which < 48 || evt.which > 57 ){
+                        evt.preventDefault();
+                    }
+                });
+                $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();');
+            },
+            onRender: ()=>{
+                for (const marca of marcas) {
+                    $("#slcMarca").append(`<option value="${marca.descripcion}">${marca.descripcion}</option>`);      
+                }
+                for (const tipo of tipos) {
+                    $("#slcTipo").append(`<option value="${tipo.descripcion}">${tipo.descripcion}</option>`);      
+                }
+            },
+            preConfirm: () =>{
+                if($("#txtDescripcion").val().length === 0){
+                    $("#txtDescripcion").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtDescripcion").removeAttr("style");
+                }
+                if($("#txtClave").val().length === 0){
+                    $("#txtClave").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtClave").removeAttr("style");
+                }
+                if($("#slcMarca").val() === null){
+                    $("#slcMarca").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#slcMarca").removeAttr("style");
+                }
+                if($("#slcTipo").val() === null){
+                    $("#slcTipo").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#slcTipo").removeAttr("style");
+                }
+
+                if($("#txtDescripcion").val().length === 0 || $("#txtClave").val().length === 0 || $("#slcMarca").val() === null || $("#slcTipo").val() === null){
+                    Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                }
+            }
+        }).then(result =>{
+            if(result.value){
+                $.ajax({
+                    url: '@Url.Action("IfInsumoExist","Rest")',
+                    method: "GET",
+                    data: {
+                        clave: $("#txtClave").val()
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        if(res){
+                            Swal.fire({
+                                icon: 'error',
+                                title: '¡Error!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `El Insumo ya existe`
+                            });
+                        }
+                        else{
+                            $.ajax({
+                                url: '@Url.Action("Create","Insumos")',
+                                method: "POST",
+                                data: {
+                                    __RequestVerificationToken: token,
+                                    insumo:{
+                                        Descripcion: $("#txtDescripcion").val(),
+                                        Clave: $("#txtClave").val(),
+                                        Marca: $("#slcMarca").val(),
+                                        Tipo: $("#slcTipo").val(),
+                                        Precio: ($("#txtPrecio").val().length === 0)?"0.00":$("#txtPrecio").val().replace(',', '.'),
+                                        Estatus: true,
+                                        Opcional1: $("#txtOp1").val(),
+                                        Opcional2: $("#txtOp2").val()
+                                    }
+                                },
+                                async: true,
+                                dataType: "json",
+                                success: function (res){
+                                    if(res.success){
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Éxito!',
+                                            confirmButtonColor: "#67E7CF",
+                                            confirmButtonText:"Aceptar",
+                                            text: `El Insumo se registró con éxito`,
+                                            onClose: ()=>{
+                                                location.reload(true);
+                                            }
+                                        }).then(result => {
+                                            if (result.value) {
+                                                location.reload(true);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+    const btnDetails = element => {
+        $.ajax({
+            url: '@Url.Action("Details","Insumos")',
+            method: "GET",
+            data: {
+                id: element.id
+            },
+            async: true,
+            dataType: "json",
+            success: function (data){
+                if(data.success){
+                    Swal.fire({
+                        title:"Detalles",
+                        confirmButtonColor: "#67E7CF",
+                        confirmButtonText:"Aceptar",
+                        html:`
+                            <div class="form-group text-left">
+                                <label class="control-label">Insumo</label>
+                                <input type="text" class="form-control" value="${(data.data.descripcion===null)?"":data.data.descripcion}" readonly/>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Clave</label>
+                                <input type="text" class="form-control" value="${(data.data.clave===null)?"":data.data.clave}" readonly />
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Marca</label>
+                                <input type="text" class="form-control" value="${(data.data.marca===null)?"":data.data.marca}" readonly/>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Tipo</label>
+                                <input type="text" class="form-control" value="${(data.data.tipo===null)?"":data.data.tipo}" readonly/>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Precio</label>
+                                <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" value="${(data.data.precio===null)?"":data.data.precio}" readonly/>
+                                    </div>
+                                </div>               
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Campo Opcional</label>
+                                <input type="text" class="form-control" value="${(data.data.opcional1 === null)?"":data.data.opcional1}" readonly/>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Campo Opcional</label>
+                                <input type="text" class="form-control" value="${(data.data.opcional2 === null)?"":data.data.opcional2}" readonly/>
+                            </div>
+                        `
+                    });
+                }
+            }
+        });
+    }
+
+    const btnEdit = element => {
+        const token = $("[name='__RequestVerificationToken']").val();
+        const marcas = @Html.Raw(Json.Serialize(ViewData["Marcas"]));
+        const tipos = @Html.Raw(Json.Serialize(ViewData["Tipos"]));
+        $.ajax({
+            url: '@Url.Action("Details","Insumos")',
+            method: "GET",
+            data: {
+                id: element.id
+            },
+            async: true,
+            dataType: "json",
+            success: function (data){
+                if(data.success){
+                    Swal.fire({
+                        title:"Editar Insumo",
+                        confirmButtonColor: "#67E7CF",
+                        confirmButtonText:"Guardar",
+                        cancelButtonText:"Cancelar",
+                        reverseButtons: true,
+                        showCancelButton: true,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showCloseButton: true,
+                        closeButtonHtml: '<i class="fas fa-times"></i>',
+                        html:`
+                            <div class="form-group text-left">
+                                <label class="control-label">Insumo *</label>
+                                <input id="txtDescripcion" type="text" class="form-control" value="${(data.data.descripcion===null)?"":data.data.descripcion}" />
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Clave *</label>
+                                <input id="txtClave" type="text" class="form-control" value="${(data.data.clave===null)?"":data.data.clave}"  />
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label" for="slcMarca">Marca *</label>
+                                <select class="form-control" id="slcMarca" >
+                                    <option value="null" selected disabled>Selecciona Marca</option>
+                                </select>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label" for="slcTipo">Tipo de Producto *</label>
+                                <select class="form-control" id="slcTipo" >
+                                    <option value="null" selected disabled>Selecciona Tipo</option>
+                                </select>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Precio</label>
+                                <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                        </div>
+                                        <input id="txtPrecio" type="text" class="form-control" value="${(data.data.precio===null)?"":data.data.precio}" />
+                                    </div>
+                                </div>               
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Campo Opcional</label>
+                                <input id="txtOp1" type="text" class="form-control" value="${(data.data.opcional1 === null)?"":data.data.opcional1}" />
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="control-label">Campo Opcional</label>
+                                <input id="txtOp2" type="text" class="form-control" value="${(data.data.opcional2 === null)?"":data.data.opcional2}" />
+                            </div>
+                        `,
+                        onOpen: () => {
+                            $("#txtPrecio").keypress((evt) => {
+                                if (evt.which != 8 && evt.which != 0 && evt.which != 44 && evt.which != 46 && evt.which < 48 || evt.which > 57 ){
+                                    evt.preventDefault();
+                                }
+                            });
+                            $("input[type='text']").attr("onkeyup",'this.value = this.value.toUpperCase();');
+                        },
+                        onRender: ()=>{
+                            for (const marca of marcas) {
+                                $("#slcMarca").append(`<option value="${marca.descripcion}" ${(data.data.marca === marca.descripcion)?"selected":""}>${marca.descripcion}</option>`);      
+                            }
+                            for (const tipo of tipos) {
+                                $("#slcTipo").append(`<option value="${tipo.descripcion}" ${(data.data.tipo === tipo.descripcion)?"selected":""}>${tipo.descripcion}</option>`);      
+                            }
+                        },
+                        preConfirm: () =>{
+                            if($("#txtDescripcion").val().length === 0){
+                                $("#txtDescripcion").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtDescripcion").removeAttr("style");
+                            }
+                            if($("#txtClave").val().length === 0){
+                                $("#txtClave").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#txtClave").removeAttr("style");
+                            }
+                            if($("#slcMarca").val() === null){
+                                $("#slcMarca").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#slcMarca").removeAttr("style");
+                            }
+                            if($("#slcTipo").val() === null){
+                                $("#slcTipo").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                            }
+                            else{
+                                $("#slcTipo").removeAttr("style");
+                            }
+            
+                            if($("#txtDescripcion").val().length === 0 || $("#txtClave").val().length === 0 || $("#slcMarca").val() === null || $("#slcTipo").val() === null){
+                                Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                            }
+                        }
+                    }).then(result => {
+                        if(result.value){
+                            $.ajax({
+                                url: '@Url.Action("Edit","Insumos")',
+                                method: "POST",
+                                data: {
+                                    __RequestVerificationToken: token,
+                                    id: element.id,
+                                    insumo:{
+                                        Id:element.id,
+                                        Descripcion: $("#txtDescripcion").val(),
+                                        Clave: $("#txtClave").val(),
+                                        Marca: $("#slcMarca").val(),
+                                        Tipo: $("#slcTipo").val(),
+                                        Precio: ($("#txtPrecio").val().length === 0)?"0.00":$("#txtPrecio").val().replace(',', '.'),
+                                        Estatus: true,
+                                        Opcional1: $("#txtOp1").val(),
+                                        Opcional2: $("#txtOp2").val()
+                                    }
+                                },
+                                async: true,
+                                dataType: "json",
+                                success: function (res){
+                                    if(res.success){
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Éxito!',
+                                            confirmButtonColor: "#67E7CF",
+                                            confirmButtonText:"Aceptar",
+                                            text: `El Insumo ${element.name} ha sido modificado`,
+                                            onClose: ()=>{
+                                                location.reload(true);
+                                            }
+                                        }).then(result => {
+                                            if (result.value) {
+                                                location.reload(true);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                        else{
+                            Swal.close();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    const btnDelete = element => { 
+        const token = $("[name='__RequestVerificationToken']").val();
+        Swal.fire({
+            icon: 'error',
+            title: `El Insumo ${element.name} se eliminará`,
+            text: `¿Seguro que deseas eliminarlo?`,
+            reverseButtons: true,
+            showCancelButton: true,
+            confirmButtonText:"Si, Eliminar",
+            cancelButtonText:"No, Cancelar",
+            confirmButtonColor:"#E74C3C",
+            cancelButtonColor: "#67E7CF",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>'
+        }).then(result=>{
+            if(result.value){
+                $.ajax({
+                    url: '@Url.Action("Delete","Insumos")',
+                    method: "POST",
+                    data: {
+                        __RequestVerificationToken: token,
+                        id: element.id
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        if(res.success){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `El Insumo ${element.name} ha sido eliminado`,
+                                onClose: ()=>{
+                                    location.reload(true);
+                                }
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.reload(true);
+                                }
+                            })
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+    const btnMassiveLoad = () =>{
+        Swal.fire({
+            title: 'Carga Masiva de Insumos',
+            showConfirmButton:false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-row margTop40">
+                    <div class="form-group col">
+                        <a href="@Url.Action("GetBulkLoaderTemplate","Admin")?tipo=INSUMOS" target="_blank" class="btn btn-purple float" data-toggle="tooltip" data-placement="bottom" title="Plantilla" data-original-title="Tooltip on bottom"><i class="fas fa-file-download"></i></a>
+                        <label class="d-block margTop5px">Descargar Plantilla</label>
+                    </div>
+                    <div class="form-group col">
+                        <a onclick="btnLoadFile()" class="btn btn-purple float" data-toggle="tooltip" data-placement="bottom" title="Cargar" data-original-title="Tooltip on bottom"><i class="fas fa-file-upload"></i></a>
+                        <label class="d-block margTop5px">Cargar Archivo</label>
+                    </div> 
+                </div>
+            `
+        });
+    }
+
+    const btnLoadFile = () => {
+        Swal.fire({
+            title: "Carga Masiva de Insumos",
+            confirmButtonColor: "#67E7CF",
+            confirmButtonText:"Aceptar",
+            cancelButtonText:"Cancelar",
+            reverseButtons: true,
+            showCancelButton: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-group text-center">
+                    <label class="control-label">
+                        Selecciona el archivo a cargar, preferentemente utiliza la plantilla que se proporciona.
+                        Los campos marcados con asterisco (*) son obligatorios.
+                    </label>
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Archivo *</label>
+                    <input id="iptFile" type="file" class="form-control-file" />
+                </div>
+                <div class="form-group text-right">
+                    <small>* Campos obligatorios</small>
+                </div>
+            `,
+            preConfirm: () => {
+                const VALID_EXT = ["xlsx", "xls", "csv"];
+                if($("#iptFile").get(0).files.length === 0){
+                    Swal.showValidationMessage("Se debe seleccionar un archivo");
+                }
+                else{
+                    const EXTEN = $("#iptFile").prop('files')[0].name.split('.');
+                    const VALID = VALID_EXT.includes(EXTEN[EXTEN.length - 1]);
+                    if(!VALID){
+                        Swal.showValidationMessage("El tipo de archivo no es valido");
+                    }
+                }
+            }
+        }).then(result=>{
+            if(result.value){
+                const FILE = $("#iptFile").prop('files')[0];
+                const schema = {
+                    'Descripcion*':{ prop:'Descripcion', type: String, required: true },
+                    'Clave*':{ prop:'Clave', type: String, required: true },
+                    'Marca*':{ prop:'Marca', type: String, required: true },
+                    'Tipo*':{ prop:'Tipo', type: String, required: true },
+                    'Precio':{ prop:'Precio', type: Number },
+                    'Opcional1':{ prop:'Opcional1', type: String },
+                    'Opcional2':{ prop:'Opcional2', type: String }
+                }
+                readXlsxFile( FILE, {schema} ).then(({rows, errors}) => {
+                    if(errors.length !== 0){
+                        Swal.fire({
+                            icon: 'error',
+                            title: '¡Error!',
+                            confirmButtonColor: "#67E7CF",
+                            confirmButtonText:"Aceptar",
+                            text: `El campo ${errors[0].column} es requerido`
+                        });
+                    }
+                    else{
+                        $.ajax({
+                            url: '@Url.Action("Upload","BulkUpload")',
+                            method: "POST",
+                            data: {
+                                body: JSON.stringify(rows)
+                            },
+                            async: true,
+                            dataType: "json",
+                            success: function (res){
+                                if(res.success){
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Éxito!',
+                                        confirmButtonColor: "#67E7CF",
+                                        confirmButtonText:"Aceptar",
+                                        text: `Los insumos se registrarón con éxito`,
+                                        onClose: ()=>{
+                                            location.reload(true);
+                                        }
+                                    }).then((result) => {
+                                        if (result.value) {
+                                            location.reload(true);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+    $('#tableIndexInsumos').on('click-row.bs.table', (row, element, field) => {
+        Swal.fire({
+            title: `${element.supplie}`,
+            showConfirmButton:false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-row margTop40">
+                    <div class="form-group col">
+                        <a onclick="btnDetails({'id':'${element.id}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Detalles" data-original-title="Tooltip on bottom"><i class="fas fa-search"></i></a>
+                        <label class="d-block margTop5px">Detalles</label>
+                    </div>
+                    <div class="form-group col">
+                        <a onclick="btnEdit({'id':'${element.id}', 'name':'${element.supplie}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Editar" data-original-title="Tooltip on bottom"><i class="fas fa-edit"></i></a>
+                        <label class="d-block margTop5px">Editar</label>
+                    </div>
+                    <div class="form-group col">
+                        <a onclick="btnDelete({'id':'${element.id}', 'name':'${element.supplie}'})" class="btn btn-success float" data-toggle="tooltip" data-placement="bottom" title="Eliminar" data-original-title="Tooltip on bottom"><i class="fas fa-trash"></i></a>
+                        <label class="d-block margTop5px">Eliminar</label>
+                    </div>
+                </div>
+            ` 
+        });
+    });
+</script>
+}

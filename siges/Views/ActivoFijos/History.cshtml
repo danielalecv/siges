@@ -1,0 +1,60 @@
+@using System
+@using System.Collections
+@using System.Globalization
+@model siges.Models.ActivoFijo
+
+@{
+  ViewData["Title"] = "Historial Activo Fijo";
+  List<OrdenActivoFijo> oAF = ViewData["ordenAF"] as List<OrdenActivoFijo>;
+}
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h2>Historial Activo Fijo/Producto</h2>
+    </div>
+    <div class="col align-self-center text-right">
+      <a class="btn bg-blue marg-Float float" href='@Url.Action("Index", "ActivoFijos")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col margBott4em">
+      <h1 class="display-6">@(oAF.Count > 0 ? CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(oAF[0].ActivoFijo.Descripcion.ToLower()) : "No existen movimientos para este producto")</h1>
+      <p class="lead">@(oAF.Count > 0 ? oAF[0].ActivoFijo.Tipo : "No. de Serie")</p>
+      <table id="tAFHistory" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="folio">
+        <thead>
+          <tr>
+            <th>Folio</th>
+            <th>Linea de Negocio</th>
+            <th>Observaciones</th>
+            <th>Servicio</th>
+            <th>Fecha inicio</th>
+            <th>Fecha fin</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if(oAF.Count > 0){
+            @foreach(OrdenActivoFijo oaf in oAF){
+              @if(oaf.OrdenServicio.Estatus == true){
+                <tr>
+                  <td>@oaf.OrdenServicio.Folio</td>
+                  <td>@oaf.OrdenServicio.LineaNegocio.Nombre</td>
+                  <td>@(String.IsNullOrEmpty(oaf.OrdenServicio.Observaciones) ? " " : CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(oaf.OrdenServicio.Observaciones.ToLower()))</td>
+                  <td>@(CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(oaf.OrdenServicio.Servicio.Nombre.ToLower()))</td>
+                  <td>@(((DateTime) (oaf.OrdenServicio.FechaInicio)).ToString("D", CultureInfo.CreateSpecificCulture("es-ES")))</td>
+                  <td>@(((DateTime) (oaf.OrdenServicio.FechaFin)).ToString("D", CultureInfo.CreateSpecificCulture("es-ES")))</td>
+                  <td>@(CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(oaf.OrdenServicio.EstatusServicio.ToLower()))</td>
+                </tr>
+              }
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

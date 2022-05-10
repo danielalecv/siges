@@ -1,0 +1,243 @@
+@model IEnumerable<siges.Models.Persona>
+@{
+    ViewData["Title"] = "FaceApi";
+    var FaceApi = (bool) ViewData["FaceApi"];
+    var NumMin = (int) ViewData["NumMin"];
+}
+@Html.AntiForgeryToken()
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>FaceApi</h2>
+        </div>
+        @if(FaceApi){
+        <div class="col align-self-center text-right">
+            <a onclick="btnAdd()" class="btn btn-success marg-Float float" data-toggle="tooltip" data-placement="bottom" title="Agregar" data-original-title="Tooltip on bottom"><i class="fas fa-plus"></i></a>
+        </div>
+        }
+    </div>
+    <hr/>
+    <div class="row">
+        @if(!FaceApi){
+        <div class="col margBott4em">
+            <h1>El servicio de FaceApi est&aacute; desactivado</h1>
+        </div>
+        }
+        else{
+        <div class="col margBott4em">
+            <table id="tbleTrainModel" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="name">
+                <thead>
+                    <tr>
+                        <th data-visible="false" data-field="FaceApiId"></th>
+                        <th data-visible="false" data-field="PersonaId"></th>
+                        <th>Fotograf&iacute;a</th>
+                        <th data-sortable="true" data-field="name">Nombre</th>
+                        <th>Rol de Sistema</th>
+                        <th data-align="center">Fotograf&iacute;as Cargadas</th>
+                        <th>Observaciones</th>
+                        <th class="mobileHidden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                        @if(item.FaceApiId != "SINFACEAPIID"){
+                        var nombre = item.Nombre +" "+ item.Paterno + " " + item.Materno;
+                        var imgSrc = Url.Content("~/img/staff_ad.png");
+                        if(item.Fotografia.Length != 0){
+                        var base64 = Convert.ToBase64String(item.Fotografia);
+                        imgSrc = String.Format("data:image/jpeg;base64,{0}",base64);
+                        }
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.FaceApiId)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                            <td><img src="@imgSrc" class="text-hide rounded" width="50" height="50" alt="@nombre"></td>
+                            <td>@Html.DisplayFor(modelItem => nombre)</td>
+                            <td>Operador</td>
+                            <td>@Html.DisplayFor(modelItem => item.FaceApiCount)/@NumMin</td>
+                            <td>@Html.Raw((item.FaceApiCount < @NumMin)?"Para garantizar certeza se deben cargar el número mínimo de fotografías":"Se tiene el número minimo de fotografías")</td>
+                            <td class="mobileHidden">
+                                <a class="btn btn-success float_Table" data-toggle="tooltip" data-placement="bottom" title="Cargar Foto" data-original-title="Tooltip on bottom"><i class="fas fa-camera"></i></a>
+                            </td>
+                        </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+    </div>
+</div>
+
+
+@section scripts{
+<script>
+    const btnAdd = () => {
+        const listPersons = @Html.Raw(Json.Serialize(Model));
+        const token = $("[name='__RequestVerificationToken']").val();
+        Swal.fire({
+            title: "Agregar a FaceApi",
+            confirmButtonColor: "#67E7CF",
+            confirmButtonText:"Guardar",
+            cancelButtonText:"Cancelar",
+            reverseButtons: true,
+            showCancelButton: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+            <div class="form-group text-left">
+                <label class="control-label" for="slcAddFaceApi">Selecciona la Persona *</label>
+                <select class="form-control" id="slcAddFaceApi" >
+                    <option value="null" selected disabled>Selecciona un Operador</option>
+                </select>   
+            </div>
+            <div class="form-group text-right">
+                <small>* Campos obligatorios</small>
+            </div>
+            `,
+            onRender: ()=>{
+                for (const listPerson of listPersons){
+                    if(listPerson.faceApiId === "SINFACEAPIID")
+                    $("#slcAddFaceApi").append(`<option value="${listPerson.id},${listPerson.nombre} ${listPerson.paterno} ${listPerson.materno}">${listPerson.nombre} ${listPerson.paterno} ${listPerson.materno}</option>`);
+                }
+            },
+            preConfirm: () =>{
+                if($("#slcAddFaceApi").val() === null){
+                    $("#slcAddFaceApi").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#slcAddFaceApi").removeAttr("style");
+                }
+                if($("#slcAddFaceApi").val() === null){
+                    Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                }
+            }
+        }).then(result => {
+            if(result.value){
+                const valueSlc = $("#slcAddFaceApi").val().split(",");
+                $.ajax({
+                    url: '@Url.Action("AddFaceApi","Admin")',
+                    method: "POST",
+                    data: {
+                        __RequestVerificationToken: token,
+                        newPerson:{
+                            PersonaId: valueSlc[0],
+                            Nombre: valueSlc[1]
+                        }
+                    },
+                    async: true,
+                    dataType: "json",
+                    success: function (res){
+                        if(res.success){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `${valueSlc[1]} se añadió a FaceApi`,
+                                onClose: ()=>{
+                                    location.reload(true);
+                                }
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.reload(true);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    }
+
+    $('#tbleTrainModel').on('click-row.bs.table', (row, element, field) => {
+        const token = $("[name='__RequestVerificationToken']").val();
+        Swal.fire({
+            title: "Entrenar FaceApi",
+            confirmButtonColor: "#67E7CF",
+            confirmButtonText:"Guardar",
+            cancelButtonText:"Cancelar",
+            reverseButtons: true,
+            showCancelButton: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            closeButtonHtml: '<i class="fas fa-times"></i>',
+            html:`
+                <div class="form-group text-center">
+                    <label class="control-label">Se recomienda que las fotografías de ${element.name} sean de buena calidad, con luz natural y con la cara descubierta</label>
+                </div>
+                <div class="form-group text-left">
+                    <label class="control-label">Fotografía *</label>
+                    <input id="iptFoto" type="file" class="form-control-file" />
+                </div>
+                <div class="form-group text-right">
+                    <small>* Campos obligatorios</small>
+                </div>
+            `,
+            preConfirm: () =>{
+                const VALID_EXT = ["JPEG", "JPG", "BMP", "PNG"];
+                const EXTEN = $("#iptFoto").prop('files')[0].name.split('.');
+                const VALID = VALID_EXT.includes(EXTEN[EXTEN.length - 1].toUpperCase());
+
+                if($("#iptFoto").get(0).files.length === 0){
+                    $("#iptFoto").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#iptFoto").removeAttr("style");
+                }
+
+                if($("#iptFoto").get(0).files.length === 0){
+                    Swal.showValidationMessage("Algún campo obligatorio está vacío");
+                }
+
+                if(!VALID){ Swal.showValidationMessage("Archivo no valido");  }
+
+            }
+        }).then(result => {
+            if(result.value){
+                const formData = new FormData();
+                formData.append('FaceId', element.FaceApiId);
+                formData.append('PersonaId', element.PersonaId);
+                formData.append('Photo', $("#iptFoto")[0].files[0]);
+                formData.append('__RequestVerificationToken', token);
+                $.ajax({
+                    url: '@Url.Action("TrainModel","Admin")',
+                    method: "POST",
+                    data: formData,
+                    async: true,
+                    contentType: false,
+                    processData: false,
+                    success: function (res){
+                        if(res.success){
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                confirmButtonColor: "#67E7CF",
+                                confirmButtonText:"Aceptar",
+                                text: `Se añadió una fotografía de ${element.name} con éxito`,
+                                onClose: ()=>{
+                                    location.reload(true);
+                                }
+                            }).then((result) => {
+                                if (result.value) {
+                                    location.reload(true);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else{
+                Swal.close();
+            }
+        });
+    });
+
+</script>
+}

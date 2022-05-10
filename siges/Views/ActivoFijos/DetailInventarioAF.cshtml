@@ -1,0 +1,57 @@
+@using System
+@using siges.Models
+@using System.Globalization
+@{
+  ViewData["Title"] = "Detalle Inventario";
+  ActivoFijo activoFijo = ViewData["activoFijo"] as ActivoFijo;
+  List<OrdenActivoFijo> oafList = ViewData["oafList"] as List<OrdenActivoFijo>;
+}
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h2>@CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(activoFijo.Descripcion.ToLower())</h2>
+      <p class="lead">@activoFijo.Marca</p>
+    </div>
+    <div class="col align-self-center text-right">
+      <a class="btn bg-blue marg-Float float" href='@Url.Action("InventarioAF", "ActivoFijos")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col margBott4em">
+      <h3>Salidas</h3>
+      <table id="tInventarioI" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-page-list="[5,10,25]" data-show-footer="true" data-sort-name="folio">
+        <thead>
+          <tr>
+            <th data-field="id" data-visible="false">ID</th>
+            <th data-field="folio" data-sortable="true" data-width="25%">Folio</th>
+            <th data-field="procedimiento" data-sortable="true" data-width="30%">Servicio</th>
+            <th data-field="fecha" data-sortable="true" data-width="25%">Fecha utilizado</th>
+            <th data-field="ubicacion" data-sortable="true" data-width="10%">Ubicación</th>
+            @* <th data-field="numeroSerie" data-sortable="true" data-width="5%">Número Serie</th> *@
+            <th data-field="estatus" data-sortable="true" data-width="5%">Estatus</th>
+          </tr>
+        </thead>
+        <tbody>
+            @if(oafList != null && oafList.Count > 0){
+            @foreach (OrdenActivoFijo oaf in oafList) {
+            <tr>
+              <td>@oaf.Id</td>
+              <td>@oaf.OrdenServicio.Folio</td>
+              <td>@CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(oaf.OrdenServicio.Servicio.Nombre.ToLower())</td>
+              <td>@(((DateTime)(oaf.OrdenServicio.FechaInicio)).ToString("D", CultureInfo.CreateSpecificCulture("es-ES")))</td>
+              <td>@CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(oaf.OrdenServicio.Ubicacion.Nombre.ToLower())</td>
+              @* <td>@oaf.ActivoFijo.NumeroSerie</td> *@
+              <td style="text-transform: capitalize;">@(CultureInfo.CreateSpecificCulture("es-ES").TextInfo.ToTitleCase(oaf.OrdenServicio.EstatusServicio))</td>
+              @*<td style="text-transform: capitalize;">@(oaf.ActivoFijo.Estatus == true ? "Activo" : "Inactivo")</td>*@
+            </tr>
+            }
+            } else {
+            <tr>
+            </tr>
+            }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

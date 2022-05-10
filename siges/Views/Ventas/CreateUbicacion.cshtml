@@ -1,0 +1,79 @@
+﻿@model siges.Models.Ubicacion
+
+@{
+    ViewData["Title"] = "Nuevo";
+}
+
+<h2>Nuevo registro</h2>
+
+<h4>Ubicaci&oacute;n</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateUbicacion">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Nombre" class="control-label"></label>
+                <input asp-for="Nombre" class="form-control" required placeholder="Nombre de la localidad"/>
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Direccion" class="control-label"></label>
+                <input asp-for="Direccion" class="form-control" required placeholder="Calle #, colonia/localidad, alcaldía/municipio estado C.P."/>
+                <span asp-validation-for="Direccion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Contacto" class="control-label"></label>
+                <input asp-for="Contacto" class="form-control" required placeholder="Persona con quién dirigirse"/>
+                <span asp-validation-for="Contacto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContactoTelefono" class="control-label"></label>
+                <input asp-for="ContactoTelefono" class="form-control" required placeholder="Número de celular"/>
+                <span asp-validation-for="ContactoTelefono" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContactoEmail" class="control-label"></label>
+                <input type="email" asp-for="ContactoEmail" class="form-control" required placeholder="Para enviar notificaciones"/>
+                <span asp-validation-for="ContactoEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContactoOpcional" class="control-label"></label>
+                <input asp-for="ContactoOpcional" class="form-control" />
+                <span asp-validation-for="ContactoOpcional" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContactoOpcionalTelefono" class="control-label"></label>
+                <input asp-for="ContactoOpcionalTelefono" class="form-control" />
+                <span asp-validation-for="ContactoOpcionalTelefono" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContactoOpcionalEmail" class="control-label"></label>
+                <input type="email" asp-for="ContactoOpcionalEmail" class="form-control" />
+                <span asp-validation-for="ContactoOpcionalEmail" class="text-danger"></span>
+            </div>
+            @*<div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="Estatus" /> @Html.DisplayNameFor(model => model.Estatus)
+                    </label>
+                </div>
+            </div>*@
+            <div class="form-group">
+                <label asp-for="ClienteId" class="control-label"></label>
+                <select asp-for="ClienteId" class ="form-control" asp-items="ViewBag.ClienteId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Guardar" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Cancelar</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
