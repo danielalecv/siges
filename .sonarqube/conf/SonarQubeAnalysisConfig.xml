@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AnalysisConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonarsource.com/msbuild/integration/2015/1">
-  <SonarConfigDir>C:\Users\ADMIN\Documents\siges\.sonarqube\conf</SonarConfigDir>
-  <SonarOutputDir>C:\Users\ADMIN\Documents\siges\.sonarqube\out</SonarOutputDir>
-  <SonarBinDir>C:\Users\ADMIN\Documents\siges\.sonarqube\bin</SonarBinDir>
-  <SonarScannerWorkingDirectory>C:\Users\ADMIN\Documents\siges</SonarScannerWorkingDirectory>
+  <SonarConfigDir>C:\Users\HP EliteBook 2570p\source\repos\siges\.sonarqube\conf</SonarConfigDir>
+  <SonarOutputDir>C:\Users\HP EliteBook 2570p\source\repos\siges\.sonarqube\out</SonarOutputDir>
+  <SonarBinDir>C:\Users\HP EliteBook 2570p\source\repos\siges\.sonarqube\bin</SonarBinDir>
+  <SonarScannerWorkingDirectory>C:\Users\HP EliteBook 2570p\source\repos\siges</SonarScannerWorkingDirectory>
   <HasBeginStepCommandLineCredentials>true</HasBeginStepCommandLineCredentials>
   <SonarQubeHostUrl>http://roatech.dyndns.info:9000</SonarQubeHostUrl>
   <SonarQubeVersion>8.6.1.40680</SonarQubeVersion>
@@ -11,7 +11,8 @@
   <AdditionalConfig>
     <ConfigSetting Id="BuildUri" />
     <ConfigSetting Id="TfsUri" />
-    <ConfigSetting Id="settings.file.path" Value="C:\Users\ADMIN\.dotnet\tools\.store\dotnet-sonarscanner\4.7.1\dotnet-sonarscanner\4.7.1\tools\netcoreapp2.1\any\SonarQube.Analysis.xml" />
+    <ConfigSetting Id="VsCoverageConverterToolPath" />
+    <ConfigSetting Id="settings.file.path" Value="C:\Users\HP EliteBook 2570p\.dotnet\tools\.store\dotnet-sonarscanner\5.5.3\dotnet-sonarscanner\5.5.3\tools\net5.0\any\SonarQube.Analysis.xml" />
   </AdditionalConfig>
   <ServerSettings>
     <Property Name="sonaranalyzer-cs.nuget.packageVersion">8.15.0.24505</Property>
@@ -109,52 +110,52 @@
   <AnalyzersSettings>
     <AnalyzerSettings>
       <Language>cs</Language>
-      <RuleSetFilePath>C:\Users\ADMIN\Documents\siges\.sonarqube\conf\SonarQubeRoslyn-cs.ruleset</RuleSetFilePath>
-      <TestProjectRuleSetFilePath>C:\Users\ADMIN\Documents\siges\.sonarqube\conf\SonarQubeRoslyn-cs-test.ruleset</TestProjectRuleSetFilePath>
+      <RulesetPath>C:\Users\HP EliteBook 2570p\source\repos\siges\.sonarqube\conf\Sonar-cs.ruleset</RulesetPath>
+      <DeactivatedRulesetPath>C:\Users\HP EliteBook 2570p\source\repos\siges\.sonarqube\conf\Sonar-cs-none.ruleset</DeactivatedRulesetPath>
       <AnalyzerPlugins>
         <AnalyzerPlugin Key="csharp" Version="8.15.0.24505" StaticResourceName="SonarAnalyzer-8.15.0.24505.zip">
           <AssemblyPaths>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\0\Google.Protobuf.dll</Path>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.CFG.dll</Path>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.CSharp.dll</Path>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\0\Google.Protobuf.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.CFG.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.CSharp.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.dll</Path>
           </AssemblyPaths>
         </AnalyzerPlugin>
         <AnalyzerPlugin Key="vbnet" Version="8.15.0.24505" StaticResourceName="SonarAnalyzer-8.15.0.24505.zip">
           <AssemblyPaths>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\1\Google.Protobuf.dll</Path>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.dll</Path>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.VisualBasic.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\1\Google.Protobuf.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.VisualBasic.dll</Path>
           </AssemblyPaths>
         </AnalyzerPlugin>
       </AnalyzerPlugins>
       <AdditionalFilePaths>
-        <Path>C:\Users\ADMIN\Documents\siges\.sonarqube\conf\cs\SonarLint.xml</Path>
+        <Path>C:\Users\HP EliteBook 2570p\source\repos\siges\.sonarqube\conf\cs\SonarLint.xml</Path>
       </AdditionalFilePaths>
     </AnalyzerSettings>
     <AnalyzerSettings>
       <Language>vbnet</Language>
-      <RuleSetFilePath>C:\Users\ADMIN\Documents\siges\.sonarqube\conf\SonarQubeRoslyn-vbnet.ruleset</RuleSetFilePath>
-      <TestProjectRuleSetFilePath>C:\Users\ADMIN\Documents\siges\.sonarqube\conf\SonarQubeRoslyn-vbnet-test.ruleset</TestProjectRuleSetFilePath>
+      <RulesetPath>C:\Users\HP EliteBook 2570p\source\repos\siges\.sonarqube\conf\Sonar-vbnet.ruleset</RulesetPath>
+      <DeactivatedRulesetPath>C:\Users\HP EliteBook 2570p\source\repos\siges\.sonarqube\conf\Sonar-vbnet-none.ruleset</DeactivatedRulesetPath>
       <AnalyzerPlugins>
         <AnalyzerPlugin Key="csharp" Version="8.15.0.24505" StaticResourceName="SonarAnalyzer-8.15.0.24505.zip">
           <AssemblyPaths>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\0\Google.Protobuf.dll</Path>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.CFG.dll</Path>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.CSharp.dll</Path>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\0\Google.Protobuf.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.CFG.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.CSharp.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.dll</Path>
           </AssemblyPaths>
         </AnalyzerPlugin>
         <AnalyzerPlugin Key="vbnet" Version="8.15.0.24505" StaticResourceName="SonarAnalyzer-8.15.0.24505.zip">
           <AssemblyPaths>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\1\Google.Protobuf.dll</Path>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.dll</Path>
-            <Path>C:\Users\ADMIN\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.VisualBasic.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\1\Google.Protobuf.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.dll</Path>
+            <Path>C:\Users\HP EliteBook 2570p\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.VisualBasic.dll</Path>
           </AssemblyPaths>
         </AnalyzerPlugin>
       </AnalyzerPlugins>
       <AdditionalFilePaths>
-        <Path>C:\Users\ADMIN\Documents\siges\.sonarqube\conf\vbnet\SonarLint.xml</Path>
+        <Path>C:\Users\HP EliteBook 2570p\source\repos\siges\.sonarqube\conf\vbnet\SonarLint.xml</Path>
       </AdditionalFilePaths>
     </AnalyzerSettings>
   </AnalyzersSettings>

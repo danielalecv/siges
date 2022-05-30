@@ -107,7 +107,7 @@ namespace siges_test
             }
         }
 
-        //Create
+        /*Create
         [TestMethod]
         public void BadId()
         {
@@ -144,5 +144,6 @@ namespace siges_test
                 //Assert.AreEqual("~/Views/ContactoCliente/Index.cshtml", ar.ViewName);
             }
         }
+        */
     }
 }

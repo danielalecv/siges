@@ -1,0 +1,14 @@
+﻿C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\ContactoClienteControllerTest.cs
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\HomeControllerTest.cs
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\MailSupportTest.cs
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\TestControllerTest.cs
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\ToolsTest.cs
+C:\Users\HP EliteBook 2570p\.nuget\packages\microsoft.net.test.sdk\16.11.0\build\netcoreapp2.1\Microsoft.NET.Test.Sdk.Program.cs
+C:\Users\HP EliteBook 2570p\.nuget\packages\microsoft.testplatform.testhost\16.11.0\build\netcoreapp2.1\x64\testhost.exe
+C:\Users\HP EliteBook 2570p\.nuget\packages\microsoft.testplatform.testhost\16.11.0\build\netcoreapp2.1\x64\testhost.dll
+C:\Users\HP EliteBook 2570p\.nuget\packages\microsoft.testplatform.testhost\16.11.0\build\netcoreapp2.1\x64\Microsoft.TestPlatform.PlatformAbstractions.dll
+C:\Users\HP EliteBook 2570p\.nuget\packages\mstest.testadapter\2.2.7\build\_common\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Users\HP EliteBook 2570p\.nuget\packages\mstest.testadapter\2.2.7\build\_common\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\Users\HP EliteBook 2570p\.nuget\packages\mstest.testadapter\2.2.7\build\netcoreapp1.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Users\HP EliteBook 2570p\.nuget\packages\mstest.testadapter\2.2.7\build\netcoreapp1.0\Microsoft.TestPlatform.AdapterUtilities.dll
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\coverage.opencover.xml
