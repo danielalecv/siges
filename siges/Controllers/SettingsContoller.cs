@@ -1,20 +1,8 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using siges.DTO;
-using siges.Models;
 using siges.Repository;
 using siges.Utilities;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Globalization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 
 namespace siges.Controllers
 {

@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using System.Data.SqlClient;
 using System.Data;
 using System.IO;
 using System.Globalization;
-using System.Net.Http;
 
-using siges.Data;
 using siges.Models;
 using siges.DTO;
 using siges.Repository;
@@ -21,17 +18,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-using MailKit.Net.Smtp;
-using MailKit;
 using MimeKit;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using RestSharp;
-using RestSharp.Authenticators;
 
 namespace siges.Controllers {
   [Authorize(Roles = "Operador, SuperUser")]

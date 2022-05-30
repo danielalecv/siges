@@ -9,13 +9,13 @@ using siges.DTO;
 using siges.Models;
 using siges.Repository;
 using siges.Utilities;
-using siges.Areas.Identity.Data;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using siges.Areas.Identity.Data;
 
 namespace siges.Controllers
 {

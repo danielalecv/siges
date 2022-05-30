@@ -22,11 +22,6 @@ namespace siges.Repository
 
         public bool SendMessage(string name, string lastname, string email, string priority, string title, string body)
         {
-            Console.WriteLine("Appsettings: " + _emailConf.Host);
-            Console.WriteLine("Appsettings: " + _emailConf.UserName);
-            Console.WriteLine("Appsettings: " + _emailConf.Password);
-            Console.WriteLine("Appsettings: " + _emailConf.Port);
-
             string content = CreateContent(priority, name, lastname, email, body);
 
             // create message
@@ -45,7 +40,7 @@ namespace siges.Repository
             }
             catch (Exception ex)
             {
-                Console.WriteLine("error envio de correo: " + ex.Message);
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }
@@ -87,12 +82,12 @@ namespace siges.Repository
             }
             catch (Exception ex)
             {
-                Console.WriteLine("error envio de correo: " + ex.Message);
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }
     
-        private MimeMessage CreateHeader(string title)
+        public MimeMessage CreateHeader(string title)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(" SIGES - Centro de notificaciones", _emailConf.UserName));
@@ -102,7 +97,7 @@ namespace siges.Repository
             return message;
         }
 
-        private string CreateContent(string priority, string name, string lastname, string email, string body)
+        public string CreateContent(string priority, string name, string lastname, string email, string body)
         {
             string content = "<h2>Soporte Técnico</h2><br>" +
                 "<p>Prioridad: " + priority + "</p>" +
@@ -110,6 +105,37 @@ namespace siges.Repository
                 "<p>Usuario: " + email + "</p>" +
                 "<br><p>Descripción del problema: " + body + "</p>";
             return content;
+        }
+
+        public bool SendMailConfirmContact(string destinyEmail, string token, string host)
+        {
+            string url = host + "/ConfirmContact?token=" + token;
+
+            string subject = "Confirmacion contacto";
+            string body = "<p>Correo para confirmar ser contacto</p><br>" +
+                "<a href='" + url + "'>Click para confirmar contacto</a>";
+
+            // create message
+            var email = new MimeMessage();
+            email.From.Add(new MailboxAddress(" SIGES - Centro de notificaciones", _emailConf.UserName));
+            email.To.Add(MailboxAddress.Parse(destinyEmail));
+            email.Subject = subject;
+            email.Body = new TextPart(TextFormat.Html) { Text = body };
+
+            // send email
+            try
+            {
+                using var smtp = new SmtpClient();
+                smtp.Connect(_emailConf.Host, _emailConf.Port, SecureSocketOptions.Auto);
+                smtp.Authenticate(_emailConf.UserName, _emailConf.Password);
+                smtp.Send(email);
+                smtp.Disconnect(true);
+                return true;
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
         }
     }
 }

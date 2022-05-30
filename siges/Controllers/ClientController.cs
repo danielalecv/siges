@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Data;
-using System.Data.SqlClient;
+//using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -68,10 +69,10 @@ namespace siges.Controllers {
           List<int> pIdL = null;
           List<Persona> pList = null;
 
-          if(((System.Data.SqlClient.SqlConnection)conn).State == System.Data.ConnectionState.Open)
-            ((System.Data.SqlClient.SqlConnection)conn).Close();
-          ((System.Data.SqlClient.SqlConnection) conn).Open();
-          SqlCommand cmd = new SqlCommand("select p.id from clienteidentity clid left join cliente cl on clid.clienteid = cl.id left join ordenservicio os on cl.id = os.clienteid left join ordenpersona op on os.id = op.ordenservicioid left join persona p on op.personaid = p.id left join aspnetusers usr on clid.cuentausuarioid = usr.id where p.estatus = 1 and usr.Id = @Id group by p.id", (System.Data.SqlClient.SqlConnection) conn);
+          if(((SqlConnection)conn).State == System.Data.ConnectionState.Open)
+            ((SqlConnection)conn).Close();
+          ((SqlConnection) conn).Open();
+          SqlCommand cmd = new SqlCommand("select p.id from clienteidentity clid left join cliente cl on clid.clienteid = cl.id left join ordenservicio os on cl.id = os.clienteid left join ordenpersona op on os.id = op.ordenservicioid left join persona p on op.personaid = p.id left join aspnetusers usr on clid.cuentausuarioid = usr.id where p.estatus = 1 and usr.Id = @Id group by p.id", (SqlConnection) conn);
           cmd.Parameters.Add("@Id", SqlDbType.NVarChar);
           cmd.Parameters["@Id"].Value = riuId;
           SqlDataReader dataReader = cmd.ExecuteReader();
@@ -82,8 +83,8 @@ namespace siges.Controllers {
               pIdL.Add((int)dataReader[0]);
             }
           }
-          if(((System.Data.SqlClient.SqlConnection)conn).State == System.Data.ConnectionState.Open)
-            ((System.Data.SqlClient.SqlConnection)conn).Close();
+          if(((SqlConnection)conn).State == System.Data.ConnectionState.Open)
+            ((SqlConnection)conn).Close();
           if(pIdL != null && pIdL.Count > 0)
             foreach(int id in pIdL)
               pList.Add(peRepo.GetById(id));
@@ -125,10 +126,10 @@ namespace siges.Controllers {
           List<int> osIdL = null;
           List<OrdenServicio> osList = null;
 
-          if(((System.Data.SqlClient.SqlConnection)conn).State == System.Data.ConnectionState.Open)
-            ((System.Data.SqlClient.SqlConnection)conn).Close();
-          ((System.Data.SqlClient.SqlConnection) conn).Open();
-          SqlCommand cmd = new SqlCommand("select os.id from clienteidentity clid left join cliente cl on clid.clienteid = cl.id left join ordenservicio os on cl.id = os.clienteid left join aspnetusers usr on clid.cuentausuarioid = usr.id where os.estatus = 1 and usr.Id = @Id group by os.id", (System.Data.SqlClient.SqlConnection) conn);
+          if(((SqlConnection)conn).State == System.Data.ConnectionState.Open)
+            ((SqlConnection)conn).Close();
+          ((SqlConnection) conn).Open();
+          SqlCommand cmd = new SqlCommand("select os.id from clienteidentity clid left join cliente cl on clid.clienteid = cl.id left join ordenservicio os on cl.id = os.clienteid left join aspnetusers usr on clid.cuentausuarioid = usr.id where os.estatus = 1 and usr.Id = @Id group by os.id", (SqlConnection) conn);
           cmd.Parameters.Add("@Id", SqlDbType.NVarChar);
           cmd.Parameters["@Id"].Value = riuId;
           SqlDataReader dataReader = cmd.ExecuteReader();
@@ -139,8 +140,8 @@ namespace siges.Controllers {
               osIdL.Add((int)dataReader[0]);
             }
           }
-          if(((System.Data.SqlClient.SqlConnection)conn).State == System.Data.ConnectionState.Open)
-            ((System.Data.SqlClient.SqlConnection)conn).Close();
+          if(((SqlConnection)conn).State == System.Data.ConnectionState.Open)
+            ((SqlConnection)conn).Close();
           if(osIdL != null && osIdL.Count > 0)
             foreach(int id in osIdL)
               osList.Add(osRepo.GetByIdOS(id));
@@ -180,10 +181,10 @@ namespace siges.Controllers {
           List<int> osIdL = null;
           List<OrdenServicio> osList = null;
 
-          if(((System.Data.SqlClient.SqlConnection)conn).State == System.Data.ConnectionState.Open)
-            ((System.Data.SqlClient.SqlConnection)conn).Close();
-          ((System.Data.SqlClient.SqlConnection) conn).Open();
-          SqlCommand cmd = new SqlCommand("SELECT ROW_NUMBER() OVER (ORDER BY se.Id) as Id, se.Nombre AS Servicio, count(*) as NumServicio FROM OrdenServicio os INNER JOIN Servicio se ON os.ServicioId = se.Id left join cliente cl on os.clienteid = cl.id left join clienteidentity clid on cl.id = clid.clienteid left join aspnetusers usr on clid.cuentausuarioid = usr.id where usr.id = @Id and os.estatus = 1 GROUP BY se.Id, se.Nombre", (System.Data.SqlClient.SqlConnection) conn);
+          if(((SqlConnection)conn).State == System.Data.ConnectionState.Open)
+            ((SqlConnection)conn).Close();
+          ((SqlConnection) conn).Open();
+          SqlCommand cmd = new SqlCommand("SELECT ROW_NUMBER() OVER (ORDER BY se.Id) as Id, se.Nombre AS Servicio, count(*) as NumServicio FROM OrdenServicio os INNER JOIN Servicio se ON os.ServicioId = se.Id left join cliente cl on os.clienteid = cl.id left join clienteidentity clid on cl.id = clid.clienteid left join aspnetusers usr on clid.cuentausuarioid = usr.id where usr.id = @Id and os.estatus = 1 GROUP BY se.Id, se.Nombre", (SqlConnection) conn);
           cmd.Parameters.Add("@Id", SqlDbType.NVarChar);
           cmd.Parameters["@Id"].Value = riuId;
           SqlDataAdapter adp = new SqlDataAdapter(cmd);

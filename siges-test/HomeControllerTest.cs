@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -15,7 +15,7 @@ namespace siges_test
     [TestClass]
     public class HomeControllerTest
     {
-        private string success = "Hemos recibido tu problematica, trabajaremos en la solución";
+        private string success = "Hemos recibido tu problematica, trabajaremos en la soluci�n";
         private string fail = "Hubo un error al enviar tu problema, intenta de nuevo";
         private string name = "Daniel";
         private string lastname = "Camacho";

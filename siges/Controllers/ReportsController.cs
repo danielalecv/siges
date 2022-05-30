@@ -88,7 +88,11 @@ namespace siges.Controllers {
      */
     //[Authorize(Roles = "Administración")]
     public IActionResult BitacoraDeServiciosPorCliente(){
-            String payload = "client_id=bf9e32e9-af3d-42c9-a170-6725e81304aa&scope=https%3A//analysis.windows.net/powerbi/api/Report.Read.All&client_secret=Xgi5bN2x--3NMOrW9_.l5YiwqyF70yPl__&username=" + Utilities.Config.pbiUsername + "&password=" + Utilities.Config.pbiPassword + "&grant_type=password";
+            String payload = "client_id=bf9e32e9-af3d-42c9-a170-6725e81304aa&" +
+                "scope=https%3A//analysis.windows.net/powerbi/api/Report.Read.All&" +
+                "client_secret=Xgi5bN2x--3NMOrW9_.l5YiwqyF70yPl__&" +
+                "username=" + Utilities.Config.pbiUsername + "&" +
+                "password=" + Utilities.Config.pbiPassword + "&grant_type=password";
       var client = new RestClient("https://login.microsoftonline.com/6aae21c9-d38c-4939-9710-18f93daa29b2/oauth2/v2.0/token");
       client.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
       var request = new RestRequest(Method.POST);
@@ -374,7 +378,11 @@ namespace siges.Controllers {
      *
      * */
     public IActionResult Cumplimiento(){
-            String payload = "client_id=bf9e32e9-af3d-42c9-a170-6725e81304aa&scope=https%3A//analysis.windows.net/powerbi/api/Report.Read.All&client_secret=Xgi5bN2x--3NMOrW9_.l5YiwqyF70yPl__&username=" + Utilities.Config.pbiUsername + "&password=" + Utilities.Config.pbiPassword + "&grant_type=password";
+            String payload = "client_id=bf9e32e9-af3d-42c9-a170-6725e81304aa&" +
+                "scope=https%3A//analysis.windows.net/powerbi/api/Report.Read.All&" +
+                "client_secret=Xgi5bN2x--3NMOrW9_.l5YiwqyF70yPl__&" +
+                "username=" + Utilities.Config.pbiUsername + "" +
+                "&password=" + Utilities.Config.pbiPassword + "&grant_type=password";
       var client = new RestClient("https://login.microsoftonline.com/6aae21c9-d38c-4939-9710-18f93daa29b2/oauth2/v2.0/token");
       client.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
       var request = new RestRequest(Method.POST);

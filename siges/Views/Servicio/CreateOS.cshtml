@@ -2,12 +2,12 @@
 @using siges.Models
 
 @{
-  ViewData["Title"] = "Nueva Órden de Servicio";
-  bool paquete = Boolean.Parse(((bool)ViewData["siPaquete"]).ToString());
+    ViewData["Title"] = "Nueva Órden de Servicio";
+    bool paquete = Boolean.Parse(((bool)ViewData["siPaquete"]).ToString());
 }
 @*section Cubos {
-<div id="loading-overlay">
-  <div class="sk-cube-grid">
+    <div id="loading-overlay">
+    <div class="sk-cube-grid">
     <div class="sk-cube sk-cube1"></div>
     <div class="sk-cube sk-cube2"></div>
     <div class="sk-cube sk-cube3"></div>
@@ -17,693 +17,856 @@
     <div class="sk-cube sk-cube7"></div>
     <div class="sk-cube sk-cube8"></div>
     <div class="sk-cube sk-cube9"></div>
-  </div>
-</div>
-}*@
+    </div>
+    </div>
+    }*@
 
 @section css {
-  <link href="~/lib/Parsley-2.8.1/parsley.css" rel="stylesheet" />
-  <link href="~/lib/tempusdominus-5.0.0/build/css/tempusdominus-bootstrap-4.css" rel="stylesheet" />
-  <link rel="stylesheet" href="~/lib/bootstrap-select/dist/css/bootstrap-select.min.css">
+    <link href="~/lib/Parsley-2.8.1/parsley.css" rel="stylesheet" />
+    <link href="~/lib/tempusdominus-5.0.0/build/css/tempusdominus-bootstrap-4.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap-select/dist/css/bootstrap-select.min.css">
 }
 
-@section modals{
-<div class="modal fade" id="asignacionInsumos" tabindex="-1" role="dialog" aria-labelledby="asignacionInsumosTitle" aria-hidden="true" data-backdrop="static">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="asignacionInsumosTitle">Captura datos del Insumo</h5>
-        @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>*@
-      </div>
-      <div class="modal-body">
-
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title" id="car-title-Insumos">Nombre del insumo que va a ingresar a la lista de asignación.</h5>
-              <div class="form-group">
-                <label for="osLoteI">Lote</label>
-                <input id="osLoteI" type="text" class="form-control">
-              </div>
-              @*<div class="form-group">
-                <label for="osCaducidadI">Caducidad</label>
-                <div id="osCaducidadI" class="input-group date" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#osCaducidadI" placeholder="dd/MM/aaaa">
-                  <div class="input-group-append" data-target="#osCaducidadI" data-toggle="datetimepicker">
-                    <div class="input-group-text"><i data-feather="calendar"></i></div>
-                  </div>
+    @section modals{
+    <div class="modal fade" id="asignacionInsumos" tabindex="-1" role="dialog" aria-labelledby="asignacionInsumosTitle" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="asignacionInsumosTitle">Captura datos del Insumo</h5>
+                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>*@
                 </div>
-              </div>*@
-              <div class="form-group">
-                <label for="osCantidadI">Cantidad</label>
-                <input id="osCantidadI" type="number" min="1" class="form-control">
-              </div>
-            </div>
-          </div>
-        </div>
+                <div class="modal-body">
 
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="ignoreInsumo" class="btn btn-danger" data-dismiss="modal">Quitar</button>
-        <button type="button" id="addInsumoToTable" class="btn btn-primary">Agregar insumo</button>
-      </div>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col">
+                                <h5 class="card-title" id="car-title-Insumos">Nombre del insumo que va a ingresar a la lista de asignación.</h5>
+                                <div class="form-group">
+                                    <label for="osLoteI">Lote</label>
+                                    <input id="osLoteI" type="text" class="form-control">
+                                </div>
+                                @*<div class="form-group">
+                            <label for="osCaducidadI">Caducidad</label>
+                            <div id="osCaducidadI" class="input-group date" data-target-input="nearest">
+                            <input type="text" class="form-control datetimepicker-input" data-target="#osCaducidadI" placeholder="dd/MM/aaaa">
+                            <div class="input-group-append" data-target="#osCaducidadI" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i data-feather="calendar"></i></div>
+                            </div>
+                            </div>
+                            </div>*@
+                                <div class="form-group">
+                                    <label for="osCantidadI">Cantidad</label>
+                                    <input id="osCantidadI" type="number" min="1" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="ignoreInsumo" class="btn btn-danger" data-dismiss="modal">Quitar</button>
+                    <button type="button" id="addInsumoToTable" class="btn btn-primary">Agregar insumo</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 }
-<div class="container" style="margin-bottom: 100px;">
-  <div class="row">
-    <div class="col">
-      <h2>Nueva Orden de Servicio</h2>
-    </div>
-    <div class="col align-self-center text-right">
-      <a class="btn bg-blue marg-Float float" href='@Url.Action("IndexListOS", "Servicio")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
-    </div>
-  </div>
-  <div class="row margTop40">
-    <div class="col">
-      <div id="tab-lists" class="row">
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-          <div class="list-group" role="tablist">
-            <a id="stepOne" class="list-group-item list-group-item-action flex-column align-items-start active" href="#infoGral" role="tab">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">Informaci&oacute;n general</h5>
-              </div>
-            <small>Informaci&oacute;n general de la orden</small>
-            </a>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-          <div class="list-group" role="tablist">
-            <a id="stepTwo" class="list-group-item list-group-item-action" href="#infoResponsable" role="tab">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">Responsable</h5>
-              </div>
-              <small>Informaci&oacute;n sobre el responsable que recibe el servicio</small>
-            </a>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-          <div class="list-group" role="tablist">
-            <a id="stepThree" class="list-group-item list-group-item-action" href="#infoPersonal" role="tab">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">Personal</h5>
-              </div>
-              <small>Detalle del personal que brinda el servicio</small>
-            </a>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-          <div class="list-group" role="tablist">
-            <a id="stepFour" class="list-group-item list-group-item-action" href="#infoActivosFijos" role="tab">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">Activos fijos/productos</h5>
-              </div>
-              <small>Detalle de los activos fijos/productos asignados</small>
-            </a>
-          </div>
-        </div>
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-          <div class="list-group" role="tablist">
-            @if(paquete.ToString() != "True"){
-            <a id="stepFive" class="list-group-item list-group-item-action" href="#infoInsumos" role="tab">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">Insumos a utilizar</h5>
-              </div>
-              <small>Detalle del los insumos utilizados en un servicio</small>
-            </a>
-            } else {
-            <a id="stepFive" class="list-group-item list-group-item-action" href="#infoInsumosP" role="tab">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">Insumos a utilizar</h5>
-              </div>
-              <small>Detalle del los insumos utilizados en un servicio</small>
-            </a>
-            }
-          </div>
-        </div>
-      </div>
-      <div class="py-2">
+    <div class="container" style="margin-bottom: 100px;">
         <div class="row">
-          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <div class="progress">
-              <div class="progress-bar" role="progressbar" aria-valuenow="25" aria-valuemin="25" aria-valuemax="100" style="width: 25%;"></div>
+            <div class="col">
+                <h2>Nueva Orden de Servicio</h2>
             </div>
-          </div>
+            <div class="col align-self-center text-right">
+                <a class="btn bg-blue marg-Float float" href='@Url.Action("IndexListOS", "Servicio")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+            </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <form id="fNewOS" action='@Url.Action( "SaveOS", "Servicio")' method="post">
-            <div class="card">
-              <div class="card-body">
-                <div class="tab-content">
-                  <div id="infoGral" class="tab-pane fade show active form-section" role="tabpanel">
-                    <div class="form-row">
-                      <div class="form-group col-6">
-                        <label for="iCliente">Cliente</label>
-                        <select id="iCliente" class="form-control" name="Cliente" required="">
-                          <option value=""> -- Selecciona una opci&oacute;n -- </option>
-                          @foreach (var cliente in ViewData["clientes"] as List<Cliente>){
-                          <option value="@cliente.Id">@cliente.RazonSocial</option>
-                          }
-                        </select>
-                      </div>
-                      <div class="form-group col-6">
-                        <label for="iContrato">Contrato</label>
-                        <select id="iContrato" class="form-control" name="Contrato" required="">
-                          <option value=""> -- Selecciona una opci&oacute;n -- </option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="form-row">
-                      <div class="form-group col-6">
-                        <label for="iUbicacion">Ubicaci&oacute;n</label>
-                        <select id="iUbicacion" class="form-control" name="Ubicacion" required="">
-                          <option value=""> -- Selecciona una opci&oacute;n -- </option>
-                        </select>
-                      </div>
-                      <div class="form-group col-6">
-                        <label for="iLineaNegocio">L&iacute;nea de negocio</label>
-                        <select id="iLineaNegocio" class="form-control" name="LineaNegocio" required="">
-                          <option value=""> -- Selecciona una opci&oacute;n -- </option>
-                          @foreach (var linea in ViewData["lineas"] as List<LineaNegocio>){
-                          <option value="@linea.Id">@linea.Nombre</option>
-                          }
-                        </select>
-                      </div>
-                    </div>
-                    <div class="form-row">
-                      <div class="form-group col-6">
-                        <label for="iServicio">Servicio</label>
-                        <select id="iServicio" class="form-control" name="Servicio" required="">
-                          <option value=""> -- Selecciona una opci&oacute;n -- </option>
-                        </select>
-                      </div>
-                      <div class="form-group col-6">
-                        <label for="iEstatus">Estatus</label>
-                        <select id="iEstatus" class="form-control" name="EstatusServicio" required="">
-                          <option value="solicitado">Solicitado</option>
-                        </select>
-                      </div>                      
-                    </div>
-                    <div class="form-row">
-                      <div class="form-group col-6">
-                        <label for="iTipo">Tipo</label>
-                        <select id="iTipo" class="form-control" name="Tipo" required="">
-                          <option value=""> -- Selecciona una opci&oacute;n -- </option>
-                          <option value="Ordinario">Ordinario</option>
-                          <option value="Extraordinario">Extraordinario</option>
-                        </select>
-                      </div>
-                      <div class="form-group col-6">
-                        <label for="iObs">Observaciones</label>
-                        <textarea class="form-control" id="iObs" rows="3" name="Observaciones"></textarea>
-                      </div>
-                    </div>
-                    <div class="form-row">
-                      <div class="form-group col-6">
-                        <label for="iFechaInicio">Fecha/Hora de inicio</label>
-                        <div class="input-group date" id="iFechaInicio" data-target-input="nearest">
-                          <input type="text" class="form-control datetimepicker-input" data-target="#iFechaInicio" name="FechaInicio" placeholder="dd/mm/aaaa 00:00" required/>
-                          <div class="input-group-append" data-target="#iFechaInicio" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                          </div>
+        <div class="row margTop40">
+            <div class="col">
+                <div id="tab-lists" class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                        <div class="list-group" role="tablist">
+                            <a id="stepOne" class="list-group-item list-group-item-action flex-column align-items-start active" href="#infoGral" role="tab">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Informaci&oacute;n general</h5>
+                                </div>
+                                <small>Informaci&oacute;n general de la orden</small>
+                            </a>
                         </div>
-                        <div id="eiFechaInicio"></div>
-                      </div>
-                      <div class="form-group col-6">
-                        <label for="iFechaFin">Fecha/Hora de fin</label>
-                        <div class="input-group date" id="iFechaFin" data-target-input="nearest">
-                          <input type="text" class="form-control datetimepicker-input" data-target="#iFechaFin" name="FechaFin" placeholder="dd/mm/aaaa 00:00" required/>
-                          <div class="input-group-append" data-target="#iFechaFin" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                          </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                        <div class="list-group" role="tablist">
+                            <a id="stepTwo" class="list-group-item list-group-item-action" href="#infoResponsable" role="tab">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Responsable</h5>
+                                </div>
+                                <small>Informaci&oacute;n sobre el responsable que recibe el servicio</small>
+                            </a>
                         </div>
-                        <div id="eiFechaFin"></div>
-                      </div>                      
                     </div>
-                  </div>
-                  <div id="infoResponsable" class="tab-pane fade show form-section" role="tabpanel">
-                    <div class="form-row">
-                      <div class="form-group col-6">
-                        <label class="control-label" for="slcContacto">Contacto</label>
-                        <select class="form-control" id="slcContacto" required >
-                          <option value="null" selected disabled>Selecciona un Contacto</option>
-                        </select>
-                      </div>
-                      <div class="form-group col-6">
-                        <label for="iNombre">Nombre</label>
-                        <input id="iNombre" type="text" class="form-control" name="ContactoNombre" required  readonly maxlength="30"/> 
-                      </div>
-                    </div>
-                    <div class="form-row">
-                      <div class="form-group col-6">
-                        <label for="iAp">Apellido paterno</label>
-                        <input id="iAp" type="text" class="form-control" name="ContactoAP" required readonly maxlength="30"/>
-                      </div>
-                      <div class="form-group col-6">
-                        <label for="iAm">Apellido materno</label>
-                        <input id="iAm" type="text" class="form-control" name="ContactoAM" required readonly maxlength="30"/>
-                      </div>
-                    </div>
-                    <div class="form-row">
-                      <div class="form-group col-6">
-                        <label for="iEm">Correo electrónico</label>
-                        <input id="iEm" type="email" class="form-control" name="ContactoEmail" required readonly />
-                      </div>
-                      <div class="form-group col-6">
-                        <label for="iTel">Tel&eacute;fono de contacto</label>
-                        <input id="iTel" type="text" class="form-control" maxlength="10" name="ContactoTelefono" required="" readonly />
-                      </div>
-                    </div>
-                    <div class="form-row">
-                      <div class="form-check form-group col-12 mb-12 text-center align-self-end">
-                        <input class="form-check-input" type="checkbox" value="" id="ccCheck1">
-                        <label class="form-check-label m-1" for="ccCheck1">
-                          ¿Enviar copia de la notificación al cliente?
-                        </label>
-                      </div>
-                    </div>
-                    <div class="form-row" id="Cc1" style="display: none">
-                      <div class="form-group col-4">
-                        <label for="iCC1nombre">Nombre completo:</label>
-                        <input id="iCC1nombre" class="form-control m-1" type="text" name="NombreCompletoCC1" maxlength="100" />
-                      </div>
-                      <div class="form-group col-4">
-                        <label for="iCC1email">Correo electrónico:</label>
-                        <input id="iCC1email" class="form-control m-1" type="email" name="EmailCC1">
-                      </div>
-                      <div class="form-check form-group col-4 text-center align-self-center">
-                        <input class="form-check-input" type="checkbox" value="" id="ccCheck2">
-                        <label class="form-check-label" for="ccCheck2">
-                          ¿Otra persona?
-                        </label>
-                      </div>
-                    </div>
-                    <div class="form-row" id="Cc2" style="display: none">
-                      <div class="form-group col-4">
-                        <label for="iCC2nombre">Nombre completo:</label>
-                        <input id="iCC2nombre" class="form-control m-1" type="text" name="NombreCompletoCC2" maxlength="100" />
-                      </div>
-                      <div class="form-group col-4">
-                        <label for="iCC2email">Correo electrónico:</label>
-                        <input id="iCC2email" class="form-control m-1" type="email" name="EmailCC2">
-                      </div>
-                      <div class="form-group col-4"></div>
-                    </div>
-                    <div class="form-row">
-                      <div class="form-group col-6">
-                        <label for="iOp1" class="m-1">Campo Opcional</label>
-                        <input id="iOp1" type="text" class="form-control" name="Opcional1" maxlength="100"/>
-                      </div>
-                      <div class="form-group col-6">
-                        <label for="iOp4">Campo Opcional</label>
-                        <input id="iOp4" type="text" class="form-control" name="Opcional4" maxlength="100"/>
-                      </div>
-                    </div>
-                    <div class="form-row">
-                      <div class="form-group col-6">
-                        <label for="iOp2">&Oacute;rden de Servicio Relacionada</label>
-                        <input id="iOp2" type="text" class="form-control" name="Opcional2" maxlength="100"/>
-                      </div>
-                      <div class="form-group col-6">
-                        <label for="iOp3">Horario de servicio</label>
-                        <div class="input-group date" id="iOp3" data-target-input="nearest">
-                          <input type="text" class="form-control datetimepicker-input" data-target="#iOp3" name="Opcional3" placeholder="dd/mm/aaaa 00:00" required=""/>
-                          <div class="input-group-append" data-target="#iOp3" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                          </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                        <div class="list-group" role="tablist">
+                            <a id="stepThree" class="list-group-item list-group-item-action" href="#infoPersonal" role="tab">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Personal</h5>
+                                </div>
+                                <small>Detalle del personal que brinda el servicio</small>
+                            </a>
                         </div>
-                        <div id="eiOp3"></div>
-                      </div>
                     </div>
-                  </div>
-                  <div id="infoPersonal" class="tab-pane fade show form-section" role="tabpanel">
-                    <div class="row">
-                      <div class="col">
-                        <h4 class="text-uppercase text-center">Personal Asignado</h4>
-                        <table id="tPersonal" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
-                          <thead class="thead-dark">
-                            <tr>
-                              <th data-field="id" data-visible="false">ID</th>
-                              <th data-field="idpersona" data-visible="false">IdPersona</th>
-                              <th data-field="idordper" data-visible="false">IdOrdPer</th>
-                              <th data-field="nombre">Nombre</th>
-                              <th data-field="puesto">Puesto</th>
-                              <th data-field="actions"></th>
-                            </tr>
-                          </thead>
-                          <tbody></tbody>
-                        </table>
-                        <br />
-                        <div class="form-group row">
-                          <label for="osTotal" class="col-sm-2 col-form-label"><b>Total:</b></label>
-                          <div class="col-sm-10">
-                            <input id="osTotal" type="number" class="form-control" readonly>
-                          </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                        <div class="list-group" role="tablist">
+                            <a id="stepFour" class="list-group-item list-group-item-action" href="#infoActivosFijos" role="tab">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Activos fijos/productos</h5>
+                                </div>
+                                <small>Detalle de los activos fijos/productos asignados</small>
+                            </a>
                         </div>
-                      </div>
-                      <div class="col">
-                        <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
-                          <div id="aPCont"></div>
-                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="form-group">
-                          <label for="osPersonal">Personal registrado</label>
-                          <select id="osPersonal" class="form-control">
-                            <option value="0"> -- Selecciona una opci&oacute;n -- </option>
-                          </select>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-6 offset-md-4 col-lg-6 offset-lg-6 text-right">
-                            <button id="btnAddPersonal" class="btn btn-primary" type=button>Asignar personal</button>
-                          </div>
-                        </div>
-                      </div>
                     </div>
-                  </div>
-                  <div id="infoActivosFijos" class="tab-pane fade show form-section" role="tabpanel">
-                    <div class="row">
-                      <div class="col">
-                        <h4 class="text-uppercase text-center">Activo Fijo/Producto</h4>
-                        <table id="tActivoFijo" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
-                          <thead class="thead-dark">
-                            <tr>
-                              <th data-field="idaf" data-visible="false">ID</th>
-                              <th data-field="idactivofijo" data-visible="false">IdActivoFijo</th>
-                              <th data-field="idordact" data-visible="false">IdOrdAct</th>
-                              <th data-field="activo">Nombre</th>
-                              <th data-field="tipo">No. Serie</th>
-                              <th data-field="opcional2" data-visible="false">No. Producto</th>
-                              <th data-field="os" data-visible="false">Orden Servicio</th>
-                              <th data-field="actions"></th>
-                            </tr>
-                          </thead>
-                          <tbody></tbody>
-                        </table>
-                        <br />
-                        <div class="form-group row">
-                          <label for="osafTotal" class="col-sm-2 col-form-label"><B>Total:</B></label>
-                          <div class="col-sm-10">
-                            <input id="osafTotal" type="number" class="form-control" readonly>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col">
-                        <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
-                          <div id="aAFCont"></div>
-                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="form-group">
-                          <label for="osActivoFijo">Activo fijo/Producto registrado  -  No. Serie  /  No. Producto</label>
-                          <select id="osActivoFijo" class="form-control">
-                            <option value="0"> -- Selecciona una opci&oacute;n -- </option>
-                          </select>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-6 offset-md-4 col-lg-6 offset-lg-6 text-right">
-                            <button id="btnActivoFijo" class="btn btn-primary" type=button>Asignar activo fijo/producto</button>
-                          </div>
-                        </div>
-                      </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                        <div class="list-group" role="tablist">
+                            @if (paquete.ToString() != "True")
+                        {
+                            <a id="stepFive" class="list-group-item list-group-item-action" href="#infoInsumos" role="tab">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Insumos a utilizar</h5>
+                                </div>
+                                <small>Detalle del los insumos utilizados en un servicio</small>
+                            </a>
+                        }
+                        else
+                        {
+                            <a id="stepFive" class="list-group-item list-group-item-action" href="#infoInsumosP" role="tab">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Insumos a utilizar</h5>
+                                </div>
+                                <small>Detalle del los insumos utilizados en un servicio</small>
+                            </a>
+                        }
                     </div>
-                  </div>
-
-            <div id="infoInsumosP" class="tab-pane fade show form-section" role="tabpanel">
-              <div class="row">
-                <div class="col">
-                  <h4 class="text-uppercase text-center">Insumos Utilizados</h4>
-                  <table id="tInsumos" data-unique-id="idi" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
-                    <thead class="thead-dark">
-                      <tr>
-                        <th data-field="idi" data-visible="false">ID</th>
-                        <th data-field="idinsumo" data-visible="false">IdInsumo</th>
-                        @*<th data-field="idlote" data-visible="false">IdLote</th>*@
-                        <th data-field="idpaquete" data-visible="false">IdPaquete</th>
-                        <th data-field="idordins" data-visible="false">IdOrdIns</th>
-                        <th data-field="paquete">Paquete</th>
-                        <th data-field="codigo">Código</th>
-                        <th data-field="insumo">Insumo</th>
-                        <th data-field="lote">Lote</th>
-                        <th data-field="cantidad">Cantidad</th>
-                        @*<th data-field="caducidad">Caducidad</th>*@
-                        <th data-field="actions"></th>
-                      </tr>
-                    </thead>
-                    <tbody></tbody>
-                  </table>
-                  <br />
-                  <div class="form-group row">
-                    <label for="osiTotal" class="col-sm-2 col-form-label">Total</label>
-                    <div class="col-sm-10">
-                      <input id="osiTotal" type="number" class="form-control-plaintext" readonly>
-                    </div>
-                  </div>
                 </div>
-                <div class="col">
-                  <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
-                    <div id="aICont"></div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="osPaquete">Paquete</label>
-                    <select id="osPaquete" class="form-control">
-                      <option value=""> -- Selecciona una opci&oacute;n -- </option>
-                      @*foreach(Paquete pq in paquetes){
-                      <option value="@pq.Id">@pq.Clasificacion - @pq.Descripcion</option>
-                      }*@
-                    </select>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="osInsumoSearch" style="display: none">Búsqueda de insumo</label>
-                    <input id="osInsumoSearch" class="form-control" type="text" disabled style="display: none">
-                  </div>
-
-                  <div class="form-group">
-                    <label for="osInsumo">Insumo</label>
-                    <div class="form-inline">
-                        <div class="col-6">
-                    <select id="osInsumo" class="form-control selectpicker" data-live-search="true" multiple data-selected-text-format="count" data-width="auto" data-show-content="true" data-size="10" data-window-padding="20">
-                        @*<select id="osInsumo" class="form-control">
-                          <option value=""> -- Selecciona una opci&oacute;n -- </option>*@
-                        </select>
-                        </div>
-                        <div class="col-12 col-lg-6">
-                          <button id="addInsumo" class="form-control btn btn-primary" type="button">Capturar datos por insumo</button>
-                        </div>
-                    </div>
-                  </div>
-                  @*<div class="form-group">
-                    <label for="osLote">Lote</label>
-                    <select id="osLote" class="form-control">
-                      <option value=""> -- Selecciona una opci&oacute;n -- </option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <small id="osLoteCaducidad"></small>
-                    <small id="osLoteAsignado"></small>
-                    <small id="osLoteTeorico"></small>
-                    <small id="osLoteFisico"></small>
-                  </div>*@
-                  @*<div class="form-group">
-                    <label for="osLoteI">Lote</label>
-                    <input id="osLoteI" type="text" class="form-control">
-                  </div>
-                  <div class="form-group">
-                    <label for="osCaducidad">Caducidad</label>
-                    <input id="osCaducidad" type="text" class="form-control" placeholder="dd/MM/aaaa">
-                  </div>
-                  <div class="form-group">
-                    <label for="osCantidad">Cantidad</label>
-                    <input id="osCantidad" type="number" min="1" class="form-control">
-                  </div>*@
-                  <div class="row">
-                    <div class="col-md-6 offset-md-4 col-lg-6 offset-lg-6">
-                      @*<button id="btnAddInsumo" class="btn btn-primary" type=button>Asignar insumo</button>*@
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
-
-
-                  <div id="infoInsumos" class="tab-pane fade show form-section" role="tabpanel">
-                    <div class="row">
-                      <div class="col">
-                        <h4 class="text-uppercase text-center">Insumos Utilizados</h4>
-                        <table id="t_Insumos" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
-                          <thead class="thead-dark">
-                            <tr>
-                              <th data-field="idi" data-visible="false">ID</th>
-                              <th data-field="idinsumo" data-visible="false">IdInsumo</th>
-                              <th data-field="idordins" data-visible="false">IdOrdIns</th>
-                              <th data-field="insumo">Insumo</th>
-                              <th data-field="cantidad">Cantidad</th>
-                              <th data-field="actions"></th>
-                            </tr>
-                          </thead>
-                          <tbody></tbody>
-                        </table>
-                        <br />
-                        <div class="form-group row">
-                          <label for="osiTotal" class="col-sm-2 col-form-label"><b>Total:</b></label>
-                          <div class="col-sm-10">
-                            <input id="osiTotal" type="number" class="form-control" readonly>
-                          </div>
+            <div class="py-2">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="25" aria-valuemin="25" aria-valuemax="100" style="width: 25%;"></div>
                         </div>
-                      </div>
-                      <div class="col">
-                        <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
-                          <div id="aICont"></div>
-                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="form-group">
-                          <label for="os_Insumo">Insumo</label>
-                          <select id="os_Insumo" class="form-control">
-                            <option value=""> -- Selecciona una opci&oacute;n -- </option>
-                          </select>
-                        </div>
-                        <div class="form-group">
-                          <label for="osCantidad">Cantidad</label>
-                          <input id="osCantidad" type="number" min="0" class="form-control">
-                        </div>
-                        <div class="row">
-                          <div class="col-md-6 offset-md-4 col-lg-6 offset-lg-6 text-right">
-                            <button id="btnAddInsumo" class="btn btn-primary" type=button>Asignar insumo</button>
-                          </div>
-                        </div>
-                      </div>
                     </div>
-
-                  </div>
                 </div>
-              </div>
             </div>
-            <div class="form-row margTop40">
-                        <div class="col"></div>
-                        <div class="col">
-                          <button id="btnSave" class="btn btn-success btn-block">Guardar &Oacute;rden de Servicio</button>
+            <div class="row">
+                <div class="col-12">
+                    <form id="fNewOS" name="fNewOS" action='@Url.Action( "SaveOS", "Servicio")' method="post">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="tab-content">
+                                    <div id="infoGral" class="tab-pane fade show active form-section" role="tabpanel">
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="iCliente">Cliente</label>
+                                                <select id="iCliente" class="form-control" name="Cliente" required="">
+                                                    <option value=""> -- Selecciona una opci&oacute;n -- </option>
+                                                    @foreach (var cliente in ViewData["clientes"] as List<Cliente>)
+                                                    {
+                                                        <option value="@cliente.Id">@cliente.RazonSocial</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iContrato">Contrato</label>
+                                                <select id="iContrato" class="form-control" name="Contrato" required="">
+                                                    <option value=""> -- Selecciona una opci&oacute;n -- </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="iUbicacion">Ubicaci&oacute;n</label>
+                                                <select id="iUbicacion" class="form-control" name="Ubicacion" required="">
+                                                    <option value=""> -- Selecciona una opci&oacute;n -- </option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iLineaNegocio">L&iacute;nea de negocio</label>
+                                                <select id="iLineaNegocio" class="form-control" name="LineaNegocio" required="">
+                                                    <option value=""> -- Selecciona una opci&oacute;n -- </option>
+                                                    @foreach (var linea in ViewData["lineas"] as List<LineaNegocio>)
+                                                    {
+                                                        <option value="@linea.Id">@linea.Nombre</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="iServicio">Servicio</label>
+                                                <select id="iServicio" class="form-control" name="Servicio" required="">
+                                                    <option value=""> -- Selecciona una opci&oacute;n -- </option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iEstatus">Estatus</label>
+                                                <select id="iEstatus" class="form-control" name="EstatusServicio" required="">
+                                                    <option value="solicitado">Solicitado</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="iTipo">Tipo</label>
+                                                <select id="iTipo" class="form-control" name="Tipo" required="">
+                                                    <option value=""> -- Selecciona una opci&oacute;n -- </option>
+                                                    <option value="Ordinario">Ordinario</option>
+                                                    <option value="Extraordinario">Extraordinario</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iObs">Observaciones</label>
+                                                <textarea class="form-control" id="iObs" rows="3" name="Observaciones"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="iFechaInicio">Fecha/Hora de inicio</label>
+                                                <div class="input-group date" id="iFechaInicio" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#iFechaInicio" name="FechaInicio" placeholder="dd/mm/aaaa 00:00" required />
+                                                    <div class="input-group-append" data-target="#iFechaInicio" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                                <div id="eiFechaInicio"></div>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iFechaFin">Fecha/Hora de fin</label>
+                                                <div class="input-group date" id="iFechaFin" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#iFechaFin" name="FechaFin" placeholder="dd/mm/aaaa 00:00" required />
+                                                    <div class="input-group-append" data-target="#iFechaFin" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                                <div id="eiFechaFin"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-------------------------------------------------------Check Optional Contact------------------------------------------------------------------------->
+                                    <div id="infoResponsable" class="tab-pane fade show form-section" role="tabpanel">
+                                        <input type="checkbox" name="optionalContact" onclick="disableContact()">
+                                        <label>Deshabilitar contacto</label>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label class="control-label" for="slcContacto">Contacto</label>
+                                                <select class="form-control" id="slcContacto" required>
+                                                    <option value="NA" selected disabled>Selecciona un Contacto</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iNombre">Nombre</label>
+                                                <input id="iNombre" type="text" class="form-control" name="ContactoNombre" required readonly/>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="iAp">Apellido paterno</label>
+                                                <input id="iAp" type="text" class="form-control" name="ContactoAP" required readonly />
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iAm">Apellido materno</label>
+                                                <input id="iAm" type="text" class="form-control" name="ContactoAM" required readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="iEm">Correo electrónico</label>
+                                                <input id="iEm" type="text" class="form-control" name="ContactoEmail" required readonly />
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iTel">Tel&eacute;fono de contacto</label>
+                                                <input id="iTel" type="text" class="form-control" name="ContactoTelefono" required readonly />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row" id="copia-cliente">
+                                            <div class="form-check form-group col-12 mb-12 text-center align-self-end">
+                                                <input class="form-check-input" type="checkbox" value="" id="ccCheck1">
+                                                <label class="form-check-label m-1" for="ccCheck1">
+                                                    ¿Enviar copia de la notificación al cliente?
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-row" id="Cc1" style="display: none">
+                                            <div class="form-group col-4">
+                                                <label for="iCC1nombre">Nombre completo:</label>
+                                                <input id="iCC1nombre" class="form-control m-1" type="text" name="NombreCompletoCC1" maxlength="100" />
+                                            </div>
+                                            <div class="form-group col-4">
+                                                <label for="iCC1email">Correo electrónico:</label>
+                                                <input id="iCC1email" class="form-control m-1" type="email" name="EmailCC1">
+                                            </div>
+                                            <div class="form-check form-group col-4 text-center align-self-center">
+                                                <input class="form-check-input" type="checkbox" value="" id="ccCheck2">
+                                                <label class="form-check-label" for="ccCheck2">
+                                                    ¿Otra persona?
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-row" id="Cc2" style="display: none">
+                                            <div class="form-group col-4">
+                                                <label for="iCC2nombre">Nombre completo:</label>
+                                                <input id="iCC2nombre" class="form-control m-1" type="text" name="NombreCompletoCC2" maxlength="100" />
+                                            </div>
+                                            <div class="form-group col-4">
+                                                <label for="iCC2email">Correo electrónico:</label>
+                                                <input id="iCC2email" class="form-control m-1" type="email" name="EmailCC2">
+                                            </div>
+                                            <div class="form-group col-4"></div>
+                                        </div>
+
+                                        <div class="form-row" id="opcional-cliente">
+                                            <div class="form-group col-6">
+                                                <label for="iOp1" class="m-1">Campo Opcional</label>
+                                                <input id="iOp1" type="text" class="form-control" name="Opcional1" maxlength="100" />
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iOp4">Campo Opcional</label>
+                                                <input id="iOp4" type="text" class="form-control" name="Opcional4" maxlength="100" />
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="iOp2">&Oacute;rden de Servicio Relacionada</label>
+                                                <input id="iOp2" type="text" class="form-control" name="Opcional2" maxlength="100" />
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iOp3">Horario de servicio</label>
+                                                <div class="input-group date" id="iOp3" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#iOp3" name="Opcional3" placeholder="dd/mm/aaaa 00:00" required="" />
+                                                    <div class="input-group-append" data-target="#iOp3" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                                <div id="eiOp3"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--div id="infoResponsable" class="tab-pane fade show form-section" role="tabpanel">
+                                        <input type="checkbox" name="optionalContact" onclick="disableContact()">
+                                        <label>Deshabilitar contacto</label>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label class="control-label" for="slcContacto">Contacto</label>
+                                                <select class="form-control" id="slcContacto" required>
+                                                    <option value="null" selected disabled>Selecciona un Contacto</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iNombre">Nombre</label>
+                                                <input id="iNombre" type="text" class="form-control" name="ContactoNombre" required readonly maxlength="30" />
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="iAp">Apellido paterno</label>
+                                                <input id="iAp" type="text" class="form-control" name="ContactoAP" required readonly maxlength="30" />
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iAm">Apellido materno</label>
+                                                <input id="iAm" type="text" class="form-control" name="ContactoAM" required readonly maxlength="30" />
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="iEm">Correo electrónico</label>
+                                                <input id="iEm" type="email" class="form-control" name="ContactoEmail" required readonly />
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iTel">Tel&eacute;fono de contacto</label>
+                                                <input id="iTel" type="text" class="form-control" maxlength="10" name="ContactoTelefono" required="" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="form-row" id="copia-cliente">
+                                            <div class="form-check form-group col-12 mb-12 text-center align-self-end">
+                                                <input class="form-check-input" type="checkbox" value="" id="ccCheck1">
+                                                <label class="form-check-label m-1" for="ccCheck1">
+                                                    ¿Enviar copia de la notificación al cliente?
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-row" id="Cc1" style="display: none">
+                                            <div class="form-group col-4">
+                                                <label for="iCC1nombre">Nombre completo:</label>
+                                                <input id="iCC1nombre" class="form-control m-1" type="text" name="NombreCompletoCC1" maxlength="100" />
+                                            </div>
+                                            <div class="form-group col-4">
+                                                <label for="iCC1email">Correo electrónico:</label>
+                                                <input id="iCC1email" class="form-control m-1" type="email" name="EmailCC1">
+                                            </div>
+                                            <div class="form-check form-group col-4 text-center align-self-center">
+                                                <input class="form-check-input" type="checkbox" value="" id="ccCheck2">
+                                                <label class="form-check-label" for="ccCheck2">
+                                                    ¿Otra persona?
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-row" id="Cc2" style="display: none">
+                                            <div class="form-group col-4">
+                                                <label for="iCC2nombre">Nombre completo:</label>
+                                                <input id="iCC2nombre" class="form-control m-1" type="text" name="NombreCompletoCC2" maxlength="100" />
+                                            </div>
+                                            <div class="form-group col-4">
+                                                <label for="iCC2email">Correo electrónico:</label>
+                                                <input id="iCC2email" class="form-control m-1" type="email" name="EmailCC2">
+                                            </div>
+                                            <div class="form-group col-4"></div>
+                                        </div>
+                                        <div class="form-row" id="opcional-cliente">
+                                            <div class="form-group col-6">
+                                                <label for="iOp1" class="m-1">Campo Opcional</label>
+                                                <input id="iOp1" type="text" class="form-control" name="Opcional1" maxlength="100" />
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iOp4">Campo Opcional</label>
+                                                <input id="iOp4" type="text" class="form-control" name="Opcional4" maxlength="100" />
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="iOp2">&Oacute;rden de Servicio Relacionada</label>
+                                                <input id="iOp2" type="text" class="form-control" name="Opcional2" maxlength="100" />
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="iOp3">Horario de servicio</label>
+                                                <div class="input-group date" id="iOp3" data-target-input="nearest">
+                                                    <input type="text" class="form-control datetimepicker-input" data-target="#iOp3" name="Opcional3" placeholder="dd/mm/aaaa 00:00" required="" />
+                                                    <div class="input-group-append" data-target="#iOp3" data-toggle="datetimepicker">
+                                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                    </div>
+                                                </div>
+                                                <div id="eiOp3"></div>
+                                            </div>
+                                        </div>
+                                    </!--div!-->
+
+
+                                    <div id="infoPersonal" class="tab-pane fade show form-section" role="tabpanel">
+                                        <div class="row">
+                                            <div class="col">
+                                                <h4 class="text-uppercase text-center">Personal Asignado</h4>
+                                                <table id="tPersonal" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
+                                                    <thead class="thead-dark">
+                                                        <tr>
+                                                            <th data-field="id" data-visible="false">ID</th>
+                                                            <th data-field="idpersona" data-visible="false">IdPersona</th>
+                                                            <th data-field="idordper" data-visible="false">IdOrdPer</th>
+                                                            <th data-field="nombre">Nombre</th>
+                                                            <th data-field="puesto">Puesto</th>
+                                                            <th data-field="actions"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                                <br />
+                                                <div class="form-group row">
+                                                    <label for="osTotal" class="col-sm-2 col-form-label"><b>Total:</b></label>
+                                                    <div class="col-sm-10">
+                                                        <input id="osTotal" type="number" class="form-control" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
+                                                    <div id="aPCont"></div>
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="osPersonal">Personal registrado</label>
+                                                    <select id="osPersonal" class="form-control">
+                                                        <option value="0"> -- Selecciona una opci&oacute;n -- </option>
+                                                    </select>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 offset-md-4 col-lg-6 offset-lg-6 text-right">
+                                                        <button id="btnAddPersonal" class="btn btn-primary" type=button>Asignar personal</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="infoActivosFijos" class="tab-pane fade show form-section" role="tabpanel">
+                                        <div class="row">
+                                            <div class="col">
+                                                <h4 class="text-uppercase text-center">Activo Fijo/Producto</h4>
+                                                <table id="tActivoFijo" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
+                                                    <thead class="thead-dark">
+                                                        <tr>
+                                                            <th data-field="idaf" data-visible="false">ID</th>
+                                                            <th data-field="idactivofijo" data-visible="false">IdActivoFijo</th>
+                                                            <th data-field="idordact" data-visible="false">IdOrdAct</th>
+                                                            <th data-field="activo">Nombre</th>
+                                                            <th data-field="tipo">No. Serie</th>
+                                                            <th data-field="opcional2" data-visible="false">No. Producto</th>
+                                                            <th data-field="os" data-visible="false">Orden Servicio</th>
+                                                            <th data-field="actions"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                                <br />
+                                                <div class="form-group row">
+                                                    <label for="osafTotal" class="col-sm-2 col-form-label"><B>Total:</B></label>
+                                                    <div class="col-sm-10">
+                                                        <input id="osafTotal" type="number" class="form-control" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
+                                                    <div id="aAFCont"></div>
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="osActivoFijo">Activo fijo/Producto registrado  -  No. Serie  /  No. Producto</label>
+                                                    <select id="osActivoFijo" class="form-control">
+                                                        <option value="0"> -- Selecciona una opci&oacute;n -- </option>
+                                                    </select>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 offset-md-4 col-lg-6 offset-lg-6 text-right">
+                                                        <button id="btnActivoFijo" class="btn btn-primary" type=button>Asignar activo fijo/producto</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="infoInsumosP" class="tab-pane fade show form-section" role="tabpanel">
+                                        <div class="row">
+                                            <div class="col">
+                                                <h4 class="text-uppercase text-center">Insumos Utilizados</h4>
+                                                <table id="tInsumos" data-unique-id="idi" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
+                                                    <thead class="thead-dark">
+                                                        <tr>
+                                                            <th data-field="idi" data-visible="false">ID</th>
+                                                            <th data-field="idinsumo" data-visible="false">IdInsumo</th>
+                                                            @*<th data-field="idlote" data-visible="false">IdLote</th>*@
+                                                            <th data-field="idpaquete" data-visible="false">IdPaquete</th>
+                                                            <th data-field="idordins" data-visible="false">IdOrdIns</th>
+                                                            <th data-field="paquete">Paquete</th>
+                                                            <th data-field="codigo">Código</th>
+                                                            <th data-field="insumo">Insumo</th>
+                                                            <th data-field="lote">Lote</th>
+                                                            <th data-field="cantidad">Cantidad</th>
+                                                            @*<th data-field="caducidad">Caducidad</th>*@
+                                                            <th data-field="actions"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                                <br />
+                                                <div class="form-group row">
+                                                    <label for="osiTotal" class="col-sm-2 col-form-label">Total</label>
+                                                    <div class="col-sm-10">
+                                                        <input id="osiTotal" type="number" class="form-control-plaintext" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
+                                                    <div id="aICont"></div>
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="osPaquete">Paquete</label>
+                                                    <select id="osPaquete" class="form-control">
+                                                        <option value=""> -- Selecciona una opci&oacute;n -- </option>
+                                                        @*foreach(Paquete pq in paquetes){
+                                                        <option value="@pq.Id">@pq.Clasificacion - @pq.Descripcion</option>
+                                                        }*@
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="osInsumoSearch" style="display: none">Búsqueda de insumo</label>
+                                                    <input id="osInsumoSearch" class="form-control" type="text" disabled style="display: none">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="osInsumo">Insumo</label>
+                                                    <div class="form-inline">
+                                                        <div class="col-6">
+                                                            <select id="osInsumo" class="form-control selectpicker" data-live-search="true" multiple data-selected-text-format="count" data-width="auto" data-show-content="true" data-size="10" data-window-padding="20">
+                                                                @*<select id="osInsumo" class="form-control">
+                                                                <option value=""> -- Selecciona una opci&oacute;n -- </option>*@
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-12 col-lg-6">
+                                                            <button id="addInsumo" class="form-control btn btn-primary" type="button">Capturar datos por insumo</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @*<div class="form-group">
+                                                <label for="osLote">Lote</label>
+                                                <select id="osLote" class="form-control">
+                                                <option value=""> -- Selecciona una opci&oacute;n -- </option>
+                                                </select>
+                                                </div>
+                                                <div class="form-group">
+                                                <small id="osLoteCaducidad"></small>
+                                                <small id="osLoteAsignado"></small>
+                                                <small id="osLoteTeorico"></small>
+                                                <small id="osLoteFisico"></small>
+                                                </div>*@
+                                                @*<div class="form-group">
+                                                <label for="osLoteI">Lote</label>
+                                                <input id="osLoteI" type="text" class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                <label for="osCaducidad">Caducidad</label>
+                                                <input id="osCaducidad" type="text" class="form-control" placeholder="dd/MM/aaaa">
+                                                </div>
+                                                <div class="form-group">
+                                                <label for="osCantidad">Cantidad</label>
+                                                <input id="osCantidad" type="number" min="1" class="form-control">
+                                                </div>*@
+                                                <div class="row">
+                                                    <div class="col-md-6 offset-md-4 col-lg-6 offset-lg-6">
+                                                        @*<button id="btnAddInsumo" class="btn btn-primary" type=button>Asignar insumo</button>*@
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div id="infoInsumos" class="tab-pane fade show form-section" role="tabpanel">
+                                        <div class="row">
+                                            <div class="col">
+                                                <h4 class="text-uppercase text-center">Insumos Utilizados</h4>
+                                                <table id="t_Insumos" data-toggle="table" data-search="true" data-show-columns="false" data-pagination="true" data-locale="es-MX" data-classes="table table-hover" data-page-size="5" data-show-footer="true">
+                                                    <thead class="thead-dark">
+                                                        <tr>
+                                                            <th data-field="idi" data-visible="false">ID</th>
+                                                            <th data-field="idinsumo" data-visible="false">IdInsumo</th>
+                                                            <th data-field="idordins" data-visible="false">IdOrdIns</th>
+                                                            <th data-field="insumo">Insumo</th>
+                                                            <th data-field="cantidad">Cantidad</th>
+                                                            <th data-field="actions"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                                <br />
+                                                <div class="form-group row">
+                                                    <label for="osiTotal" class="col-sm-2 col-form-label"><b>Total:</b></label>
+                                                    <div class="col-sm-10">
+                                                        <input id="osiTotal" type="number" class="form-control" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="alert alert-warning alert-dismissible fade show invisible" role="alert">
+                                                    <div id="aICont"></div>
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="os_Insumo">Insumo</label>
+                                                    <select id="os_Insumo" class="form-control">
+                                                        <option value=""> -- Selecciona una opci&oacute;n -- </option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="osCantidad">Cantidad</label>
+                                                    <input id="osCantidad" type="number" min="0" class="form-control">
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 offset-md-4 col-lg-6 offset-lg-6 text-right">
+                                                        <button id="btnAddInsumo" class="btn btn-primary" type=button>Asignar insumo</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col">
-                            <input type="hidden" name="Estatus" value="" />
-                            <input type="hidden" name="Id" value="0" />
-                            <input type="hidden" name="dtPersonas" value="" />
-                            <input type="hidden" name="dtActivos" value="" />
-                            <input type="hidden" name="dtInsumos" value="" />
+                        <div class="form-row margTop40">
+                            <div class="col"></div>
+                            <div class="col">
+                                <button id="btnSave" class="btn btn-success btn-block">Guardar &Oacute;rden de Servicio</button>
+                            </div>
+                            <div class="col">
+                                <input type="hidden" name="Estatus" value="" />
+                                <input type="hidden" name="Id" value="0" />
+                                <input type="hidden" name="dtPersonas" value="" />
+                                <input type="hidden" name="dtActivos" value="" />
+                                <input type="hidden" name="dtInsumos" value="" />
+                            </div>
                         </div>
-                    </div>
-          </form>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <div class="modal fade" id="fechaFinMenorFechaInicio" tabindex="-1" role="dialog" aria-labelledby="fechaFinMenorFechaInicioLabel" aria-hidden="true" data-backdrop="static">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content alert alert-light">
-      <div class="modal-header">
-        <h5 class="modal-title" id="fechaFinMenorFechaInicioLabel">Advertencia</h5>
-      </div>
-      <div class="modal-body"><p align="center">Ha ingresado una fecha inválida. La <b>Fecha/Hora fin</b> es menor a la <b>Fecha/Hora inicio</b>.</p><p align="center">Favor de volver a capturar la <b>Fecha/Hora fin</b></p></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-      </div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content alert alert-light">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fechaFinMenorFechaInicioLabel">Advertencia</h5>
+            </div>
+            <div class="modal-body"><p align="center">Ha ingresado una fecha inválida. La <b>Fecha/Hora fin</b> es menor a la <b>Fecha/Hora inicio</b>.</p><p align="center">Favor de volver a capturar la <b>Fecha/Hora fin</b></p></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 @section scripts {
-<script>
-const paqueteP = @Html.Raw(Json.Serialize(paquete));
-let contacts = [];
-$(document).ready(function (){
-    $('#iFechaInicio').datetimepicker({
-      locale: 'es',
-      focusOnShow: false,
-      inline: true,
-      sideBySide: true
-    });
+    <script>
+        let slcContacto = document.getElementById("slcContacto");
+        let iNombre = document.getElementById("iNombre");
+        let iAp = document.getElementById("iAp");
+        let iAm = document.getElementById("iAm");
+        let iEm = document.getElementById("iEm");
+        let iTel = document.getElementById("iTel");
+        function disableContact() {
+            if (document.fNewOS.optionalContact.checked) {
+                slcContacto.value = "NA";
+                slcContacto.placeholder = "NA";
+                slcContacto.required = false;
+                slcContacto.disabled = true;
 
-    $('#iFechaFin').datetimepicker({
-      locale: 'es',
-      focusOnShow: false,
-      inline: true,
-      sideBySide: true
-    });
+                iNombre.value = "NA";
 
-    $('#iOp3').datetimepicker({
-      locale: 'es',
-      focusOnShow: false,
-      inline: true,
-      sideBySide: true
-    });
-  });
-  
-  $("#iCliente").change(() => {
-    $.ajax({
-      url: '@Url.Action("GetContactoCliente","Rest")',
-      method: "GET",
-      data: {
-        cId: $("#iCliente").val()
-      },
-      async: true,
-      dataType: "json",
-      success: data => {
-        if(data.success){
-          contacts.length = 0;
-          contacts = [...data.data ];
-          $("#slcContacto").empty().append(`<option value="null" selected disabled>Selecciona un Contacto</option>`);
-          for (const contacto of data.data) {
-            $("#slcContacto").append(`<option value="${contacto.id}">${contacto.nombre} ${contacto.paterno} ${contacto.materno}</option>`);      
-          }
-          $("#iNombre").val("");
-          $("#iAp").val("");
-          $("#iAm").val("");
-          $("#iEm").val("");
-          $("#iTel").val("");
+                iAp.value = "NA";
+
+                iAm.value = "NA";
+
+                iEm.type = "text";
+                iEm.value = "NA";
+
+                iTel.value = "NA";
+
+                document.getElementById('copia-cliente').setAttribute('style', 'display: none');
+                document.getElementById('opcional-cliente').setAttribute('style', 'display: none');
+            } else {
+                slcContacto.disabled = false;
+                slcContacto.value = null;
+
+                iNombre.value = null;
+                iNombre.placeholder = "";
+
+                iAp.value = null;
+                iAp.placeholder = "";
+
+                iAm.value = null;
+                iAm.placeholder = "";
+
+                iEm.type = "email";
+                iEm.value = null;
+                iEm.placeholder = "";
+
+                iTel.value = null;
+                iTel.placeholder = "";
+
+                document.getElementById('copia-cliente').setAttribute('style', 'display: true');
+                document.getElementById('opcional-cliente').setAttribute('style', 'display: true');
+            }
         }
-      }
-    });
-  });
+    </script>
 
-  $("#slcContacto").change(()=>{
-    const result = contacts.filter(contact => contact.id == $("#slcContacto").val());
-    $("#iNombre").val(result[0].nombre);
-    $("#iAp").val(result[0].paterno);
-    $("#iAm").val(result[0].materno);
-    $("#iEm").val(result[0].email);
-    $("#iTel").val(result[0].telefono);
-  });  
+    <script>
+        const paqueteP = @Html.Raw(Json.Serialize(paquete));
+        let contacts = [];
+        $(document).ready(function() {
+            $('#iFechaInicio').datetimepicker({
+                locale: 'es',
+                focusOnShow: false,
+                inline: true,
+                sideBySide: true
+            });
 
-  $("#osCantidad").keypress((evt) => {
-    if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
-        evt.preventDefault();
-    }
-  });
-  $("#iTel").keypress((evt) => {
-    if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57 ){
-        evt.preventDefault();
-    }
-  });
-</script>
-<script src="~/lib/Parsley-2.8.1/parsley.min.js"></script>
-<script src="~/lib/Parsley-2.8.1/i18n/es.js"></script>
-<script src="~/js/moment-2.22.2/min/moment-with-locales.js"></script>
-<script src="~/lib/tempusdominus-5.0.0/build/js/tempusdominus-bootstrap-4.min.js"></script>
-<script src="~/lib/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-<script src="~/js/createOrdenServicio.js"></script>
+            $('#iFechaFin').datetimepicker({
+                locale: 'es',
+                focusOnShow: false,
+                inline: true,
+                sideBySide: true
+            });
+
+            $('#iOp3').datetimepicker({
+                locale: 'es',
+                focusOnShow: false,
+                inline: true,
+                sideBySide: true
+            });
+        });
+
+        $("#iCliente").change(() => {
+            $.ajax({
+                url: '@Url.Action("GetContactoCliente","Rest")',
+                method: "GET",
+                data: {
+                    cId: $("#iCliente").val()
+                },
+                async: true,
+                dataType: "json",
+                success: data => {
+                    if (data.success) {
+                        contacts.length = 0;
+                        contacts = [...data.data];
+                        $("#slcContacto").empty().append(`<option value="null" selected disabled>Selecciona un Contacto</option>`);
+                        for (const contacto of data.data) {
+                            $("#slcContacto").append(`<option value="${contacto.id}">${contacto.nombre} ${contacto.paterno} ${contacto.materno}</option>`);
+                        }
+                        $("#iNombre").val("");
+                        $("#iAp").val("");
+                        $("#iAm").val("");
+                        $("#iEm").val("");
+                        $("#iTel").val("");
+                    }
+                }
+            });
+        });
+
+        $("#slcContacto").change(() => {
+            const result = contacts.filter(contact => contact.id == $("#slcContacto").val());
+            $("#iNombre").val(result[0].nombre);
+            $("#iAp").val(result[0].paterno);
+            $("#iAm").val(result[0].materno);
+            $("#iEm").val(result[0].email);
+            $("#iTel").val(result[0].telefono);
+        });
+
+        $("#osCantidad").keypress((evt) => {
+            if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57) {
+                evt.preventDefault();
+            }
+        });
+
+        $("#iTel").keypress((evt) => {
+            if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57) {
+                evt.preventDefault();
+            }
+        });
+    </script>
+    <script src="~/lib/Parsley-2.8.1/parsley.min.js"></script>
+    <script src="~/lib/Parsley-2.8.1/i18n/es.js"></script>
+    <script src="~/js/moment-2.22.2/min/moment-with-locales.js"></script>
+    <script src="~/lib/tempusdominus-5.0.0/build/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="~/lib/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/js/createOrdenServicio.js"></script>
 }

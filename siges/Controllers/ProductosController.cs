@@ -1,15 +1,10 @@
 using System;
 using System.Data;
-using System.Data.SqlClient;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using siges.DTO;
 using siges.Data;
 using siges.Models;
 using siges.Repository;

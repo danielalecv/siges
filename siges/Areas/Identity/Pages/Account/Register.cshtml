@@ -22,7 +22,7 @@
                         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                             <a class="nav-link active" id="pills-one-tab" data-toggle="pill" href="#pills-one" role="tab" aria-controls="pills-one" aria-selected="true">Generales</a>
                             @*<a class="nav-link" id="pills-two-tab" data-toggle="pill" href="#pills-two" role="tab" aria-controls="pills-two" aria-selected="false">Direcci&oacute;n</a>+@
-                            @*<a class="nav-link" id="pills-three-tab" data-toggle="pill" href="#pills-three" role="tab" aria-controls="pills-three" aria-selected="false">Laborales</a>*@
+                                @*<a class="nav-link" id="pills-three-tab" data-toggle="pill" href="#pills-three" role="tab" aria-controls="pills-three" aria-selected="false">Laborales</a>*@
                         </div>
                     </div>
                     <div class="col-9">
@@ -32,31 +32,31 @@
                                     <div class="form-row">
                                         <div class="col mb-3">
                                             <label asp-for="Input.per.Nombre">Nombre(s) *</label>
-                                            <input asp-for="Input.per.Nombre" class="form-control" placeholder="Nombre(s)" required=""/>
+                                            <input asp-for="Input.per.Nombre" class="form-control" placeholder="Nombre(s)" required="" />
                                             <span asp-validation-for="Input.per.Nombre" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="col mb-3">
                                             <label asp-for="Input.per.Paterno">Apellido Paterno *</label>
-                                            <input asp-for="Input.per.Paterno" class="form-control" placeholder="Apellido Paterno" required=""/>
+                                            <input asp-for="Input.per.Paterno" class="form-control" placeholder="Apellido Paterno" required="" />
                                             <span asp-validation-for="Input.per.Paterno" class="text-danger"></span>
                                         </div>
                                         <div class="col mb-3">
                                             <label asp-for="Input.per.Materno">Apellido Materno *</label>
-                                            <input asp-for="Input.per.Materno" class="form-control" placeholder="Apellido Materno" required=""/>
+                                            <input asp-for="Input.per.Materno" class="form-control" placeholder="Apellido Materno" required="" />
                                             <span asp-validation-for="Input.per.Materno" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="col mb-3">
                                             <label asp-for="Input.per.Telefono">Tel&eacute;fono *</label>
-                                            <input asp-for="Input.per.Telefono" class="form-control" placeholder="Ej: 5556058941" required="" type="number" maxlength="10" minlength="10" min="1000000000" max="9999999999"/>
-                                            
+                                            <input asp-for="Input.per.Telefono" class="form-control" placeholder="Ej: 5556058941" required="" type="number" maxlength="10" minlength="10" min="1000000000" max="9999999999" />
+
                                         </div>
                                         <div class="col mb-3">
-                                            <label asp-for="Input.Email">Correo Electr&oacute;nico *</label> 
-                                            <input asp-for="Input.Email" class="form-control" placeholder="Correo electrónico" required=""/>
+                                            <label asp-for="Input.Email">Correo Electr&oacute;nico *</label>
+                                            <input asp-for="Input.Email" class="form-control" placeholder="Correo electrónico" required="" />
                                             <small>El correo electrónico debe de ser <b>único</b> en el registro de los usuarios</small>
                                         </div>
                                     </div>
@@ -64,9 +64,9 @@
                                         <div class="col mb-3">
                                             <label asp-for="Input.Password">Contrase&ntilde;a *</label>
                                             <div class="input-group">
-                                                <input id="inputPassword" asp-for="Input.Password" class="form-control" placeholder="Contrase&ntilde;a"/>
+                                                <input id="inputPassword" asp-for="Input.Password" class="form-control" placeholder="Contrase&ntilde;a" />
                                                 <div class="input-group-append">
-                                                    <button id="showPassword" class="btn input-group-text" type="button"><i class="fas fa-eye"></i></button >
+                                                    <button id="showPassword" class="btn input-group-text" type="button"><i class="fas fa-eye"></i></button>
                                                 </div>
                                                 <small id="spnPassword">Mínimo, la contraseña debe contener: 9 caracteres, una mayúscula, una minúscula, un número, un símbolo, no repetir algún caracter, ni que sea consecutivo.</small>
                                             </div>
@@ -77,101 +77,101 @@
                                             <div class="input-group">
                                                 <input id="inputConfirmPassword" asp-for="Input.ConfirmPassword" class="form-control" placeholder="Confirmar Contrase&ntilde;a" />
                                                 <div class="input-group-append">
-                                                    <button id="showConfirmPassword" class="btn input-group-text" type="button"><i class="fas fa-eye"></i></button >
+                                                    <button id="showConfirmPassword" class="btn input-group-text" type="button"><i class="fas fa-eye"></i></button>
                                                 </div>
                                                 <small>Mínimo, la contraseña debe contener: 9 caracteres, una mayúscula, una minúscula, un número, un símbolo, no repetir algún caracter, ni que sea consecutivo.</small>
                                             </div>
                                             <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-                                            
+
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="col mb-3">
                                             <label asp-for="Input.per.CURP">CURP *</label>
-                                            <input id="txtCURP" asp-for="Input.per.CURP" class="form-control" placeholder="CURP" required=""/>
+                                            <input id="txtCURP" asp-for="Input.per.CURP" class="form-control" placeholder="CURP" required="" />
                                             <span asp-validation-for="Input.per.CURP" class="text-danger"></span>
                                         </div>
                                         <div class="col mb-3">
                                             <label asp-for="Input.per.RFC">RFC *</label>
-                                            <input id="txtRFC" asp-for="Input.per.RFC" class="form-control" placeholder="RFC" required=""/>
+                                            <input id="txtRFC" asp-for="Input.per.RFC" class="form-control" placeholder="RFC" required="" />
                                             <span asp-validation-for="Input.per.RFC" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="form-row justify-content-end">
-                                        <small>* Campos obligatorios</small>                                    
+                                        <small>* Campos obligatorios</small>
                                     </div>
                                 </div>
                                 @*<div class="tab-pane fade" id="pills-two" role="tabpanel" aria-labelledby="v-pills-profile-tab">
                                     <div class="form-row">
-                                        <div class="col mb-3">
-                                            <label asp-for="Input.dir.calle">Calle</label>
-                                            <input asp-for="Input.dir.calle" class="form-control" placeholder="Calle"/>
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label asp-for="Input.dir.numero">N&uacute;mero</label>
-                                            <input asp-for="Input.dir.numero" class="form-control" placeholder="Número"/>
-                                        </div>
+                                    <div class="col mb-3">
+                                    <label asp-for="Input.dir.calle">Calle</label>
+                                    <input asp-for="Input.dir.calle" class="form-control" placeholder="Calle"/>
+                                    </div>
+                                    <div class="col mb-3">
+                                    <label asp-for="Input.dir.numero">N&uacute;mero</label>
+                                    <input asp-for="Input.dir.numero" class="form-control" placeholder="Número"/>
+                                    </div>
                                     </div>
                                     <div class="form-row">
-                                        <div class="col mb-3">
-                                            <label asp-for="Input.dir.colonia">Colonia</label>
-                                            <input asp-for="Input.dir.colonia" class="form-control" placeholder="Colonia"/>
-                                            <span  asp-validation-for="Input.dir.colonia" class="text-danger"></span>
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label asp-for="Input.dir.cp">C&oacute;digo Postal</label>
-                                            <input asp-for="Input.dir.cp" class="form-control" placeholder="Código Postal"/>
-                                        </div>
+                                    <div class="col mb-3">
+                                    <label asp-for="Input.dir.colonia">Colonia</label>
+                                    <input asp-for="Input.dir.colonia" class="form-control" placeholder="Colonia"/>
+                                    <span  asp-validation-for="Input.dir.colonia" class="text-danger"></span>
+                                    </div>
+                                    <div class="col mb-3">
+                                    <label asp-for="Input.dir.cp">C&oacute;digo Postal</label>
+                                    <input asp-for="Input.dir.cp" class="form-control" placeholder="Código Postal"/>
+                                    </div>
                                     </div>
                                     <div class="form-row">
-                                        <div class="col mb-3">
-                                            <label asp-for="Input.dir.municipio">Municipio</label>
-                                            <input asp-for="Input.dir.municipio" class="form-control" placeholder="Municipio"/>
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label asp-for="Input.dir.entidadFederativa">Entidad Federativa</label>
-                                            <input asp-for="Input.dir.entidadFederativa" class="form-control" placeholder="Entidad Federativa"/>
-                                        </div>
+                                    <div class="col mb-3">
+                                    <label asp-for="Input.dir.municipio">Municipio</label>
+                                    <input asp-for="Input.dir.municipio" class="form-control" placeholder="Municipio"/>
                                     </div>
-                                </div>*@
+                                    <div class="col mb-3">
+                                    <label asp-for="Input.dir.entidadFederativa">Entidad Federativa</label>
+                                    <input asp-for="Input.dir.entidadFederativa" class="form-control" placeholder="Entidad Federativa"/>
+                                    </div>
+                                    </div>
+                                    </div>*@
                                 @*
-                                <div class="tab-pane fade" id="pills-three" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+                                    <div class="tab-pane fade" id="pills-three" role="tabpanel" aria-labelledby="v-pills-messages-tab">
                                     <div class="form-row">
-                                        <div class="col mb-3">
-                                            <label asp-for="Input.per.Puesto">Puesto</label>
-                                            <input asp-for="Input.per.Puesto" class="form-control" placeholder="Puesto"/>
-                                        </div>
+                                    <div class="col mb-3">
+                                    <label asp-for="Input.per.Puesto">Puesto</label>
+                                    <input asp-for="Input.per.Puesto" class="form-control" placeholder="Puesto"/>
+                                    </div>
                                     </div>
                                     <div class="form-row">
-                                        <div class="col mb-3">
-                                            <label asp-for="Input.per.ClaveEmpleado">Clave de Empleado</label>
-                                            <input asp-for="Input.per.ClaveEmpleado" class="form-control" placeholder="Clave de Empleado"/>
-                                        </div>
-                                        <div class="col mb-3">
-                                            <label asp-for="Input.per.Sueldo">Sueldo</label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
-                                                </div>
-                                                <input asp-for="Input.per.Sueldo" type="number" min="0" class="form-control" placeholder="Sueldo"/>
-                                            </div>
-                                        </div>
+                                    <div class="col mb-3">
+                                    <label asp-for="Input.per.ClaveEmpleado">Clave de Empleado</label>
+                                    <input asp-for="Input.per.ClaveEmpleado" class="form-control" placeholder="Clave de Empleado"/>
+                                    </div>
+                                    <div class="col mb-3">
+                                    <label asp-for="Input.per.Sueldo">Sueldo</label>
+                                    <div class="input-group">
+                                    <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                    </div>
+                                    <input asp-for="Input.per.Sueldo" type="number" min="0" class="form-control" placeholder="Sueldo"/>
+                                    </div>
+                                    </div>
                                     </div>
                                     <div class="form-row">
-                                        <div class="col">
-                                            <label  asp-for="Input.per.Opcional1">Campo Opcional</label>
-                                            <input  asp-for="Input.per.Opcional1" class="form-control" placeholder="Campo Opcional"/>
-                                            <span  asp-validation-for="Input.per.Opcional1" class="text-danger"></span>
-                                        </div>
-                                        <div class="col">
-                                            <label  asp-for="Input.per.Opcional2">Campo Opcional</label>
-                                            <input  asp-for="Input.per.Opcional2" class="form-control" placeholder="Campo Opcional"/>
-                                        </div>
+                                    <div class="col">
+                                    <label  asp-for="Input.per.Opcional1">Campo Opcional</label>
+                                    <input  asp-for="Input.per.Opcional1" class="form-control" placeholder="Campo Opcional"/>
+                                    <span  asp-validation-for="Input.per.Opcional1" class="text-danger"></span>
                                     </div>
-                                </div>
+                                    <div class="col">
+                                    <label  asp-for="Input.per.Opcional2">Campo Opcional</label>
+                                    <input  asp-for="Input.per.Opcional2" class="form-control" placeholder="Campo Opcional"/>
+                                    </div>
+                                    </div>
+                                    </div>
                                 *@
                             </div>
-                            <div class="form-group"> 
+                            <div class="form-group">
                                 <button id="btnSave" type="button" class="btn btn-primary btn-block margTop40"><h5>Guardar</h5></button>
                             </div>
                         </form>
@@ -184,127 +184,127 @@
 
 @* <div class="col-md-6 col-md-offset-2">
     <section>
-        <h4>Use another service to register.</h4>
-        <hr />
-        @{
-            if ((Model.ExternalLogins?.Count ?? 0) == 0)
-            {
-                <div>
-                    <p>
-                        There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
-                        for details on setting up this ASP.NET application to support logging in via external services.
-                    </p>
-                </div>
-            }
-            else
-            {
-                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                    <div>
-                        <p>
-                            @foreach (var provider in Model.ExternalLogins)
-                            {
-                                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                            }
-                        </p>
-                    </div>
-                </form>
-            }
-        }
+    <h4>Use another service to register.</h4>
+    <hr />
+    @{
+    if ((Model.ExternalLogins?.Count ?? 0) == 0)
+    {
+    <div>
+    <p>
+    There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+    for details on setting up this ASP.NET application to support logging in via external services.
+    </p>
+    </div>
+    }
+    else
+    {
+    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+    <div>
+    <p>
+    @foreach (var provider in Model.ExternalLogins)
+    {
+    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+    }
+    </p>
+    </div>
+    </form>
+    }
+    }
     </section>
-</div> *@
+    </div> *@
 
 @section Scripts {
-    <script src="~/lib/Parsley-2.8.1/parsley.min.js"></script>
-    <script src="~/lib/Parsley-2.8.1/i18n/es.js"></script>
-    <partial name="_ValidationScriptsPartial" />
-    <script>
-        $('#showPassword').on('mousedown', () => {
-            $('#inputPassword').attr("type", "text");
-        });
-        $('#showPassword').on('mouseup mouseleave', () => {
-            $('#inputPassword').attr("type", "password");
-        });
-        $('#showConfirmPassword').on('mousedown', () => {
-            $('#inputConfirmPassword').attr("type", "text");
-        });
-        $('#showConfirmPassword').on('mouseup mouseleave', () => {
-            $('#inputConfirmPassword').attr("type", "password");
-        });
-    </script>
-    <script>
-        $(function () {
-          $('#formRegister').parsley().on('field:validated', function() {
-            var ok = $('.parsley-error').length === 0;
-            $('.bs-callout-info').toggleClass('hidden', !ok);
-            $('.bs-callout-warning').toggleClass('hidden', ok);
-            $('#pills-one-tab').tab('show')
-          })
-        });
-
-        const RegExpPass = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@@\#\$%\^&\*])(?=.{8,})");
-
-        $("#inputPassword").on("keyup", () => {
-            if(!RegExpPass.test($("#inputPassword").val())){
-                $("#inputPassword").addClass("parsley-error");
-                $("#spnPassword").css( "color", "red" )
-            }
-            else{
-                $("#inputPassword").removeClass("parsley-error")
-                $("#spnPassword").css( "color", "black" )
-                validate = true;
-            }
-        });
-
-        $("#btnSave").on("click", function(){
-            let validate = true;
-
-
-  $.ajax({
-url: '@Url.Action("IfPersonExist","Rest")',
-method: "GET",
-data: {
-RFC: $("#txtRFC").val(),
-CURP: $("#txtCURP").val()
-},
-async: true,
-dataType: "json",
-success: function (res){
-if(res){
-Swal.fire({
-icon: 'error',
-title: '¡Error!',
-text: `La persona ya existe`
-});
-}
-else{
-            if($("#inputPassword").val().length < 8){
-                $("#inputPassword").addClass("parsley-error");
-                $("#spnPassword").css( "color", "red" )
+<script src="~/lib/Parsley-2.8.1/parsley.min.js"></script>
+<script src="~/lib/Parsley-2.8.1/i18n/es.js"></script>
+<partial name="_ValidationScriptsPartial" />
+<script>
+    $('#showPassword').on('mousedown', () => {
+        $('#inputPassword').attr("type", "text");
+    });
+    $('#showPassword').on('mouseup mouseleave', () => {
+        $('#inputPassword').attr("type", "password");
+    });
+    $('#showConfirmPassword').on('mousedown', () => {
+        $('#inputConfirmPassword').attr("type", "text");
+    });
+    $('#showConfirmPassword').on('mouseup mouseleave', () => {
+        $('#inputConfirmPassword').attr("type", "password");
+    });
+</script>
+<script>
+            $(function () {
+              $('#formRegister').parsley().on('field:validated', function() {
+                var ok = $('.parsley-error').length === 0;
+                $('.bs-callout-info').toggleClass('hidden', !ok);
+                $('.bs-callout-warning').toggleClass('hidden', ok);
                 $('#pills-one-tab').tab('show')
-                $("#inputPassword").focus();
-                validate = false;
-            }
-            else if(!RegExpPass.test($("#inputPassword").val())){
-                $("#inputPassword").addClass("parsley-error");
-                $('#pills-one-tab').tab('show')
-                $("#inputPassword").focus();
-                $("#spnPassword").css( "color", "red" )
-                validate = false;
-            }
-            else{
-                $("#inputPassword").removeClass("parsley-error")
-                $("#spnPassword").css( "color", "black" )
-                validate = true;
-            }
+              })
+            });
 
-            if(validate){
-                $('#formRegister').submit();
-            }
-}
-}
-});
+            const RegExpPass = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@@\#\$%\^&\*])(?=.{8,})");
 
-        });
+            $("#inputPassword").on("keyup", () => {
+                if(!RegExpPass.test($("#inputPassword").val())){
+                    $("#inputPassword").addClass("parsley-error");
+                    $("#spnPassword").css( "color", "red" )
+                }
+                else{
+                    $("#inputPassword").removeClass("parsley-error")
+                    $("#spnPassword").css( "color", "black" )
+                    validate = true;
+                }
+            });
 
-    </script>
+            $("#btnSave").on("click", function(){
+                let validate = true;
+
+
+      $.ajax({
+    url: '@Url.Action("IfPersonExist","Rest")',
+    method: "GET",
+    data: {
+    RFC: $("#txtRFC").val(),
+    CURP: $("#txtCURP").val()
+    },
+    async: true,
+    dataType: "json",
+    success: function (res){
+    if(res){
+    Swal.fire({
+    icon: 'error',
+    title: '¡Error!',
+    text: `La persona ya existe`
+    });
+    }
+    else{
+                if($("#inputPassword").val().length < 8){
+                    $("#inputPassword").addClass("parsley-error");
+                    $("#spnPassword").css( "color", "red" )
+                    $('#pills-one-tab').tab('show')
+                    $("#inputPassword").focus();
+                    validate = false;
+                }
+                else if(!RegExpPass.test($("#inputPassword").val())){
+                    $("#inputPassword").addClass("parsley-error");
+                    $('#pills-one-tab').tab('show')
+                    $("#inputPassword").focus();
+                    $("#spnPassword").css( "color", "red" )
+                    validate = false;
+                }
+                else{
+                    $("#inputPassword").removeClass("parsley-error")
+                    $("#spnPassword").css( "color", "black" )
+                    validate = true;
+                }
+
+                if(validate){
+                    $('#formRegister').submit();
+                }
+    }
+    }
+    });
+
+            });
+
+</script>
 }

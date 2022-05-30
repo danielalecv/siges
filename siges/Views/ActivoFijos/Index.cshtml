@@ -77,6 +77,10 @@
                     <input id="txtDescripcion" type="text" class="form-control" maxlength="30" />
                 </div>
                 <div class="form-group text-left">
+                    <label class="control-label">No. de serie</label>
+                    <input id="txtNoSerie" type="text" class="form-control" maxlength="30" />
+                </div>
+                <div class="form-group text-left">
                     <label class="control-label">Clave *</label>
                     <input id="txtClave" type="text" class="form-control"  maxlength="20" />
                 </div>
@@ -136,6 +140,12 @@
                 else{
                     $("#txtDescripcion").removeAttr("style");
                 }
+                if($("#txtNoSerie").val().length === 0){
+                    $("#txtNoSerie").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
+                }
+                else{
+                    $("#txtNoSerie").removeAttr("style");
+                }
                 if($("#txtClave").val().length === 0){
                     $("#txtClave").attr("style", "border-color: #f27474!important;box-shadow: 0 0 2px #f27474!important;");
                 }
@@ -155,7 +165,7 @@
                     $("#slcTipo").removeAttr("style");
                 }
 
-                if($("#txtDescripcion").val().length === 0 || $("#txtClave").val().length === 0 || $("#slcMarca").val() === null || $("#slcTipo").val() === null){
+                if($("#txtDescripcion").val().length === 0 || $("#txtNoSerie").val().length === 0 || $("#txtClave").val().length === 0 || $("#slcMarca").val() === null || $("#slcTipo").val() === null){
                     Swal.showValidationMessage("Algún campo obligatorio está vacío");
                 }
             }
@@ -164,6 +174,7 @@
                                     __RequestVerificationToken: token,
                                     activoFijo:{
                                         Descripcion: $("#txtDescripcion").val(),
+                                        NumeroSerie: $("#txtNoSerie").val(),
                                         Clave: $("#txtClave").val(),
                                         Marca: $("#slcMarca").val(),
                                         Tipo: $("#slcTipo").val(),

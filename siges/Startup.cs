@@ -64,190 +64,182 @@ using siges.Data;
 using siges.Repository;
 using siges.Areas.Identity.Data;
 
-namespace siges
-{
-    public class Startup
-    {
+namespace siges {
+  public class Startup {
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.Configure<CookiePolicyOptions>(options => {
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-            services.AddAuthentication(AzureADDefaults.AuthenticationScheme).AddAzureAD(options => Configuration.Bind("AzureAd", options));
-            services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options => {
-                options.Authority = options.Authority + "/v2.0/";
-                options.TokenValidationParameters.ValidateIssuer = false;
-            });
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<RoatechIdentityUser>(options => options.SignIn.RequireConfirmedEmail = true).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
-            //Change email and activity timeout
-            services.ConfigureApplicationCookie(o => {
-                //o.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-                o.ExpireTimeSpan = TimeSpan.FromMinutes(4 * 60);
-                o.SlidingExpiration = true;
-            });
-            services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromMinutes(20));
-
-            services.AddMvc(
-                config => {
-                    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-                    config.Filters.Add(new AuthorizeFilter(policy));
-                    config.EnableEndpointRouting = false;
-                }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
-            services.Configure<AuthMessageSenderOptions>(Configuration);
-            //services.AddRazorPages();
-            services.Configure<IdentityOptions>(options => {
-                // Password settings.
-                options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequiredUniqueChars = 1;
-                // Lockout settings.
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(60);
-                options.Lockout.MaxFailedAccessAttempts = 5;
-                options.Lockout.AllowedForNewUsers = true;
-                // User settings.
-                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                options.User.RequireUniqueEmail = true;
-            });
-            services.ConfigureApplicationCookie(options =>
-            {
-                // Cookie settings
-                options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(4 * 60);
-                //options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-                options.LoginPath = "/Identity/Account/Login";
-                options.LogoutPath = "/Identity/Account/Login";
-                options.AccessDeniedPath = "/Identity/Account/Login";
-                //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-                options.SlidingExpiration = true;
-            });
-
-            services.AddScoped<IPersonaRepository, PersonaRepository>();
-            services.AddScoped<IRoatechIdentityUserRepo, RoatechIdentityUserRepo>();
-
-            services.AddScoped<IActivoFijoRepository, ActivoFijoRepository>();
-            services.AddScoped<IContratoRepository, ContratoRepository>();
-            services.AddScoped<IInsumoRepository, InsumoRepository>();
-            services.AddScoped<ILineaNegocioRepository, LineaNegocioRepository>();
-            services.AddScoped<IPersonaRepository, PersonaRepository>();
-            services.AddScoped<IServicioRepository, ServicioRepository>();
-            services.AddScoped<IUbicacionRepository, UbicacionRepository>();
-            services.AddScoped<IClienteRepository, ClienteRepository>();
-            services.AddScoped<IDetalleActivoFijoRepository, DetalleActivoFijoRepository>();
-            services.AddScoped<IEntradaActivoFijoRepository, EntradaActivoFijoRepository>();
-            services.AddScoped<IConciliacionActivoFijoRepository, ConciliacionActivoFijoRepository>();
-            services.AddScoped<IConciliacionInsumoRepository, ConciliacionInsumoRepository>();
-            services.AddScoped<IConfiguracionServicioRepository, ConfiguracionServicioRepository>();
-            services.AddScoped<IDetalleConfiguracionServicioRepository, DetalleConfiguracionServicioRepository>();
-            services.AddScoped<IDetalleInsumoRepository, DetalleInsumoRepository>();
-            services.AddScoped<IEntradaInsumoRepository, EntradaInsumoRepository>();
-            services.AddScoped<IOrdenServicioRepository, OrdenServicioRepository>();
-            services.AddScoped<IInventarioActivoFijoRepository, InventarioActivoFijoRepository>();
-            services.AddScoped<IInventarioInsumoRepository, InventarioInsumoRepository>();
-            services.AddScoped<ITraspasoActivoFijoRepository, TraspasoActivoFijoRepository>();
-            services.AddScoped<ITraspasoInsumoRepository, TraspasoInsumoRepository>();
-            services.AddScoped<IBitacoraRepository, BitacoraRepository>();
-            services.AddScoped<IOrdenPersona, OrdenPersonaRepository>();
-            services.AddScoped<IOperador, OperadorRepository>();
-            services.AddScoped<IInventarioAF, InventarioAFRepository>();
-            services.AddScoped<IAdministracion, AdministracionRepository>();
-            services.AddScoped<IComercial, ComercialRepository>();
-            services.AddScoped<IBitacoraEstatusRepository, BitacoraEstatusRepository>();
-            services.AddScoped<ISettingsRepository, SettingsRepository>();
-            services.AddScoped<IOrdenActivoFijo, OrdenActivoFijoRepository>();
-            services.AddScoped<IProducto, ProductoRepository>();
-            services.AddScoped<ISemaphoreParamsRepo, SemaphoreParamsRepo>();
-            services.AddScoped<IOrdenInsumo, OrdenInsumoRepository>();
-            services.AddScoped<ILote, LoteRepository>();
-            services.AddScoped<IPaquete, PaqueteRepository>();
-            services.AddScoped<IKit, KitRepository>();
-            services.AddScoped<IPaqueteInsumo, PaqueteInsumoRepository>();
-            services.AddScoped<IKitInsumo, KitInsumoRepository>();
-            services.AddScoped<IPaqueteInsumo, PaqueteInsumoRepository>();
-            services.AddScoped<IInventarioI, InventarioIRepository>();
-            services.AddScoped<IClienteIdentity, ClienteIdentityRepository>();
-            services.AddScoped<IArchivo, ArchivoRepository>();
-            services.AddScoped<IMarca, MarcaRepository>();
-            services.AddScoped<ITipoProducto, TipoProductoRepository>();
-            services.AddScoped<IContactoCliente, ContactoClienteRepository>();
-            services.AddScoped<IBulkUploadTemplate, BulkUploadTemplateRepository>();
-            services.AddScoped<IIndexListOSDTORepository, IndexListOSDTORepository>();
-            services.AddScoped<IMailSupport, MailSupportRepository>();
-
-            services.AddSingleton<siges.Utilities.IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<siges.Utilities.EmailConfiguration>());
-            services.AddTransient<siges.Services.IEmailSender, siges.Services.EmailSender>();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        // IHostingEnvironment Interface
-        // Definition
-        // Namespace:
-        // Microsoft.AspNetCore.Hosting
-        // Assembly:
-        // Microsoft.AspNetCore.Hosting.Abstractions.dll
-        // Warning
-        // This API is now obsolete.
-        // Provides information about the web hosting environment an application is running in.
-        // This type is obsolete and will be removed in a future version. The recommended alternative is Microsoft.AspNetCore.Hosting.IWebHostEnvironment.
-        // https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.hosting.ihostingenvironment?view=aspnetcore-2.2
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                //app.UseDatabaseErrorPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-            var cultureInfo = new CultureInfo("es-ES");
-            //cultureInfo.DateTimeFormat.LongDatePattern = "dd/MM/yyyy";
-            cultureInfo.NumberFormat.CurrencySymbol = "$";
-            cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
-            cultureInfo.NumberFormat.CurrencyDecimalSeparator = ".";
-            cultureInfo.NumberFormat.CurrencyGroupSeparator = ",";
-
-            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
-            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
-
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
-            //https://docs.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-2.2
-            //app.UseRouting();
-
-            app.UseCookiePolicy();
-            app.UseAuthentication();
-            //app.UseAuthorization();
-
-            //app.UseEndpoints(endpoints => {
-            //endpoints.MapControllerRoute(
-            //name: "default",
-            //pattern: "{controller=Home}/{action=Index}/{id?}");
-            //endpoints.MapRazorPages();
-            //});
-            app.UseMvc(routes => {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
-        }
+    public Startup(IConfiguration configuration) {
+      Configuration = configuration;
     }
+
+    public IConfiguration Configuration { get; }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services) {
+      services.Configure<CookiePolicyOptions>(options => {
+          options.CheckConsentNeeded = context => true;
+          options.MinimumSameSitePolicy = SameSiteMode.None;
+          });
+      services.AddAuthentication(AzureADDefaults.AuthenticationScheme).AddAzureAD(options => Configuration.Bind("AzureAd", options));
+      services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options => {
+          options.Authority = options.Authority + "/v2.0/";
+          options.TokenValidationParameters.ValidateIssuer = false;
+          });
+      services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer( Configuration.GetConnectionString("DefaultConnection")));
+      services.AddDefaultIdentity<RoatechIdentityUser>(options => options.SignIn.RequireConfirmedEmail = true).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+      //Change email and activity timeout
+      services.ConfigureApplicationCookie(o => {
+          //o.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+          o.ExpireTimeSpan = TimeSpan.FromMinutes(4*60);
+          o.SlidingExpiration = true; });
+      services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromMinutes(20));
+
+      services.AddMvc(
+          config => {
+          var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+          config.Filters.Add(new AuthorizeFilter(policy));
+          config.EnableEndpointRouting = false;
+          }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+      services.Configure<AuthMessageSenderOptions>(Configuration);
+      //services.AddRazorPages();
+      services.Configure<IdentityOptions>(options => {
+          // Password settings.
+          options.Password.RequireDigit = true;
+          options.Password.RequireLowercase = true;
+          options.Password.RequireNonAlphanumeric = true;
+          options.Password.RequireUppercase = true;
+          options.Password.RequiredLength = 8;
+          options.Password.RequiredUniqueChars = 1;
+          // Lockout settings.
+          options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(60);
+          options.Lockout.MaxFailedAccessAttempts = 5;
+          options.Lockout.AllowedForNewUsers = true;
+          // User settings.
+          options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+          options.User.RequireUniqueEmail = true;
+          });
+      services.ConfigureApplicationCookie(options =>
+          {
+          // Cookie settings
+          options.Cookie.HttpOnly = true;
+          options.ExpireTimeSpan = TimeSpan.FromMinutes(4*60);
+          //options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+          options.LoginPath = "/Identity/Account/Login";
+          options.LogoutPath ="/Identity/Account/Login";
+          options.AccessDeniedPath = "/Identity/Account/Login";
+          //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+          options.SlidingExpiration = true;
+          });
+
+      services.AddScoped<IPersonaRepository, PersonaRepository>();
+      services.AddScoped<IRoatechIdentityUserRepo, RoatechIdentityUserRepo>();
+
+      services.AddScoped<IActivoFijoRepository, ActivoFijoRepository>();
+      services.AddScoped<IContratoRepository, ContratoRepository>();
+      services.AddScoped<IInsumoRepository, InsumoRepository>();
+      services.AddScoped<ILineaNegocioRepository, LineaNegocioRepository>();
+      services.AddScoped<IPersonaRepository, PersonaRepository>();
+      services.AddScoped<IServicioRepository, ServicioRepository>();
+      services.AddScoped<IUbicacionRepository, UbicacionRepository>();
+      services.AddScoped<IClienteRepository, ClienteRepository>();
+      services.AddScoped<IDetalleActivoFijoRepository, DetalleActivoFijoRepository>();
+      services.AddScoped<IEntradaActivoFijoRepository, EntradaActivoFijoRepository>();
+      services.AddScoped<IConciliacionActivoFijoRepository, ConciliacionActivoFijoRepository>();
+      services.AddScoped<IConciliacionInsumoRepository, ConciliacionInsumoRepository>();
+      services.AddScoped<IConfiguracionServicioRepository, ConfiguracionServicioRepository>();
+      services.AddScoped<IDetalleConfiguracionServicioRepository, DetalleConfiguracionServicioRepository>();
+      services.AddScoped<IDetalleInsumoRepository, DetalleInsumoRepository>();
+      services.AddScoped<IEntradaInsumoRepository, EntradaInsumoRepository>();
+      services.AddScoped<IOrdenServicioRepository, OrdenServicioRepository>();
+      services.AddScoped<IInventarioActivoFijoRepository, InventarioActivoFijoRepository>();
+      services.AddScoped<IInventarioInsumoRepository, InventarioInsumoRepository>();
+      services.AddScoped<ITraspasoActivoFijoRepository, TraspasoActivoFijoRepository>();
+      services.AddScoped<ITraspasoInsumoRepository, TraspasoInsumoRepository>();
+      services.AddScoped<IBitacoraRepository, BitacoraRepository>();
+      services.AddScoped<IOrdenPersona, OrdenPersonaRepository>();
+      services.AddScoped<IOperador, OperadorRepository>();
+      services.AddScoped<IInventarioAF, InventarioAFRepository>();
+      services.AddScoped<IAdministracion, AdministracionRepository>();
+      services.AddScoped<IComercial, ComercialRepository>();
+      services.AddScoped<IBitacoraEstatusRepository, BitacoraEstatusRepository>();
+      services.AddScoped<ISettingsRepository, SettingsRepository>();
+      services.AddScoped<IOrdenActivoFijo, OrdenActivoFijoRepository>();
+      services.AddScoped<IProducto, ProductoRepository>();
+      services.AddScoped<ISemaphoreParamsRepo, SemaphoreParamsRepo>();
+      services.AddScoped<IOrdenInsumo, OrdenInsumoRepository>();
+      services.AddScoped<ILote, LoteRepository>();
+      services.AddScoped<IPaquete, PaqueteRepository>();
+      services.AddScoped<IKit, KitRepository>();
+      services.AddScoped<IPaqueteInsumo, PaqueteInsumoRepository>();
+      services.AddScoped<IKitInsumo, KitInsumoRepository>();
+      services.AddScoped<IPaqueteInsumo, PaqueteInsumoRepository>();
+      services.AddScoped<IInventarioI, InventarioIRepository>();
+      services.AddScoped<IClienteIdentity, ClienteIdentityRepository>();
+      services.AddScoped<IArchivo, ArchivoRepository>();
+      services.AddScoped<IMarca, MarcaRepository>();
+      services.AddScoped<ITipoProducto, TipoProductoRepository>();
+      services.AddScoped<IContactoCliente, ContactoClienteRepository>();
+      services.AddScoped<IBulkUploadTemplate, BulkUploadTemplateRepository>();
+      services.AddScoped<IIndexListOSDTORepository, IndexListOSDTORepository>();
+      services.AddScoped<IMailSupport, MailSupportRepository>();
+      services.AddScoped<IClientContactService, ClientContactService>();
+
+      services.AddSingleton<siges.Utilities.IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<siges.Utilities.EmailConfiguration>());
+      services.AddTransient<siges.Services.IEmailSender, siges.Services.EmailSender>();
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    // IHostingEnvironment Interface
+    // Definition
+    // Namespace:
+    // Microsoft.AspNetCore.Hosting
+    // Assembly:
+    // Microsoft.AspNetCore.Hosting.Abstractions.dll
+    // Warning
+    // This API is now obsolete.
+    // Provides information about the web hosting environment an application is running in.
+    // This type is obsolete and will be removed in a future version. The recommended alternative is Microsoft.AspNetCore.Hosting.IWebHostEnvironment.
+    // https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.hosting.ihostingenvironment?view=aspnetcore-2.2
+    public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env) {
+      if (env.IsDevelopment()) {
+        app.UseDeveloperExceptionPage();
+        //app.UseDatabaseErrorPage();
+      } else {
+        app.UseExceptionHandler("/Home/Error");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+      }
+      var cultureInfo = new CultureInfo("es-ES");
+      //cultureInfo.DateTimeFormat.LongDatePattern = "dd/MM/yyyy";
+      cultureInfo.NumberFormat.CurrencySymbol = "$";
+      cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
+      cultureInfo.NumberFormat.CurrencyDecimalSeparator = ".";
+      cultureInfo.NumberFormat.CurrencyGroupSeparator = ",";
+
+      CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+      CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+      app.UseHttpsRedirection();
+      app.UseStaticFiles();
+
+      //https://docs.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-2.2
+      //app.UseRouting();
+
+      app.UseCookiePolicy();
+      app.UseAuthentication();
+      //app.UseAuthorization();
+
+      //app.UseEndpoints(endpoints => {
+          //endpoints.MapControllerRoute(
+              //name: "default",
+              //pattern: "{controller=Home}/{action=Index}/{id?}");
+          //endpoints.MapRazorPages();
+          //});
+      app.UseMvc(routes => {
+          routes.MapRoute(
+              name: "default",
+              template: "{controller=Home}/{action=Index}/{id?}");
+          });
+    }
+  }
 }

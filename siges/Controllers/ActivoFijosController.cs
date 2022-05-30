@@ -1,14 +1,13 @@
 using System;
 using System.Data;
-using System.Data.SqlClient;
+//using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using siges.DTO;
 using siges.Data;
 using siges.Models;
@@ -280,9 +279,9 @@ namespace siges.Controllers {
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Supervisor, Almacen")]
-    public async Task<IActionResult> Create([Bind("Descripcion,Clave,Marca,Tipo,Precio,Estatus,Opcional1,Opcional2")] ActivoFijo activoFijo) {
+    public async Task<IActionResult> Create([Bind("Descripcion,NumeroSerie,Clave,Marca,Tipo,Precio,Estatus,Opcional1,Opcional2")] ActivoFijo activoFijo) {
       if(User.Identity.IsAuthenticated){
-        if(!String.IsNullOrEmpty(activoFijo.Descripcion) && !String.IsNullOrEmpty(activoFijo.Clave) && !String.IsNullOrEmpty(activoFijo.Marca) && !String.IsNullOrEmpty(activoFijo.Tipo)){
+        if(!String.IsNullOrEmpty(activoFijo.Descripcion) && !String.IsNullOrEmpty(activoFijo.NumeroSerie) && !String.IsNullOrEmpty(activoFijo.Clave) && !String.IsNullOrEmpty(activoFijo.Marca) && !String.IsNullOrEmpty(activoFijo.Tipo)){
           if (ModelState.IsValid) {
             try{
               activoFijo.Estatus = true;
@@ -340,17 +339,17 @@ namespace siges.Controllers {
         if(id != null && id > 0){
             var conn = RelationalDatabaseFacadeExtensions.GetDbConnection(_context.Database);
             JsonResult failResponse = null;
-            ((System.Data.SqlClient.SqlConnection) conn).Open();
-            SqlCommand cmd = new SqlCommand("select ordenservicioid from ordenactivofijo where activofijoid = @ActFijId", (System.Data.SqlClient.SqlConnection) conn);
+            ((SqlConnection) conn).Open();
+            SqlCommand cmd = new SqlCommand("select ordenservicioid from ordenactivofijo where activofijoid = @ActFijId", (SqlConnection) conn);
             cmd.Parameters.Add("@ActFijId", SqlDbType.Int);
             cmd.Parameters["@ActFijId"].Value = id;
-            System.Data.SqlClient.SqlDataReader dataReader = cmd.ExecuteReader();
+            SqlDataReader dataReader = cmd.ExecuteReader();
             if(dataReader.HasRows){
               while(dataReader.Read())
               failResponse = Json(new{success=false, data="No es posible eliminarlo, ya que está asignado a una orden de servicio."});
             }
-            if(((System.Data.SqlClient.SqlConnection)conn).State == System.Data.ConnectionState.Open)
-              ((System.Data.SqlClient.SqlConnection)conn).Close();
+            if(((SqlConnection)conn).State == System.Data.ConnectionState.Open)
+              ((SqlConnection)conn).Close();
             if(failResponse != null)
               return failResponse;
 

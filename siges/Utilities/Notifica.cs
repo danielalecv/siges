@@ -17,6 +17,7 @@ using MimeKit;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
+using MailKit.Security;
 
 namespace siges.Utilities
 {
@@ -72,12 +73,15 @@ namespace siges.Utilities
             Console.WriteLine("Pass: " + pass);
             Console.WriteLine("user: " + usr);
             Console.WriteLine("Nombre: " + nombre);
+            Console.WriteLine("Remitente: " + _emailConf.UserName);
+            Console.WriteLine("Remitente host: " + _emailConf.Host);
+            Console.WriteLine("Remitente port: " + _emailConf.Port);
             this.message = new MimeMessage();
-          this.message.To.Add(new MailboxAddress(nombre, usr));
+            this.message.To.Add(new MailboxAddress(nombre, usr));
             using (var client = new SmtpClient()){
                 client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                client.Connect(settings.EmailHost, Int32.Parse(settings.EmailPort), settings.EmailEnableSSL);
-                client.Authenticate(settings.EmailUser, settings.EmailPass);
+                client.Connect(_emailConf.Host, _emailConf.Port, SecureSocketOptions.Auto);
+                client.Authenticate(_emailConf.UserName, _emailConf.Password);
                 client.Send(createMessage("NuevaCuenta", "ConfirmEmail", null, null, nombre+"{-}"+usr+"{-}"+pass+"{-}"+url));
                 client.Disconnect(true);
             }
@@ -92,7 +96,7 @@ namespace siges.Utilities
 
         private MimeMessage createMessage(string aQuien, string que, List<Operador> osAtendido, OrdenServicio os, string finaDesc)
         {
-            message.From.Add(new MailboxAddress(" SIGES - Centro de notificaciones", settings.EmailUser));
+            message.From.Add(new MailboxAddress(" SIGES - Centro de notificaciones", _emailConf.UserName));
             message.Subject = String.Format("{0} - {1}.", os != null ? os.Folio : osAtendido != null ? osAtendido[0].OrdenServicio.Folio : "", this.subject);
             message.Body = createBody(aQuien, que, osAtendido, os, finaDesc);
             return message;
@@ -138,9 +142,16 @@ namespace siges.Utilities
             {
                 // For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
                 client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                client.Connect(settings.EmailHost, Int32.Parse(settings.EmailPort), settings.EmailEnableSSL);
-                client.Authenticate(settings.EmailUser, settings.EmailPass);
-                client.Send(createMessage(aQuien, que, osAtendido, os, finaDesc));
+                client.Connect(_emailConf.Host, _emailConf.Port, SecureSocketOptions.Auto);
+                client.Authenticate(_emailConf.UserName, _emailConf.Password);
+                try
+                {
+                    client.Send(createMessage(aQuien, que, osAtendido, os, finaDesc));
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
                 client.Disconnect(true);
             }
         }

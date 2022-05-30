@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
+//using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 
@@ -12,6 +13,7 @@ using siges.Models;
 using siges.Repository;
 using siges.Areas.Identity.Data;
 using siges.Models.ViewModels;
+using siges.Utilities;
 
 // using SendGrid's C# Library
 // https://github.com/sendgrid/sendgrid-csharp
@@ -54,34 +56,26 @@ namespace siges.Controllers
                     var body = model.Body;
                     var screenshots = model.Screenshots;
 
-                    Console.WriteLine("nombre: " + name);
-                    Console.WriteLine("apellido: " + lastname);
-                    Console.WriteLine("email: " + email);
-                    Console.WriteLine("prioridad: " + priority);
-                    Console.WriteLine("titulo: " + title);
-                    Console.WriteLine("body: " + body);
-
                     if (screenshots != null)
                     {
-                        Console.WriteLine("screenshots: " + screenshots.Count);
                         if (_mailSupport.SendMessage(name, lastname, email, priority, title, body, screenshots))
                         {
-                            ViewData["Message"] = "Hemos recibido tu problematica, trabajaremos en la solución";
+                            ViewData["Message"] = Constants.Home.SuccessfulEmailSending;
                         }
                         else
                         {
-                            ViewData["Message"] = "Hubo un error al enviar tu problema, intenta de nuevo";
+                            ViewData["Message"] = Constants.Home.FailEmailSending;
                         }
                     }
                     else
                     {
                         if (_mailSupport.SendMessage(name, lastname, email, priority, title, body))
                         {
-                            ViewData["Message"] = "Hemos recibido tu problematica, trabajaremos en la solución";
+                            ViewData["Message"] = Constants.Home.SuccessfulEmailSending;
                         }
                         else
                         {
-                            ViewData["Message"] = "Hubo un error al enviar tu problema, intenta de nuevo";
+                            ViewData["Message"] = Constants.Home.FailEmailSending;
                         }
                     }
                 }
@@ -106,10 +100,10 @@ namespace siges.Controllers
                 {
                     string razonSocial = "";
                     var conn = RelationalDatabaseFacadeExtensions.GetDbConnection(context.Database);
-                    if (((System.Data.SqlClient.SqlConnection)conn).State == System.Data.ConnectionState.Open)
-                        ((System.Data.SqlClient.SqlConnection)conn).Close();
-                    ((System.Data.SqlClient.SqlConnection)conn).Open();
-                    SqlCommand cmd = new SqlCommand("select cl.razonsocial from clienteidentity ci left join cliente cl on ci.clienteid = cl.id where cuentausuarioid = @RiuId", (System.Data.SqlClient.SqlConnection)conn);
+                    if (((SqlConnection)conn).State == ConnectionState.Open)
+                        ((SqlConnection)conn).Close();
+                    ((SqlConnection)conn).Open();
+                    SqlCommand cmd = new SqlCommand("select cl.razonsocial from clienteidentity ci left join cliente cl on ci.clienteid = cl.id where cuentausuarioid = @RiuId", (SqlConnection)conn);
                     cmd.Parameters.Add("@RiuId", SqlDbType.NVarChar);
                     cmd.Parameters["@RiuId"].Value = riu.Id;
                     SqlDataReader dataReader = cmd.ExecuteReader();
@@ -121,8 +115,8 @@ namespace siges.Controllers
                         }
                     }
                     dataReader.Close();
-                    if (((System.Data.SqlClient.SqlConnection)conn).State == System.Data.ConnectionState.Open)
-                        ((System.Data.SqlClient.SqlConnection)conn).Close();
+                    if (((SqlConnection)conn).State == System.Data.ConnectionState.Open)
+                        ((SqlConnection)conn).Close();
                     ViewData["cliente"] = razonSocial;
                 }
                 return View();

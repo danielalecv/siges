@@ -2,24 +2,19 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Net.Mail;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+//using System.Data.SqlClient;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 
-using MailKit;
-using MailKit.Net.Smtp;
-using MailKit.Security;
-using MimeKit;
 
 using siges.Areas.Identity.Data;
 using siges.Repository;
@@ -28,12 +23,9 @@ using siges.DTO;
 using siges.Data;
 using siges.Utilities;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Linq;
 
 using RestSharp;
-using RestSharp.Authenticators;
 
 namespace siges.Controllers {
   [Authorize(Roles = "Admin, Supervisor")]
@@ -564,10 +556,10 @@ namespace siges.Controllers {
           Console.WriteLine("\n\nbloqueado: " + userManager.IsLockedOutAsync(userManager.FindByEmailAsync(email).Result).Result);
           if(userManager.IsLockedOutAsync(userManager.FindByEmailAsync(email).Result).Result){
             var conn = RelationalDatabaseFacadeExtensions.GetDbConnection(context.Database);
-            if(((System.Data.SqlClient.SqlConnection)conn).State == System.Data.ConnectionState.Open)
-              ((System.Data.SqlClient.SqlConnection)conn).Close();
-            ((System.Data.SqlClient.SqlConnection) conn).Open();
-            SqlCommand cmd = new SqlCommand("update aspnetusers set lockoutend = current_timestamp where email = @Email", (System.Data.SqlClient.SqlConnection) conn);
+            if(((SqlConnection)conn).State == System.Data.ConnectionState.Open)
+              ((SqlConnection)conn).Close();
+            ((SqlConnection) conn).Open();
+            SqlCommand cmd = new SqlCommand("update aspnetusers set lockoutend = current_timestamp where email = @Email", (SqlConnection) conn);
             cmd.Parameters.Add("@Email", SqlDbType.NVarChar);
             cmd.Parameters["@Email"].Value = email;
             cmd.ExecuteNonQuery();
@@ -585,10 +577,10 @@ namespace siges.Controllers {
           try{
             string userId = "";
             var conn = RelationalDatabaseFacadeExtensions.GetDbConnection(context.Database);
-            if(((System.Data.SqlClient.SqlConnection)conn).State == System.Data.ConnectionState.Open)
-              ((System.Data.SqlClient.SqlConnection)conn).Close();
-            ((System.Data.SqlClient.SqlConnection) conn).Open();
-            SqlCommand cmd = new SqlCommand("select id from aspnetusers where email = @Email", (System.Data.SqlClient.SqlConnection) conn);
+            if(((SqlConnection)conn).State == System.Data.ConnectionState.Open)
+              ((SqlConnection)conn).Close();
+            ((SqlConnection) conn).Open();
+            SqlCommand cmd = new SqlCommand("select id from aspnetusers where email = @Email", (SqlConnection) conn);
             cmd.Parameters.Add("@Email", SqlDbType.NVarChar);
             cmd.Parameters["@Email"].Value = email;
             SqlDataReader dataReader = cmd.ExecuteReader();
@@ -597,17 +589,17 @@ namespace siges.Controllers {
                 userId = (string)dataReader[0];
               }
             }
-            if(((System.Data.SqlClient.SqlConnection)conn).State == System.Data.ConnectionState.Open)
-              ((System.Data.SqlClient.SqlConnection)conn).Close();
+            if(((SqlConnection)conn).State == System.Data.ConnectionState.Open)
+              ((SqlConnection)conn).Close();
             if(!String.IsNullOrEmpty(userId)){
-              ((System.Data.SqlClient.SqlConnection) conn).Open();
-              cmd = new SqlCommand("delete from clienteidentity where cuentausuarioid = @Id", (System.Data.SqlClient.SqlConnection) conn);
+              ((SqlConnection) conn).Open();
+              cmd = new SqlCommand("delete from clienteidentity where cuentausuarioid = @Id", (SqlConnection) conn);
               cmd.Parameters.Add("@Id", SqlDbType.NVarChar);
               cmd.Parameters["@Id"].Value = userId;
               int rows = cmd.ExecuteNonQuery();
               Console.WriteLine("\n\nLineas afectadas? "+rows+"\n");
-              if(((System.Data.SqlClient.SqlConnection)conn).State == System.Data.ConnectionState.Open)
-                ((System.Data.SqlClient.SqlConnection)conn).Close();
+              if(((SqlConnection)conn).State == System.Data.ConnectionState.Open)
+                ((SqlConnection)conn).Close();
             }
             var user = await userManager.FindByEmailAsync(email);
             var result = await userManager.DeleteAsync(user);

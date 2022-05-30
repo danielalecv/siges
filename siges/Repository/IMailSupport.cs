@@ -8,5 +8,6 @@ namespace siges.Repository
     {
         public bool SendMessage(string name, string lastname, string email, string priority, string title, string body);
         public bool SendMessage(string name, string lastname, string email, string priority, string title, string body, IList<IFormFile> capturas);
+        public bool SendMailConfirmContact(string destinyEmail, string token, string host);
     }
 }
