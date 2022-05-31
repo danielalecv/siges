@@ -20,10 +20,10 @@ namespace siges.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IBitacoraRepository _bRepo;
         private readonly IContactoCliente _ccRepo;
-        private readonly IClienteRepository _cliRepo;
         private readonly IPersonaRepository _pRepo;
         private readonly IRoatechIdentityUserRepo riuRepo;
         private readonly IMailSupport _mailSupport;
+        private readonly IClienteRepository _cliRepo;
         private readonly IClientContactService _contactClient;
         private String LoggedUser;
 
@@ -201,7 +201,6 @@ namespace siges.Controllers
                                     cc.Contactos.Add(p);
                                 }
                                 //enviar correo de confirmacion-------------------------------------------------------------------------
-                                Console.WriteLine("\n\ndestino: " + cc.Contactos[cc.Contactos.Count() - 1].Email + "\n\n");
                                 if (_mailSupport.SendMailConfirmContact(cc.Contactos[cc.Contactos.Count() - 1].Email, token, host))
                                 {
                                     Console.WriteLine("success mail");
@@ -239,7 +238,9 @@ namespace siges.Controllers
                 }
                 return new JsonResult(false);
             }
-            return View("~/Views/ContactoCliente/Index.cshtml");
+            ViewData["Message"] = "Hola";
+            //return View("~/Views/ContactoCliente/Index.cshtml");
+            return View("~/Views/Clientes/Contacts.cshtml");
         }
 
         [HttpGet]
