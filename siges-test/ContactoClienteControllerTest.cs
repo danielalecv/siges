@@ -27,11 +27,14 @@ namespace siges_test
 
         private static string validToken = "succesToken12345";
         private Persona persona = new Persona() { Nombre = "Daniel Alejandro", Paterno = "Camacho", Materno = "Vazquez", Email = "daniel.alecv5@gmail.com", Token = validToken };
-        private Cliente cliente = new Cliente() { Id = 1, RazonSocial = "Cliente 1", RFC = "PFI201020Y60", Estatus = true };
+        private static Persona personaCreate = new Persona() { Nombre = "Daniel Alejandro", Paterno = "Camacho", Materno = "Vazquez", Email = "daniel.alecv5@gmail.com", Token = validToken };
+        private static Cliente cliente = new Cliente() { Id = 1, RazonSocial = "Cliente 1", RFC = "PFI201020Y60", Estatus = true };
         private static Persona newContact = new Persona() { Nombre = "nuevo", Paterno = "nuevo", Materno = "nuevo", Email = "nuevo@gmail.com" };
         private static ContactoCliente contactoCliente = new ContactoCliente() { Cliente = new Cliente() { RazonSocial = "Cliente prueba" } };
         private static List<Persona> emptycontacts = new List<Persona>();
         private static List<Persona> contacts = new List<Persona>() { newContact };
+
+        private static ContactoCliente contactoClienteCreate = new ContactoCliente() { Id= 1, Estatus = true, Cliente = cliente, Contactos = new List<Persona>() { personaCreate } };
         private static ContactoClienteDTO contactoClienteDTO = new ContactoClienteDTO() { clienteId = 1, contactos = contacts, opcional1 = "opcional 1", opcional2 = "opcional 2" };
 
         //ConfirmContact
@@ -91,7 +94,7 @@ namespace siges_test
             }
         }
 
-        //Create
+        /*Create
         [TestMethod]
         public void BadId()
         {
@@ -111,6 +114,7 @@ namespace siges_test
             {
                 context.Persona.Add(persona);
                 context.Cliente.Add(cliente);
+                context.ContactoCliente.Add(contactoClienteCreate);
                 context.SaveChanges();
             }
 
@@ -127,6 +131,6 @@ namespace siges_test
                 //Assert.AreEqual("~/Views/ContactoCliente/Index.cshtml", ar.ViewName);
                 //Assert.AreEqual("", ar.ViewData["Hola"]);
             }
-        }
+        }*/
     }
 }
