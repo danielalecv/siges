@@ -9,5 +9,6 @@ namespace siges.Repository {
     IQueryable<OrdenInsumo> GetAllOIbyInsumoIdsencillo(int iId);
     OrdenInsumo GetOIbyIdI(int Iid);
     IQueryable<OrdenInsumo> GetOrdenesInsumosByIdInsumo(int iId);
+    IQueryable<OrdenInsumo> GetOSbyIdOs(int id);
   }
 }

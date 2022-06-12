@@ -14,5 +14,6 @@ namespace siges.Repository
         IQueryable<OrdenActivoFijo> GetAllByClienteAndByLineaNegocio(int cId, string lnNombre);
         IQueryable<OrdenActivoFijo> GetAllOAFbyAFId(int afId);
         IQueryable<OrdenActivoFijo> GetAllOAFbyAFIdsencillo(int afId);
+        IQueryable<OrdenActivoFijo> GetOSbyIdOs(int id);
     }
 }

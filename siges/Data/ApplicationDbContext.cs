@@ -54,5 +54,6 @@ namespace siges.Data {
     public DbSet<siges.Models.TipoProducto> TipoProducto {get; set;}
     public DbSet<siges.Models.ContactoCliente> ContactoCliente {get; set;}
     public DbSet<siges.DTO.IndexListOSDTO> IndexListOSDTO {get; set;}
+    public DbSet<siges.Models.OsRecurrente> OsRecurrente { get; set; }
   }
 }

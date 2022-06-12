@@ -75,6 +75,8 @@ namespace siges {
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services) {
+      services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
       services.Configure<CookiePolicyOptions>(options => {
           options.CheckConsentNeeded = context => true;
           options.MinimumSameSitePolicy = SameSiteMode.None;
@@ -183,6 +185,7 @@ namespace siges {
       services.AddScoped<IIndexListOSDTORepository, IndexListOSDTORepository>();
       services.AddScoped<IMailSupport, MailSupportRepository>();
       services.AddScoped<IClientContactService, ClientContactService>();
+      services.AddScoped<IOsRecurrente, OsRecurrenteRepository>();
 
       services.AddSingleton<siges.Utilities.IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<siges.Utilities.EmailConfiguration>());
       services.AddTransient<siges.Services.IEmailSender, siges.Services.EmailSender>();

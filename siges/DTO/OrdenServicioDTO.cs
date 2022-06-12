@@ -36,6 +36,9 @@ namespace siges.DTO
         public string dtPersonas { get; set; }
         public string dtActivos { get; set; }
         public string dtInsumos { get; set; }
+        public bool OSRecurrente { get; set; }
+        public string fechasOSRecurrente { get; set; }
+        public string OSRecurrentePeriodo { get; set; }
 
         public OrdenServicioDTO() {}
     }

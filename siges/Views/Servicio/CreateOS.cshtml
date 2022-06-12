@@ -22,112 +22,189 @@
     }*@
 
 @section css {
-    <link href="~/lib/Parsley-2.8.1/parsley.css" rel="stylesheet" />
-    <link href="~/lib/tempusdominus-5.0.0/build/css/tempusdominus-bootstrap-4.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/lib/bootstrap-select/dist/css/bootstrap-select.min.css">
+<link href="~/lib/Parsley-2.8.1/parsley.css" rel="stylesheet" />
+<link href="~/lib/tempusdominus-5.0.0/build/css/tempusdominus-bootstrap-4.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/lib/bootstrap-select/dist/css/bootstrap-select.min.css">
 }
 
-    @section modals{
-    <div class="modal fade" id="asignacionInsumos" tabindex="-1" role="dialog" aria-labelledby="asignacionInsumosTitle" aria-hidden="true" data-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="asignacionInsumosTitle">Captura datos del Insumo</h5>
-                    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>*@
-                </div>
-                <div class="modal-body">
+@section modals{
+<div class="modal fade" id="asignacionInsumos" tabindex="-1" role="dialog" aria-labelledby="asignacionInsumosTitle" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="asignacionInsumosTitle">Captura datos del Insumo</h5>
+                @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>*@
+            </div>
+            <div class="modal-body">
 
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="card-title" id="car-title-Insumos">Nombre del insumo que va a ingresar a la lista de asignación.</h5>
-                                <div class="form-group">
-                                    <label for="osLoteI">Lote</label>
-                                    <input id="osLoteI" type="text" class="form-control">
-                                </div>
-                                @*<div class="form-group">
-                            <label for="osCaducidadI">Caducidad</label>
-                            <div id="osCaducidadI" class="input-group date" data-target-input="nearest">
-                            <input type="text" class="form-control datetimepicker-input" data-target="#osCaducidadI" placeholder="dd/MM/aaaa">
-                            <div class="input-group-append" data-target="#osCaducidadI" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i data-feather="calendar"></i></div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title" id="car-title-Insumos">Nombre del insumo que va a ingresar a la lista de asignación.</h5>
+                            <div class="form-group">
+                                <label for="osLoteI">Lote</label>
+                                <input id="osLoteI" type="text" class="form-control">
                             </div>
-                            </div>
-                            </div>*@
-                                <div class="form-group">
-                                    <label for="osCantidadI">Cantidad</label>
-                                    <input id="osCantidadI" type="number" min="1" class="form-control">
+                            @*<div class="form-group">
+                                <label for="osCaducidadI">Caducidad</label>
+                                <div id="osCaducidadI" class="input-group date" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input" data-target="#osCaducidadI" placeholder="dd/MM/aaaa">
+                                <div class="input-group-append" data-target="#osCaducidadI" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i data-feather="calendar"></i></div>
                                 </div>
+                                </div>
+                                </div>*@
+                            <div class="form-group">
+                                <label for="osCantidadI">Cantidad</label>
+                                <input id="osCantidadI" type="number" min="1" class="form-control">
                             </div>
                         </div>
                     </div>
+                </div>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="ignoreInsumo" class="btn btn-danger" data-dismiss="modal">Quitar</button>
-                    <button type="button" id="addInsumoToTable" class="btn btn-primary">Agregar insumo</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="ignoreInsumo" class="btn btn-danger" data-dismiss="modal">Quitar</button>
+                <button type="button" id="addInsumoToTable" class="btn btn-primary">Agregar insumo</button>
             </div>
         </div>
     </div>
-}
-    <div class="container" style="margin-bottom: 100px;">
-        <div class="row">
-            <div class="col">
-                <h2>Nueva Orden de Servicio</h2>
+</div>
+
+<div class="modal fade" id="fechaFinMenorFechaInicio" tabindex="-1" role="dialog" aria-labelledby="fechaFinMenorFechaInicioLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content alert alert-light">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fechaFinMenorFechaInicioLabel">Advertencia</h5>
             </div>
-            <div class="col align-self-center text-right">
-                <a class="btn bg-blue marg-Float float" href='@Url.Action("IndexListOS", "Servicio")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+            <div class="modal-body"><p align="center">Ha ingresado una fecha inválida. La <b>Fecha/Hora fin</b> es menor a la <b>Fecha/Hora inicio</b>.</p><p align="center">Favor de volver a capturar la <b>Fecha/Hora fin</b></p></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
-        <div class="row margTop40">
-            <div class="col">
-                <div id="tab-lists" class="row">
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                        <div class="list-group" role="tablist">
-                            <a id="stepOne" class="list-group-item list-group-item-action flex-column align-items-start active" href="#infoGral" role="tab">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Informaci&oacute;n general</h5>
-                                </div>
-                                <small>Informaci&oacute;n general de la orden</small>
-                            </a>
+    </div>
+</div>
+
+<!-- Alerta Horario incorrecto 00:00 -->
+<div class="modal fade" id="hmAlert" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="hmAlertLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="hmAlertLabel">Hora / Minuto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">¡Horario incorrecto!</h4>
+                    <p>Favor de establecer un horario diferente de cero</p>
+                    <hr>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OS Recurrente - Fechas Modal -->
+<div class="modal fade" id="fechasModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="fechasModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fechasModalLabel">Confirmar fechas de OS recurrente</h5>
+            </div>
+            <div class="modal-body">
+                <div class="form-group m-3">
+                    <label for="iFechaInicioN">Fecha de inicio</label>
+                    <div class="input-group date" id="iFechaInicioN" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#iFechaInicioN" name="FechaInicio" placeholder="dd/mm/aaaa" required />
+                        <div class="input-group-append" data-target="#iFechaInicioN" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i data-feather="calendar"></i></div>
                         </div>
                     </div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                        <div class="list-group" role="tablist">
-                            <a id="stepTwo" class="list-group-item list-group-item-action" href="#infoResponsable" role="tab">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Responsable</h5>
-                                </div>
-                                <small>Informaci&oacute;n sobre el responsable que recibe el servicio</small>
-                            </a>
+                    <div id="eiFechaInicioN"></div>
+                </div>
+
+                <div class="form-group m-3">
+                    <label for="iFechaFinN">Fecha de fin</label>
+                    <div class="input-group date" id="iFechaFinN" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#iFechaFinN" name="FechaFin" placeholder="dd/mm/aaaa" required />
+                        <div class="input-group-append" data-target="#iFechaFinN" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i data-feather="calendar"></i></div>
                         </div>
                     </div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                        <div class="list-group" role="tablist">
-                            <a id="stepThree" class="list-group-item list-group-item-action" href="#infoPersonal" role="tab">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Personal</h5>
-                                </div>
-                                <small>Detalle del personal que brinda el servicio</small>
-                            </a>
-                        </div>
+                    <div id="eiFechaFinN"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>*@
+                <button id="confirmarFecha" type="button" class="btn btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<div class="container" style="margin-bottom: 100px;">
+    <div class="row">
+        <div class="col">
+            <h2>Nueva Orden de Servicio</h2>
+        </div>
+        <div class="col align-self-center text-right">
+            <a class="btn bg-blue marg-Float float" href='@Url.Action("IndexListOS", "Servicio")' data-toggle="tooltip" data-placement="bottom" title="Regresar" data-original-title="Tooltip on bottom"><i class="fas fa-arrow-left"></i></a>
+        </div>
+    </div>
+    <div class="row margTop40">
+        <div class="col">
+            <div id="tab-lists" class="row">
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                    <div class="list-group" role="tablist">
+                        <a id="stepOne" class="list-group-item list-group-item-action flex-column align-items-start active" href="#infoGral" role="tab">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Informaci&oacute;n general</h5>
+                            </div>
+                            <small>Informaci&oacute;n general de la orden</small>
+                        </a>
                     </div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                        <div class="list-group" role="tablist">
-                            <a id="stepFour" class="list-group-item list-group-item-action" href="#infoActivosFijos" role="tab">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">Activos fijos/productos</h5>
-                                </div>
-                                <small>Detalle de los activos fijos/productos asignados</small>
-                            </a>
-                        </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                    <div class="list-group" role="tablist">
+                        <a id="stepTwo" class="list-group-item list-group-item-action" href="#infoResponsable" role="tab">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Responsable</h5>
+                            </div>
+                            <small>Informaci&oacute;n sobre el responsable que recibe el servicio</small>
+                        </a>
                     </div>
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                        <div class="list-group" role="tablist">
-                            @if (paquete.ToString() != "True")
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                    <div class="list-group" role="tablist">
+                        <a id="stepThree" class="list-group-item list-group-item-action" href="#infoPersonal" role="tab">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Personal</h5>
+                            </div>
+                            <small>Detalle del personal que brinda el servicio</small>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                    <div class="list-group" role="tablist">
+                        <a id="stepFour" class="list-group-item list-group-item-action" href="#infoActivosFijos" role="tab">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Activos fijos/productos</h5>
+                            </div>
+                            <small>Detalle de los activos fijos/productos asignados</small>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                    <div class="list-group" role="tablist">
+                        @if (paquete.ToString() != "True")
                         {
                             <a id="stepFive" class="list-group-item list-group-item-action" href="#infoInsumos" role="tab">
                                 <div class="d-flex w-100 justify-content-between">
@@ -228,6 +305,111 @@
                                                 <textarea class="form-control" id="iObs" rows="3" name="Observaciones"></textarea>
                                             </div>
                                         </div>
+
+                                        <!-------------------------------------------------------OS Recurrente-------------------------------------------------------------------------------->
+                                        <div class="form-row mt-2 mb-3">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">
+                                                        <small for="osRecurrente">¿Recurrente?</small>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend mr-1">
+                                                    <div class="input-group-text">
+                                                        <input id="osRecurrente" type="checkbox" aria-label="Checkbox for following text input">
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <small for="diario">¿Diario?</small>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <input id="diario" type="radio" name="periodo" aria-label="Checkbox for following text input">
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <small for="semanal">¿Semanal?</small>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <input id="semanal" type="radio" name="periodo" aria-label="Checkbox for following text input">
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <small for="mensual">¿Mensual?</small>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <input id="mensual" type="radio" name="periodo" aria-label="Checkbox for following text input">
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <small for="bimestral">¿Bimestral?</small>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <input id="bimestral" type="radio" name="periodo" aria-label="Checkbox for following text input">
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <small for="trimestral">¿Trimestral?</small>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <input id="trimestral" type="radio" name="periodo" aria-label="Checkbox for following text input">
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <small for="cuatrimestral">¿Cuatrimestral?</small>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <input id="cuatrimestral" type="radio" name="periodo" aria-label="Checkbox for following text input">
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <small for="semestral">¿Semestral?</small>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <input id="semestral" type="radio" name="periodo" aria-label="Checkbox for following text input">
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <small for="anual">¿Anual?</small>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-prepend mr-1" hidden data-recurrente-radio="true">
+                                                    <div class="input-group-text">
+                                                        <input id="anual" name="periodo" type="radio" aria-label="Checkbox for following text input">
+                                                    </div>
+                                                </div>
+
+                                                <div class="input-group-prepend" hidden data-recurrente-radio="false">
+                                                    <div class="input-group-text">
+                                                        <small for="numRepet">¿Repeticiones?</small>
+                                                    </div>
+                                                </div>
+                                                <input type="number" id="numRepet" min="1" class="form-control text-center" aria-label="Text input with checkbox" hidden data-recurrente-radio="false">
+
+                                            </div>
+                                        </div>
+
                                         <div class="form-row">
                                             <div class="form-group col-6">
                                                 <label for="iFechaInicio">Fecha/Hora de inicio</label>
@@ -264,7 +446,7 @@
                                             </div>
                                             <div class="form-group col-6">
                                                 <label for="iNombre">Nombre</label>
-                                                <input id="iNombre" type="text" class="form-control" name="ContactoNombre" required readonly/>
+                                                <input id="iNombre" type="text" class="form-control" name="ContactoNombre" required readonly />
                                             </div>
                                         </div>
                                         <div class="form-row">
@@ -334,6 +516,7 @@
                                                 <input id="iOp4" type="text" class="form-control" name="Opcional4" maxlength="100" />
                                             </div>
                                         </div>
+
                                         <div class="form-row">
                                             <div class="form-group col-6">
                                                 <label for="iOp2">&Oacute;rden de Servicio Relacionada</label>
@@ -570,9 +753,9 @@
                                                 </table>
                                                 <br />
                                                 <div class="form-group row">
-                                                    <label for="osiTotal" class="col-sm-2 col-form-label">Total</label>
+                                                    <label for="osiTotal" class="col-sm-2 col-form-label">Total:</label>
                                                     <div class="col-sm-10">
-                                                        <input id="osiTotal" type="number" class="form-control-plaintext" readonly>
+                                                        <input id="osiTotal" type="number" class="form-control" readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -589,8 +772,8 @@
                                                     <select id="osPaquete" class="form-control">
                                                         <option value=""> -- Selecciona una opci&oacute;n -- </option>
                                                         @*foreach(Paquete pq in paquetes){
-                                                        <option value="@pq.Id">@pq.Clasificacion - @pq.Descripcion</option>
-                                                        }*@
+                                                            <option value="@pq.Id">@pq.Clasificacion - @pq.Descripcion</option>
+                                                            }*@
                                                     </select>
                                                 </div>
 
@@ -605,7 +788,7 @@
                                                         <div class="col-6">
                                                             <select id="osInsumo" class="form-control selectpicker" data-live-search="true" multiple data-selected-text-format="count" data-width="auto" data-show-content="true" data-size="10" data-window-padding="20">
                                                                 @*<select id="osInsumo" class="form-control">
-                                                                <option value=""> -- Selecciona una opci&oacute;n -- </option>*@
+                                                                    <option value=""> -- Selecciona una opci&oacute;n -- </option>*@
                                                             </select>
                                                         </div>
                                                         <div class="col-12 col-lg-6">
@@ -614,29 +797,29 @@
                                                     </div>
                                                 </div>
                                                 @*<div class="form-group">
-                                                <label for="osLote">Lote</label>
-                                                <select id="osLote" class="form-control">
-                                                <option value=""> -- Selecciona una opci&oacute;n -- </option>
-                                                </select>
-                                                </div>
-                                                <div class="form-group">
-                                                <small id="osLoteCaducidad"></small>
-                                                <small id="osLoteAsignado"></small>
-                                                <small id="osLoteTeorico"></small>
-                                                <small id="osLoteFisico"></small>
-                                                </div>*@
+                                                    <label for="osLote">Lote</label>
+                                                    <select id="osLote" class="form-control">
+                                                    <option value=""> -- Selecciona una opci&oacute;n -- </option>
+                                                    </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                    <small id="osLoteCaducidad"></small>
+                                                    <small id="osLoteAsignado"></small>
+                                                    <small id="osLoteTeorico"></small>
+                                                    <small id="osLoteFisico"></small>
+                                                    </div>*@
                                                 @*<div class="form-group">
-                                                <label for="osLoteI">Lote</label>
-                                                <input id="osLoteI" type="text" class="form-control">
-                                                </div>
-                                                <div class="form-group">
-                                                <label for="osCaducidad">Caducidad</label>
-                                                <input id="osCaducidad" type="text" class="form-control" placeholder="dd/MM/aaaa">
-                                                </div>
-                                                <div class="form-group">
-                                                <label for="osCantidad">Cantidad</label>
-                                                <input id="osCantidad" type="number" min="1" class="form-control">
-                                                </div>*@
+                                                    <label for="osLoteI">Lote</label>
+                                                    <input id="osLoteI" type="text" class="form-control">
+                                                    </div>
+                                                    <div class="form-group">
+                                                    <label for="osCaducidad">Caducidad</label>
+                                                    <input id="osCaducidad" type="text" class="form-control" placeholder="dd/MM/aaaa">
+                                                    </div>
+                                                    <div class="form-group">
+                                                    <label for="osCantidad">Cantidad</label>
+                                                    <input id="osCantidad" type="number" min="1" class="form-control">
+                                                    </div>*@
                                                 <div class="row">
                                                     <div class="col-md-6 offset-md-4 col-lg-6 offset-lg-6">
                                                         @*<button id="btnAddInsumo" class="btn btn-primary" type=button>Asignar insumo</button>*@
@@ -712,6 +895,7 @@
                                 <input type="hidden" name="dtPersonas" value="" />
                                 <input type="hidden" name="dtActivos" value="" />
                                 <input type="hidden" name="dtInsumos" value="" />
+                                <input type="hidden" name="OSRecurrentePeriodo" value="">
                             </div>
                         </div>
                     </form>
@@ -721,152 +905,557 @@
     </div>
 </div>
 
-<div class="modal fade" id="fechaFinMenorFechaInicio" tabindex="-1" role="dialog" aria-labelledby="fechaFinMenorFechaInicioLabel" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content alert alert-light">
-            <div class="modal-header">
-                <h5 class="modal-title" id="fechaFinMenorFechaInicioLabel">Advertencia</h5>
-            </div>
-            <div class="modal-body"><p align="center">Ha ingresado una fecha inválida. La <b>Fecha/Hora fin</b> es menor a la <b>Fecha/Hora inicio</b>.</p><p align="center">Favor de volver a capturar la <b>Fecha/Hora fin</b></p></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section scripts {
-    <script>
-        let slcContacto = document.getElementById("slcContacto");
-        let iNombre = document.getElementById("iNombre");
-        let iAp = document.getElementById("iAp");
-        let iAm = document.getElementById("iAm");
-        let iEm = document.getElementById("iEm");
-        let iTel = document.getElementById("iTel");
-        function disableContact() {
-            if (document.fNewOS.optionalContact.checked) {
-                slcContacto.value = "NA";
-                slcContacto.placeholder = "NA";
-                slcContacto.required = false;
-                slcContacto.disabled = true;
+<script>
+    let slcContacto = document.getElementById("slcContacto");
+    let iNombre = document.getElementById("iNombre");
+    let iAp = document.getElementById("iAp");
+    let iAm = document.getElementById("iAm");
+    let iEm = document.getElementById("iEm");
+    let iTel = document.getElementById("iTel");
+    function disableContact() {
+        if (document.fNewOS.optionalContact.checked) {
+            slcContacto.value = "NA";
+            slcContacto.placeholder = "NA";
+            slcContacto.required = false;
+            slcContacto.disabled = true;
 
-                iNombre.value = "NA";
+            iNombre.value = "NA";
 
-                iAp.value = "NA";
+            iAp.value = "NA";
 
-                iAm.value = "NA";
+            iAm.value = "NA";
 
-                iEm.type = "text";
-                iEm.value = "NA";
+            iEm.type = "text";
+            iEm.value = "NA";
 
-                iTel.value = "NA";
+            iTel.value = "NA";
 
-                document.getElementById('copia-cliente').setAttribute('style', 'display: none');
-                document.getElementById('opcional-cliente').setAttribute('style', 'display: none');
-            } else {
-                slcContacto.disabled = false;
-                slcContacto.value = null;
+            document.getElementById('copia-cliente').setAttribute('style', 'display: none');
+            document.getElementById('opcional-cliente').setAttribute('style', 'display: none');
+        } else {
+            slcContacto.disabled = false;
+            slcContacto.value = null;
 
-                iNombre.value = null;
-                iNombre.placeholder = "";
+            iNombre.value = null;
+            iNombre.placeholder = "";
 
-                iAp.value = null;
-                iAp.placeholder = "";
+            iAp.value = null;
+            iAp.placeholder = "";
 
-                iAm.value = null;
-                iAm.placeholder = "";
+            iAm.value = null;
+            iAm.placeholder = "";
 
-                iEm.type = "email";
-                iEm.value = null;
-                iEm.placeholder = "";
+            iEm.type = "email";
+            iEm.value = null;
+            iEm.placeholder = "";
 
-                iTel.value = null;
-                iTel.placeholder = "";
+            iTel.value = null;
+            iTel.placeholder = "";
 
-                document.getElementById('copia-cliente').setAttribute('style', 'display: true');
-                document.getElementById('opcional-cliente').setAttribute('style', 'display: true');
-            }
+            document.getElementById('copia-cliente').setAttribute('style', 'display: true');
+            document.getElementById('opcional-cliente').setAttribute('style', 'display: true');
         }
-    </script>
+    }
+</script>
 
-    <script>
-        const paqueteP = @Html.Raw(Json.Serialize(paquete));
-        let contacts = [];
-        $(document).ready(function() {
+<script>
+    $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default,
+      {
+        icons: {
+                  time: 'fas fa-clock',
+                  date: 'fas fa-calendar',
+                  up: 'fas fa-arrow-up',
+                  down: 'fas fa-arrow-down',
+                  previous: 'fas fa-chevron-left',
+                  next: 'fas fa-chevron-right',
+                  today: 'fas fa-calendar-check-o',
+                  clear: 'fas fa-trash',
+                  close: 'fas fa-times'
+                }
+      });
+</script>
+
+<script>
+    const hiddenElements = document.querySelector('.input-group').querySelectorAll('.input-group-prepend');
+    var osRecurrente = false;
+    var fechaFinModificado = false;
+    var fechas = [];
+    var fechasModal = $('#fechasModal');
+    var periodo = '';
+    var cantRepetir = 0;
+    var indexCache = 0;
+    var fechasConfirmadas = false;
+
+    function initFechas(lineaNegocio) {
+        console.log(lineaNegocio);
+        if (document.getElementById('iFechaInicio').querySelector('input').value !== '') {
+            $('#iFechaInicio').datetimepicker('toggle');
+            $('#iFechaInicio').datetimepicker('clear');
+            $('#iFechaInicio').datetimepicker('destroy');
+            $('#iFechaInicio').datetimepicker('destroy');
             $('#iFechaInicio').datetimepicker({
                 locale: 'es',
                 focusOnShow: false,
                 inline: true,
-                sideBySide: true
+                sideBySide: true,
+                useCurrent: false
             });
-
+        }
+        if (document.getElementById('iFechaFin').querySelector('input').value !== '') {
+            $('#iFechaFin').datetimepicker('toggle');
+            $('#iFechaFin').datetimepicker('clear');
+            $('#iFechaFin').datetimepicker('destroy');
+            $('#iFechaFin').datetimepicker('destroy');
             $('#iFechaFin').datetimepicker({
                 locale: 'es',
                 focusOnShow: false,
                 inline: true,
-                sideBySide: true
+                sideBySide: true,
+                useCurrent: false
             });
+        }
+        switch (lineaNegocio) {
+            case 'INSTALACIÓN':
+                $('#iFechaInicio').datetimepicker('minDate', moment().add(3, 'd').hour(0).minutes(0).seconds(0));
+                $('#iFechaInicio').datetimepicker('defaultDate', moment().add(3, 'd').hour(0).minutes(0).seconds(0));
+                $('#iFechaInicio').datetimepicker('disabledDates', [moment(), moment().add(1, 'd'), moment().add(2, 'd')]);
+                $('#iFechaFin').datetimepicker('minDate', moment().add(3, 'd').hour(0).minutes(0).seconds(0));
+                $('#iFechaFin').datetimepicker('defaultDate', moment().add(3, 'd').hour(0).minutes(0).seconds(0));
+                $('#iFechaFin').datetimepicker('disabledDates', [moment(), moment().add(1, 'd'), moment().add(2, 'd')]);
+                break;
+            case 'MANTENIMIENTO':
+                $('#iFechaInicio').datetimepicker('minDate', moment().add(2, 'd').hour(0).minutes(0).seconds(0));
+                $('#iFechaInicio').datetimepicker('defaultDate', moment().add(2, 'd').hour(0).minutes(0).seconds(0));
+                $('#iFechaInicio').datetimepicker('disabledDates', [moment(), moment().add(1, 'd')]);
+                $('#iFechaFin').datetimepicker('minDate', moment().add(2, 'd').hour(0).minutes(0).seconds(0));
+                $('#iFechaFin').datetimepicker('defaultDate', moment().add(2, 'd').hour(0).minutes(0).seconds(0));
+                $('#iFechaFin').datetimepicker('disabledDates', [moment(), moment().add(1, 'd')]);
+                break;
+            case 'FLETE':
+                $('#iFechaInicio').datetimepicker('minDate', moment().add(3, 'd').hour(0).minutes(0).seconds(0));
+                $('#iFechaInicio').datetimepicker('defaultDate', moment().add(3, 'd').hour(0).minutes(0).seconds(0));
+                $('#iFechaInicio').datetimepicker('disabledDates', [moment(), moment().add(1, 'd'), moment().add(2, 'd')]);
+                $('#iFechaFin').datetimepicker('minDate', moment().add(3, 'd').hour(0).minutes(0).seconds(0));
+                $('#iFechaFin').datetimepicker('defaultDate', moment().add(3, 'd').hour(0).minutes(0).seconds(0));
+                $('#iFechaFin').datetimepicker('disabledDates', [moment(), moment().add(1, 'd'), moment().add(2, 'd')]);
+                break;
+            default:
+                $('#iFechaInicio').datetimepicker('defaultDate', moment().hour(0).minutes(0).seconds(0));
+                $('#iFechaFin').datetimepicker('defaultDate', moment().hour(0).minutes(0).seconds(0));
+                break;
+        }
+    }
 
-            $('#iOp3').datetimepicker({
-                locale: 'es',
-                focusOnShow: false,
-                inline: true,
-                sideBySide: true
-            });
-        });
-
-        $("#iCliente").change(() => {
-            $.ajax({
-                url: '@Url.Action("GetContactoCliente","Rest")',
-                method: "GET",
-                data: {
-                    cId: $("#iCliente").val()
-                },
-                async: true,
-                dataType: "json",
-                success: data => {
-                    if (data.success) {
-                        contacts.length = 0;
-                        contacts = [...data.data];
-                        $("#slcContacto").empty().append(`<option value="null" selected disabled>Selecciona un Contacto</option>`);
-                        for (const contacto of data.data) {
-                            $("#slcContacto").append(`<option value="${contacto.id}">${contacto.nombre} ${contacto.paterno} ${contacto.materno}</option>`);
+    function creaRepeticionFechas() {
+        hiddenElements.forEach((e, i, l) => {
+            if (e.dataset.recurrenteRadio != undefined) {
+                if (e.dataset.recurrenteRadio === 'true') {
+                    if (e.querySelector('[type="radio"]') != null) {
+                        if (e.querySelector('[type="radio"]').checked) {
+                            periodo = e.querySelector('[type="radio"]').id;
+                            if (parseInt(document.getElementById('numRepet').value) !== NaN) {
+                                cantRepetir = parseInt(document.getElementById('numRepet').value);
+                                llenarFechasArray(periodo, cantRepetir + 1);
+                            } else {
+                                document.getElementById('numRepet').focus();
+                                return;
+                            }
                         }
-                        $("#iNombre").val("");
-                        $("#iAp").val("");
-                        $("#iAm").val("");
-                        $("#iEm").val("");
-                        $("#iTel").val("");
+                    }
+                }
+            }
+        });
+        loopOSR();
+    }
+
+    function llenarFechasArray(per, rep) {
+        if (!fechasConfirmadas)
+            if (fechas !== null && fechas.length > 0)
+                fechas = [];
+        switch (per) {
+            case 'diario':
+                for (var i = 0; i < rep - 1; i++) {
+                    fechas.push({
+                        'inicio': ($('#iFechaInicio').datetimepicker('viewDate')).add(i + 1, 'days'),
+                        'fin': ($('#iFechaFin').datetimepicker('viewDate')).add(i + 1, 'days'),
+                    });
+                }
+                break;
+            case 'semanal':
+                for (var i = 0; i < rep - 1; i++) {
+                    fechas.push({
+                        'inicio': ($('#iFechaInicio').datetimepicker('viewDate')).add(i + 1, 'weeks'),
+                        'fin': ($('#iFechaFin').datetimepicker('viewDate')).add(i + 1, 'weeks'),
+                    });
+                }
+                break;
+            case 'mensual':
+                for (var i = 0; i < rep - 1; i++) {
+                    fechas.push({
+                        'inicio': ($('#iFechaInicio').datetimepicker('viewDate')).add(i + 1, 'months'),
+                        'fin': ($('#iFechaFin').datetimepicker('viewDate')).add(i + 1, 'months'),
+                    });
+                }
+                break;
+            case 'bimestral':
+                for (var i = 0; i < rep - 1; i++) {
+                    fechas.push({
+                        'inicio': ($('#iFechaInicio').datetimepicker('viewDate')).add(2 * (i + 1), 'months'),
+                        'fin': ($('#iFechaFin').datetimepicker('viewDate')).add(2 * (i + 1), 'months'),
+                    });
+                }
+                break;
+            case 'trimestral':
+                for (var i = 0; i < rep - 1; i++) {
+                    fechas.push({
+                        'inicio': ($('#iFechaInicio').datetimepicker('viewDate')).add(3 * (i + 1), 'months'),
+                        'fin': ($('#iFechaFin').datetimepicker('viewDate')).add(3 * (i + 1), 'months'),
+                    });
+                }
+                break;
+            case 'cuatrimestral':
+                for (var i = 0; i < rep - 1; i++) {
+                    fechas.push({
+                        'inicio': ($('#iFechaInicio').datetimepicker('viewDate')).add(4 * (i + 1), 'months'),
+                        'fin': ($('#iFechaFin').datetimepicker('viewDate')).add(4 * (i + 1), 'months'),
+                    });
+                }
+                break;
+            case 'semestral':
+                for (var i = 0; i < rep - 1; i++) {
+                    fechas.push({
+                        'inicio': ($('#iFechaInicio').datetimepicker('viewDate')).add(6 * (i + 1), 'months'),
+                        'fin': ($('#iFechaFin').datetimepicker('viewDate')).add(6 * (i + 1), 'months'),
+                    });
+                }
+                break;
+            case 'anual':
+                for (var i = 0; i < rep - 1; i++) {
+                    fechas.push({
+                        'inicio': ($('#iFechaInicio').datetimepicker('viewDate')).add(i + 1, 'years'),
+                        'fin': ($('#iFechaFin').datetimepicker('viewDate')).add(i + 1, 'years'),
+                    });
+                }
+                break;
+        }
+        document.querySelector('input[name="OSRecurrentePeriodo"]').value = per;
+    }
+
+    function loopOSR() {
+        if (indexCache < fechas.length) {
+            document.getElementById('fechasModalLabel').innerText = 'Confirmar fechas ' + (indexCache + 2) + ' de ' + (fechas.length + 1);
+            $('#iFechaInicioN').datetimepicker({
+                locale: 'es',
+                date: fechas[indexCache].inicio
+            });
+            $('#iFechaFinN').datetimepicker({
+                locale: 'es',
+                date: fechas[indexCache].fin
+            });
+            fechasModal.modal('show');
+        } else {
+            fechasConfirmadas = true;
+        }
+    }
+
+    function actualizarFechaConfirmada() {
+        fechas[indexCache].inicio = $('#iFechaInicioN').datetimepicker('viewDate');
+        fechas[indexCache].fin = $('#iFechaFinN').datetimepicker('viewDate');
+        $('#iFechaInicioN').datetimepicker('destroy');
+        $('#iFechaFinN').datetimepicker('destroy');
+        ++indexCache;
+    }
+
+    document.getElementById('confirmarFecha').addEventListener('click', e => {
+        actualizarFechaConfirmada();
+        $('#fechasModal').modal('hide');
+    });
+
+    document.getElementById('iTipo').addEventListener('blur', e => {
+       if(osRecurrente)
+         if(!fechasConfirmadas)
+           creaRepeticionFechas();
+    });
+
+    $('#fechasModal').on('hidden.bs.modal', loopOSR);
+    //select check box OS recurrente
+    document.getElementById('osRecurrente').addEventListener('change', e => {
+        if (e.target.checked) {
+            hiddenElements.forEach((e, i, l) => {
+                if (e.hidden)
+                    if (e.dataset.recurrenteRadio === "true")
+                        e.hidden = false;
+            });
+            osRecurrente = true;
+        }
+        if (!e.target.checked) {
+            osRecurrente = false;
+            fechaFinModificado = false;
+            fechas = [];
+            periodo = '';
+            cantRepetir = 0;
+            fechasConfirmadas = false;
+            indexCache = 0;
+            hiddenElements.forEach((e, i, l) => {
+                if (e.dataset.recurrenteRadio != undefined)
+                    if (e.dataset.recurrenteRadio === "true" || e.dataset.recurrenteRadio === "false")
+                        if (!e.hidden)
+                            e.hidden = true;
+                e.querySelector('[type="radio"]') !== null ? e.querySelector('[type="radio"]').checked = false : null;
+                if (e.dataset.recurrenteRadio === "false") {
+                    e.nextElementSibling.value = null;
+                    e.nextElementSibling.hidden = true;
+                    e.nextElementSibling.required = false;
+                }
+            });
+            initFechas(document.getElementById('iLineaNegocio').selectedOptions[0].innerText);
+        }
+    });
+
+    document.getElementById('diario').addEventListener('change', e => {
+        const cantRep = document.querySelector('[data-recurrente-radio="false"]');
+        cantRep.hidden = false;
+        cantRep.nextElementSibling.hidden = false;
+        cantRep.nextElementSibling.required = true;
+        if (cantRep.nextElementSibling.value) {
+            cantRep.nextElementSibling.value = null;
+            fechas = [];
+            fechaFinModificado = false;
+            initFechas(document.getElementById('iLineaNegocio').selectedOptions[0].innerText);
+            fechasConfirmadas = false;
+            indexCache = 0;
+        }
+    });
+
+    document.getElementById('semanal').addEventListener('change', e => {
+        const cantRep = document.querySelector('[data-recurrente-radio="false"]');
+        cantRep.hidden = false;
+        cantRep.nextElementSibling.hidden = false;
+        cantRep.nextElementSibling.required = true;
+        if (cantRep.nextElementSibling.value) {
+            cantRep.nextElementSibling.value = null;
+            fechas = [];
+            fechaFinModificado = false;
+            initFechas(document.getElementById('iLineaNegocio').selectedOptions[0].innerText);
+            fechasConfirmadas = false;
+            indexCache = 0;
+        }
+    });
+
+    document.getElementById('mensual').addEventListener('change', e => {
+        const cantRep = document.querySelector('[data-recurrente-radio="false"]');
+        cantRep.hidden = false;
+        cantRep.nextElementSibling.hidden = false;
+        cantRep.nextElementSibling.required = true;
+        if (cantRep.nextElementSibling.value) {
+            cantRep.nextElementSibling.value = null;
+            fechas = [];
+            fechaFinModificado = false;
+            initFechas(document.getElementById('iLineaNegocio').selectedOptions[0].innerText);
+            fechasConfirmadas = false;
+            indexCache = 0;
+        }
+    });
+
+    document.getElementById('bimestral').addEventListener('change', e => {
+        const cantRep = document.querySelector('[data-recurrente-radio="false"]');
+        cantRep.hidden = false;
+        cantRep.nextElementSibling.hidden = false;
+        cantRep.nextElementSibling.required = true;
+        if (cantRep.nextElementSibling.value) {
+            cantRep.nextElementSibling.value = null;
+            fechas = [];
+            fechaFinModificado = false;
+            initFechas(document.getElementById('iLineaNegocio').selectedOptions[0].innerText);
+            fechasConfirmadas = false;
+            indexCache = 0;
+        }
+    });
+
+    document.getElementById('trimestral').addEventListener('change', e => {
+        const cantRep = document.querySelector('[data-recurrente-radio="false"]');
+        cantRep.hidden = false;
+        cantRep.nextElementSibling.hidden = false;
+        cantRep.nextElementSibling.required = true;
+        if (cantRep.nextElementSibling.value) {
+            cantRep.nextElementSibling.value = null;
+            fechas = [];
+            fechaFinModificado = false;
+            initFechas(document.getElementById('iLineaNegocio').selectedOptions[0].innerText);
+            fechasConfirmadas = false;
+            indexCache = 0;
+        }
+    });
+
+    document.getElementById('cuatrimestral').addEventListener('change', e => {
+        const cantRep = document.querySelector('[data-recurrente-radio="false"]');
+        cantRep.hidden = false;
+        cantRep.nextElementSibling.hidden = false;
+        cantRep.nextElementSibling.required = true;
+        if (cantRep.nextElementSibling.value) {
+            cantRep.nextElementSibling.value = null;
+            fechas = [];
+            fechaFinModificado = false;
+            initFechas(document.getElementById('iLineaNegocio').selectedOptions[0].innerText);
+            fechasConfirmadas = false;
+            indexCache = 0;
+        }
+    });
+
+    document.getElementById('semestral').addEventListener('change', e => {
+        const cantRep = document.querySelector('[data-recurrente-radio="false"]');
+        cantRep.hidden = false;
+        cantRep.nextElementSibling.hidden = false;
+        cantRep.nextElementSibling.required = true;
+        if (cantRep.nextElementSibling.value) {
+            cantRep.nextElementSibling.value = null;
+            fechas = [];
+            fechaFinModificado = false;
+            initFechas(document.getElementById('iLineaNegocio').selectedOptions[0].innerText);
+            fechasConfirmadas = false;
+            indexCache = 0;
+        }
+    });
+
+    document.getElementById('anual').addEventListener('change', e => {
+        const cantRep = document.querySelector('[data-recurrente-radio="false"]');
+        cantRep.hidden = false;
+        cantRep.nextElementSibling.hidden = false;
+        cantRep.nextElementSibling.required = true;
+        if (cantRep.nextElementSibling.value) {
+            cantRep.nextElementSibling.value = null;
+            fechas = [];
+            fechaFinModificado = false;
+            initFechas(document.getElementById('iLineaNegocio').selectedOptions[0].innerText);
+            fechasConfirmadas = false;
+            indexCache = 0;
+        }
+    });
+
+    document.getElementById('numRepet').addEventListener('blur', e => {
+        console.log(e.srcElement.value);
+        if (e.srcElement.value === '') {
+            document.getElementById('numRepet').focus();
+            document.getElementById('numRepet').focus();
+        } else if (fechaFinModificado) {
+            if (fechas.length === 0) {
+                creaRepeticionFechas();
+                return;
+            }
+        }
+    });
+
+    document.getElementById('stepTwo').addEventListener('click', e => {
+        if (osRecurrente) {
+            if (!fechasConfirmadas) {
+                creaRepeticionFechas();
+            }
+        }
+    });
+
+    $('#iFechaFin').on('change.datetimepicker', c => {
+        if (osRecurrente) {
+            fechaFinModificado = true;
+            hiddenElements.forEach((e, i, l) => {
+                if (e.dataset.recurrenteRadio != undefined) {
+                    if (e.dataset.recurrenteRadio === 'true') {
+                        if (e.querySelector('[type="radio"]') != null) {
+                            if (e.querySelector('[type="radio"]').checked) {
+                                if (document.getElementById('numRepet').value == '') {
+                                    document.getElementById('numRepet').focus()
+                                } else {
+                                    if (!fechasConfirmadas)
+                                        creaRepeticionFechas();
+                                }
+                            }
+                        }
                     }
                 }
             });
+        }
+    });
+
+</script>
+
+<script>
+    const paqueteP = @Html.Raw(Json.Serialize(paquete));
+    let contacts = [];
+    $(document).ready(function() {
+        $('#iFechaInicio').datetimepicker({
+            locale: 'es',
+            focusOnShow: false,
+            inline: true,
+            sideBySide: true
         });
 
-        $("#slcContacto").change(() => {
-            const result = contacts.filter(contact => contact.id == $("#slcContacto").val());
-            $("#iNombre").val(result[0].nombre);
-            $("#iAp").val(result[0].paterno);
-            $("#iAm").val(result[0].materno);
-            $("#iEm").val(result[0].email);
-            $("#iTel").val(result[0].telefono);
+        $('#iFechaFin').datetimepicker({
+            locale: 'es',
+            focusOnShow: false,
+            inline: true,
+            sideBySide: true
         });
 
-        $("#osCantidad").keypress((evt) => {
-            if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57) {
-                evt.preventDefault();
+        $('#iOp3').datetimepicker({
+            locale: 'es',
+            focusOnShow: false,
+            inline: true,
+            sideBySide: true
+        });
+    });
+
+    $("#iCliente").change(() => {
+        $.ajax({
+            url: '@Url.Action("GetContactoCliente","Rest")',
+            method: "GET",
+            data: {
+                cId: $("#iCliente").val()
+            },
+            async: true,
+            dataType: "json",
+            success: data => {
+                if (data.success) {
+                    contacts.length = 0;
+                    contacts = [...data.data];
+                    $("#slcContacto").empty().append(`<option value="null" selected disabled>Selecciona un Contacto</option>`);
+                    for (const contacto of data.data) {
+                        $("#slcContacto").append(`<option value="${contacto.id}">${contacto.nombre} ${contacto.paterno} ${contacto.materno}</option>`);
+                    }
+                    $("#iNombre").val("");
+                    $("#iAp").val("");
+                    $("#iAm").val("");
+                    $("#iEm").val("");
+                    $("#iTel").val("");
+                }
             }
         });
+    });
 
-        $("#iTel").keypress((evt) => {
-            if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57) {
-                evt.preventDefault();
-            }
-        });
-    </script>
-    <script src="~/lib/Parsley-2.8.1/parsley.min.js"></script>
-    <script src="~/lib/Parsley-2.8.1/i18n/es.js"></script>
-    <script src="~/js/moment-2.22.2/min/moment-with-locales.js"></script>
-    <script src="~/lib/tempusdominus-5.0.0/build/js/tempusdominus-bootstrap-4.min.js"></script>
-    <script src="~/lib/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-    <script src="~/js/createOrdenServicio.js"></script>
+    $("#slcContacto").change(() => {
+        const result = contacts.filter(contact => contact.id == $("#slcContacto").val());
+        $("#iNombre").val(result[0].nombre);
+        $("#iAp").val(result[0].paterno);
+        $("#iAm").val(result[0].materno);
+        $("#iEm").val(result[0].email);
+        $("#iTel").val(result[0].telefono);
+    });
+
+    $("#osCantidad").keypress((evt) => {
+        if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+
+    $("#iTel").keypress((evt) => {
+        if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57) {
+            evt.preventDefault();
+        }
+    });
+</script>
+<script src="~/lib/Parsley-2.8.1/parsley.min.js"></script>
+<script src="~/lib/Parsley-2.8.1/i18n/es.js"></script>
+<script src="~/js/moment-2.22.2/min/moment-with-locales.js"></script>
+<script src="~/lib/tempusdominus-5.0.0/build/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="~/lib/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+<script src="~/js/createOrdenServicio.js"></script>
 }

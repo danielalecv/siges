@@ -57,9 +57,12 @@ namespace siges.Controllers
         private readonly Settings settings;
         private readonly ApplicationDbContext _context;
         private readonly IArchivo _archivoRepo;
+        private readonly IOrdenActivoFijo _orAfRepo;
+        private readonly IOrdenInsumo _orInsumoRepo;
+        private readonly IOsRecurrente _osRecuRepo;
         private String LoggedUser;
 
-        public ServicioController(IConfiguracionServicioRepository csRepo, IContratoRepository cRepo, IServicioRepository sRepo, ILineaNegocioRepository lnRepo, IOrdenServicioRepository osRepo, IUbicacionRepository uRepo, IPersonaRepository pRepo, IInsumoRepository iRepo, IActivoFijoRepository afRepo, IClienteRepository clRepo, IBitacoraRepository bRepo, IOperador operRepo, UserManager<RoatechIdentityUser> um, RoleManager<IdentityRole> rm, IEmailConfiguration emailConf, IComercial comRepo, IHostingEnvironment hostingEnvironment, IBitacoraEstatusRepository beRepo, ISettingsRepository setRepo, IOrdenPersona opRepo, ApplicationDbContext context, IArchivo arR)
+        public ServicioController(IConfiguracionServicioRepository csRepo, IContratoRepository cRepo, IServicioRepository sRepo, ILineaNegocioRepository lnRepo, IOrdenServicioRepository osRepo, IUbicacionRepository uRepo, IPersonaRepository pRepo, IInsumoRepository iRepo, IActivoFijoRepository afRepo, IClienteRepository clRepo, IBitacoraRepository bRepo, IOperador operRepo, UserManager<RoatechIdentityUser> um, RoleManager<IdentityRole> rm, IEmailConfiguration emailConf, IComercial comRepo, IHostingEnvironment hostingEnvironment, IBitacoraEstatusRepository beRepo, ISettingsRepository setRepo, IOrdenPersona opRepo, ApplicationDbContext context, IArchivo arR, IOrdenActivoFijo orAfRepo, IOrdenInsumo orInsumoRepo, IOsRecurrente osRecuRepo)
         {
             _csRepo = csRepo;
             _cRepo = cRepo;
@@ -84,6 +87,9 @@ namespace siges.Controllers
             _context = context;
             _archivoRepo = arR;
             settings = _setRepo.GetByVersion("DAMSA");
+            _orAfRepo = orAfRepo;
+            _orInsumoRepo = orInsumoRepo;
+            _osRecuRepo = osRecuRepo;
         }
 
         /*
@@ -868,7 +874,6 @@ namespace siges.Controllers
         public IActionResult SaveOS(OrdenServicioDTO nOS)
         {
             Console.WriteLine("\n\n\nInicio: SaveOS");
-            Console.WriteLine("Nombre contacto: " + nOS.ContactoNombre + ", " + nOS.ContactoAP + ", " + nOS.ContactoAM + "\n:" + nOS.ContactoEmail + "\n:" + nOS.ContactoTelefono);
             List<OrdenPersonalDTO> personal = new List<OrdenPersonalDTO>();
             List<OrdenInsumoDTO> insumos = new List<OrdenInsumoDTO>();
             List<OrdenActivoFijoDTO> activos = new List<OrdenActivoFijoDTO>();
@@ -1048,6 +1053,65 @@ namespace siges.Controllers
             Console.WriteLine("\n\nOS antes de ser insertado en la bd: {0}\n", os.PersonaComercial.FaceApiId);
             Console.WriteLine("\n\nOS antes de ser insertado en la bd: {0}\n", os.PersonaValida.FaceApiId);
             _osRepo.Insert(os);
+
+            //OSREC
+
+            List<OrdenServicio> osR = null;
+            if (nOS.OSRecurrente)
+            {
+                osR = new List<OrdenServicio>();
+                OsRecurrente children = new OsRecurrente();
+                children.OsOrigenId = _osRepo.GetOSbyFolio(os.Folio).Id;
+                children.Periodo = nOS.OSRecurrentePeriodo;
+                //if(JArray.Parse(nOS.fechasOSRecurrente).Count > 0){
+                int count = 0;
+                foreach (var f in JArray.Parse(nOS.fechasOSRecurrente))
+                {
+                    osR.Add(new OrdenServicio
+                    {
+                        Folio = getOsFolio(settings.FolioPrefix),
+                        FechaInicio = DateTime.Parse(JObject.Parse(f.ToString()).Property("inicio").Value.ToString()),
+                        FechaFin = DateTime.Parse(JObject.Parse(f.ToString()).Property("fin").Value.ToString()),
+                        Cliente = os.Cliente,
+                        Contrato = os.Contrato,
+                        Ubicacion = os.Ubicacion,
+                        LineaNegocio = os.LineaNegocio,
+                        Servicio = os.Servicio,
+                        Tipo = os.Tipo,
+                        EstatusServicio = os.EstatusServicio,
+                        Observaciones = os.Observaciones,
+                        ContactoNombre = os.ContactoNombre,
+                        ContactoAP = os.ContactoAP,
+                        ContactoAM = os.ContactoAM,
+                        ContactoEmail = os.ContactoEmail,
+                        ContactoTelefono = os.ContactoTelefono,
+                        NombreCompletoCC1 = os.NombreCompletoCC1,
+                        EmailCC1 = os.EmailCC1,
+                        NombreCompletoCC2 = os.NombreCompletoCC2,
+                        EmailCC2 = os.EmailCC2,
+                        Opcional1 = os.Opcional1,
+                        Opcional2 = os.Opcional2,
+                        Opcional3 = os.Opcional3,
+                        Opcional4 = os.Opcional4,
+                        Estatus = os.Estatus,
+                        Insumos = os.Insumos,
+                        Personal = os.Personal,
+                        Activos = os.Activos,
+                        PersonaComercial = os.PersonaComercial,
+                        PersonaValida = os.PersonaValida,
+                        FechaAdministrativa = os.FechaAdministrativa,
+                    });
+                    _osRepo.Insert(osR[count++]);
+                    children.OsRecurrentesIds.Add(new OsRecurrente.Oses { OsId = _osRepo.GetOSbyFolio(osR[count - 1].Folio).Id });
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    Console.WriteLine("{0} {1} {2}", osR[count - 1].Folio, osR[count - 1].FechaInicio, osR[count - 1].FechaFin);
+                }
+                //}
+                _osRecuRepo.Insert(children);
+            }
+
+            //termina OSRECURRENTE
+
             int perId = _pRepo.GetByEmail(this.User.Identity.Name).Single().Id;
             int newOSId = 0;
             //List<OrdenServicio> osPersonaList = _osRepo.GetByPersonaComercialId(perId).ToList();
@@ -1132,6 +1196,7 @@ namespace siges.Controllers
             }
             _bRepo.Insert(new Bitacora() { UserId = LoggedUser, EventDate = DateTime.Now, Event = "Insert", Section = "Orden de servicio", Description = "Orden de servicio no. " + nOS.Id + " agregada." });
             ViewData["ordenServicio"] = os;
+            ViewData["osRecurrente"] = osR;
             return View("~/Views/Servicio/ConfirmOrdenServicio.cshtml");
             //return RedirectToAction("IndexListOS", "Servicio");
         }
@@ -1141,6 +1206,9 @@ namespace siges.Controllers
         public IActionResult IndexEditOS(int ordenId)
         {
             OrdenServicio eOS = _osRepo.GetByIdOS(ordenId);
+            eOS.Personal = _opRepo.GetOSbyIdOs(ordenId).ToList();
+            eOS.Activos = _orAfRepo.GetOSbyIdOs(ordenId).ToList();
+            eOS.Insumos = _orInsumoRepo.GetOSbyIdOs(ordenId).ToList();
             List<Cliente> _allcl = _clRepo.GetAll(true).ToList();
             _allcl.Sort((a, b) => a.RazonSocial.CompareTo(b.RazonSocial));
             List<Contrato> _allc = _cRepo.GetContratoByCliente(eOS.Cliente.Id).ToList();
@@ -1169,6 +1237,9 @@ namespace siges.Controllers
         public IActionResult IndexDetailOS(int ordenId)
         {
             OrdenServicio eOS = _osRepo.GetByIdOS(ordenId);
+            eOS.Personal = _opRepo.GetOSbyIdOs(ordenId).ToList();
+            eOS.Activos = _orAfRepo.GetOSbyIdOs(ordenId).ToList();
+            eOS.Insumos = _orInsumoRepo.GetOSbyIdOs(ordenId).ToList();
             List<Cliente> _allcl = _clRepo.GetAll(true).ToList();
             _allcl.Sort((a, b) => a.RazonSocial.CompareTo(b.RazonSocial));
             List<Contrato> _allc = _cRepo.GetContratoByCliente(eOS.Cliente.Id).ToList();

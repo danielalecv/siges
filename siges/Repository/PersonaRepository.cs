@@ -1,7 +1,10 @@
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using siges.Data;
 using siges.Models;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -47,6 +50,18 @@ namespace siges.Repository
         {
             var result = entities.Any(r => r.Email == email);
             return result;
+        }
+        public void DeleteByContactoClienteId(int id)
+        {
+            string connectionString = "Server=192.168.1.221;Database=SSM4_test;user id=ssm4Test;password=Ssm4Test&2021.!";
+            string queryString = "delete Persona where ContactoClienteId = " + id;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                command.Connection.Open();
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 using siges.Models;
-
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,5 +12,6 @@ namespace siges.Repository
         IQueryable<Persona> GetAll(bool status);
         bool Exist(string RFC, string CURP);
         bool ExistByEmail(string email);
+        void DeleteByContactoClienteId(int id);
     }
 }

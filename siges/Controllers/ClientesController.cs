@@ -16,12 +16,14 @@ namespace siges.Controllers
     public class ClientesController : Controller {
         private readonly ApplicationDbContext _context;
         private readonly IBitacoraRepository _bRepo;
+        private readonly IPersonaRepository _personaRepo;
         private String LoggedUser;
 
-        public ClientesController(ApplicationDbContext context, IBitacoraRepository bRepo)
+        public ClientesController(ApplicationDbContext context, IBitacoraRepository bRepo, IPersonaRepository personaRepo)
         {
             _context = context;
             _bRepo = bRepo;
+            _personaRepo = personaRepo;
         }
 
         // GET: Clientes
@@ -129,7 +131,8 @@ namespace siges.Controllers
         // POST: Clientes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id) { 
+        public async Task<IActionResult> DeleteConfirmed(int id) {
+          Console.WriteLine("\n\n\tInicio Delete: " + id + "\n\n");
           if(User.Identity.IsAuthenticated){
             if (id > 0){
               try{
@@ -137,14 +140,30 @@ namespace siges.Controllers
                 cliente.Estatus = false;
                 _context.Update(cliente);
                 var RcontactoCliente = await _context.ContactoCliente.Where(r => r.Cliente.Id == id).FirstOrDefaultAsync();
-                _context.Cliente.Remove(cliente);
-                RcontactoCliente.Estatus = false;
-                _context.Update(RcontactoCliente);
-                _context.ContactoCliente.Remove(RcontactoCliente);
-                await _context.SaveChangesAsync();
-                LoggedUser = this.User.Identity.Name;
-                _bRepo.Insert(new Bitacora() { UserId = LoggedUser, EventDate = DateTime.Now, Event = "Delete", Section = "Cliente", Description = "Cliente no. " + cliente.Id + " eliminado." });
-                return new JsonResult(true);
+                        if (RcontactoCliente != null)
+                        {
+                            Console.WriteLine("\n\n\tcontactoCli encontrado: " + RcontactoCliente.Id);
+                            _personaRepo.DeleteByContactoClienteId(RcontactoCliente.Id);
+                            Console.WriteLine("elimino personas");
+                            _context.Cliente.Remove(cliente);
+                            RcontactoCliente.Estatus = false;
+                            _context.Update(RcontactoCliente);
+                            _context.ContactoCliente.Remove(RcontactoCliente);
+                            await _context.SaveChangesAsync();
+                            LoggedUser = this.User.Identity.Name;
+                            _bRepo.Insert(new Bitacora() { UserId = LoggedUser, EventDate = DateTime.Now, Event = "Delete", Section = "Cliente", Description = "Cliente no. " + cliente.Id + " eliminado." });
+                            return new JsonResult(true);
+                        }
+                        else
+                        {
+                            Console.WriteLine("contactoCli encontrado: " + RcontactoCliente);
+                            _context.Cliente.Remove(cliente);
+                            await _context.SaveChangesAsync();
+                            LoggedUser = this.User.Identity.Name;
+                            _bRepo.Insert(new Bitacora() { UserId = LoggedUser, EventDate = DateTime.Now, Event = "Delete", Section = "Cliente", Description = "Cliente no. " + cliente.Id + " eliminado." });
+                            return new JsonResult(true);
+
+                        }
               } catch (Exception e) {
                 return new JsonResult(e);
               }

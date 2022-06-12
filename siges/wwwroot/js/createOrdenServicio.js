@@ -742,6 +742,7 @@ $(document).ready(function () {
 
     //feather.replace();
     $('#osTotal').val(0);
+    $('#osafTotal').val(0);
     $('#osiTotal').val(0);
 
     // Wizard steps
@@ -767,28 +768,30 @@ $(document).ready(function () {
 
     $('#stepTwo').click(function (e) {
         e.preventDefault();
+        if (($('#iFechaInicio').datetimepicker('viewDate').hours() > 0 || $('#iFechaInicio').datetimepicker('viewDate').minutes() > 0) && ($('#iFechaFin').datetimepicker('viewDate').hours() > 0 || $('#iFechaFin').datetimepicker('viewDate').minutes() > 0)) {
+            $('#fNewOS').parsley().whenValidate({
+                group: 'block-' + 0
+            }).done(function () {
 
-        $('#fNewOS').parsley().whenValidate({
-            group: 'block-' + 0
-        }).done(function () {
+                var progressValue = 40;
+                $("#stepTwo").addClass("active");
+                $("#stepOne").removeClass("active");
+                $("#stepThree").removeClass("active");
+                $("#stepFour").removeClass("active");
+                $("#stepFive").removeClass("active");
+                $("#infoResponsable").fadeIn('fast');
+                $("#infoGral").fadeOut('fast');
+                $("#infoPersonal").fadeOut('fast');
+                $("#infoInsumos").fadeOut('fast');
+                $("#infoInsumosP").fadeOut('fast');
+                $("#infoActivosFijos").fadeOut('fast');
+                moveProgressBar(progressValue);
 
-            var progressValue = 40;
-            $("#stepTwo").addClass("active");
-            $("#stepOne").removeClass("active");
-            $("#stepThree").removeClass("active");
-            $("#stepFour").removeClass("active");
-            $("#stepFive").removeClass("active");
-            $("#infoResponsable").fadeIn('fast');
-            $("#infoGral").fadeOut('fast');
-            $("#infoPersonal").fadeOut('fast');
-            $("#infoInsumos").fadeOut('fast');
-            $("#infoInsumosP").fadeOut('fast');
-            $("#infoActivosFijos").fadeOut('fast');
-            moveProgressBar(progressValue);
-
-            $('#tab-lists a[href="#infoResponsable"]').tab('show');
-        });
-
+                $('#tab-lists a[href="#infoResponsable"]').tab('show');
+            });
+        } else {
+            $('#hmAlert').modal('show');
+        }
     });
 
     $('#stepThree').click(function (e) {
@@ -1279,7 +1282,7 @@ $(document).ready(function () {
         `;
                 $('#t_Insumos').bootstrapTable('append', data);
                 var total = $('#t_Insumos').bootstrapTable('getData').length;
-                $('#osiTotal').val(total);
+                document.getElementById('infoInsumos').getElementsByTagName('input').osiTotal.value = total;
                 $('#os_Insumo').prop('selectedIndex', "");
                 $('#osCantidad').val("");
 
@@ -1363,8 +1366,9 @@ $(document).ready(function () {
                 }
             });
             $('#tInsumos').bootstrapTable('load', data);
-            var total = $('#tInsumos').bootstrapTable('getData').length;
-            $('#osiTotal').val(total);
+            //var total = $('#tInsumos').bootstrapTable('getData').length;
+            var total = $('#t_Insumos').bootstrapTable('getData').length;
+            document.getElementById('infoInsumos').getElementsByTagName('input').osiTotal.value = total;
         }
     });
 
@@ -1433,7 +1437,7 @@ $(document).ready(function () {
             });
             $('#t_Insumos').bootstrapTable('load', data);
             var total = $('#t_Insumos').bootstrapTable('getData').length;
-            $('#osiTotal').val(total);
+            document.getElementById('infoInsumos').getElementsByTagName('input').osiTotal.value = total;
             //feather.replace();
         }
     });
@@ -1446,6 +1450,20 @@ $(document).ready(function () {
             $("[name='dtInsumos']").val(JSON.stringify($('#t_Insumos').bootstrapTable('getData')));
         } else {
             $("[name='dtInsumos']").val(JSON.stringify($('#tInsumos').bootstrapTable('getData')));
+        }
+        //recurrente
+        if (osRecurrente && fechasConfirmadas && fechas.length > 0) {
+            var osr = document.createElement('input');
+            osr.setAttribute('type', 'hidden');
+            osr.setAttribute('name', 'fechasOSRecurrente');
+            moment.fn.toJSON = function () { return this.format(); }
+            osr.value = JSON.stringify(fechas);
+            var osf = document.createElement('input');
+            osf.setAttribute('type', 'hidden');
+            osf.setAttribute('name', 'OSRecurrente');
+            osf.value = osRecurrente;
+            document.getElementById('fNewOS').appendChild(osr);
+            document.getElementById('fNewOS').appendChild(osf);
         }
     });
 

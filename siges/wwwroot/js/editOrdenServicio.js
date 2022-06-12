@@ -998,7 +998,7 @@ if(!paqueteP){
         $('#osCantidad').val("");
 
         var total = $('#t_Insumos').bootstrapTable('getData').length;
-        $('#osiTotal').val(total);
+        document.getElementById('infoInsumos').getElementsByTagName('input').osiTotal.value = total;
 
         //feather.replace();
       } else {
@@ -1083,7 +1083,7 @@ if(!paqueteP){
       });
       $('#t_Insumos').bootstrapTable('load', data);
       var total = $('#t_Insumos').bootstrapTable('getData').length;
-      $('#osiTotal').val(total);
+      document.getElementById('infoInsumos').getElementsByTagName('input').osiTotal.value = total;
       //feather.replace();
     }
   });
@@ -1159,7 +1159,7 @@ if(!paqueteP){
       });
       $('#tInsumos').bootstrapTable('load', data);
       var total = $('#tInsumos').bootstrapTable('getData').length;
-      $('#osiTotal').val(total);
+      document.getElementById('infoInsumos').getElementsByTagName('input').osiTotal.value = total;
     }
   });
 $('#osInsumo').on('changed.bs.select', (e, clickedIndex, isSelected, previousValue) => {
