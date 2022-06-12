@@ -106,6 +106,7 @@
   </ServerSettings>
   <LocalSettings>
     <Property Name="sonar.host.url">http://roatech.dyndns.info:9000</Property>
+    <Property Name="sonar.scm.provider">git</Property>
   </LocalSettings>
   <AnalyzersSettings>
     <AnalyzerSettings>

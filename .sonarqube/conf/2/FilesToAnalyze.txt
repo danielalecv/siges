@@ -133,6 +133,10 @@ C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Migrations\20200910192112_B
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Migrations\20200910192112_BulkUploadTemplate_Upgraded.Designer.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Migrations\20200923221536_PorSiHayAlgoPendiente.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Migrations\20200923221536_PorSiHayAlgoPendiente.Designer.cs
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Migrations\20220609171909_OsRecurrente.cs
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Migrations\20220609171909_OsRecurrente.Designer.cs
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Migrations\20220610235133_inicial.cs
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Migrations\20220610235133_inicial.Designer.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Migrations\ApplicationDbContextModelSnapshot.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Models\ActivoFijo.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Models\Administracion.cs
@@ -181,6 +185,7 @@ C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Models\OrdenActivoFijo.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Models\OrdenInsumo.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Models\OrdenPersona.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Models\OrdenServicio.cs
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Models\OsRecurrente.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Models\Paquete.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Models\PaqueteInsumo.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Models\PaqueteInsumoKit.cs
@@ -259,6 +264,7 @@ C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\IOrdenActivoFijo
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\IOrdenInsumo.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\IOrdenPersona.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\IOrdenServicioRepository.cs
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\IOsRecurrente.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\IPaquete.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\IPaqueteInsumo.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\IPersonaRepository.cs
@@ -283,6 +289,7 @@ C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\OrdenActivoFijoR
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\OrdenInsumoRepository.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\OrdenPersonaRepository.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\OrdenServicioRepository.cs
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\OsRecurrenteRepository.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\PaqueteInsumoRepository.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\PaqueteRepository.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges\Repository\PersonaRepository.cs
