@@ -1179,8 +1179,8 @@ namespace siges.Controllers
                 osR.Add(new OrdenServicio
                 {
                     Folio = getOsFolio(settings.FolioPrefix),
-                    FechaInicio = DateTime.Parse(JObject.Parse(f.ToString()).Property("inicio").Value.ToString(), CultureInfo.InvariantCulture),
-                    FechaFin = DateTime.Parse(JObject.Parse(f.ToString()).Property("fin").Value.ToString(), CultureInfo.InvariantCulture),
+                    FechaInicio = DateTime.Parse(JObject.Parse(f.ToString()).Property("inicio").Value.ToString()),
+                    FechaFin = DateTime.Parse(JObject.Parse(f.ToString()).Property("fin").Value.ToString()),
                     Cliente = os.Cliente,
                     Contrato = os.Contrato,
                     Ubicacion = os.Ubicacion,

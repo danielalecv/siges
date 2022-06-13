@@ -1,6 +1,7 @@
 ﻿C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\ContactoClienteControllerTest.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\HomeControllerTest.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\MailSupportTest.cs
+C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\ServicioControllerTest.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\TestControllerTest.cs
 C:\Users\HP EliteBook 2570p\source\repos\siges\siges-test\ToolsTest.cs
 C:\Users\HP EliteBook 2570p\.nuget\packages\microsoft.net.test.sdk\16.11.0\build\netcoreapp2.1\Microsoft.NET.Test.Sdk.Program.cs
