@@ -62,7 +62,14 @@ namespace siges.Controllers
         private readonly IOsRecurrente _osRecuRepo;
         private String LoggedUser;
 
-        public ServicioController(IConfiguracionServicioRepository csRepo, IContratoRepository cRepo, IServicioRepository sRepo, ILineaNegocioRepository lnRepo, IOrdenServicioRepository osRepo, IUbicacionRepository uRepo, IPersonaRepository pRepo, IInsumoRepository iRepo, IActivoFijoRepository afRepo, IClienteRepository clRepo, IBitacoraRepository bRepo, IOperador operRepo, UserManager<RoatechIdentityUser> um, RoleManager<IdentityRole> rm, IEmailConfiguration emailConf, IComercial comRepo, IHostingEnvironment hostingEnvironment, IBitacoraEstatusRepository beRepo, ISettingsRepository setRepo, IOrdenPersona opRepo, ApplicationDbContext context, IArchivo arR, IOrdenActivoFijo orAfRepo, IOrdenInsumo orInsumoRepo, IOsRecurrente osRecuRepo)
+        public ServicioController(IConfiguracionServicioRepository csRepo, IContratoRepository cRepo, 
+            IServicioRepository sRepo, ILineaNegocioRepository lnRepo, IOrdenServicioRepository osRepo, 
+            IUbicacionRepository uRepo, IPersonaRepository pRepo, IInsumoRepository iRepo, IActivoFijoRepository afRepo, 
+            IClienteRepository clRepo, IBitacoraRepository bRepo, IOperador operRepo, 
+            UserManager<RoatechIdentityUser> um, RoleManager<IdentityRole> rm, IEmailConfiguration emailConf, 
+            IComercial comRepo, IHostingEnvironment hostingEnvironment, IBitacoraEstatusRepository beRepo, 
+            ISettingsRepository setRepo, IOrdenPersona opRepo, ApplicationDbContext context, IArchivo arR, 
+            IOrdenActivoFijo orAfRepo, IOrdenInsumo orInsumoRepo, IOsRecurrente osRecuRepo)
         {
             _csRepo = csRepo;
             _cRepo = cRepo;
@@ -1059,55 +1066,7 @@ namespace siges.Controllers
             List<OrdenServicio> osR = null;
             if (nOS.OSRecurrente)
             {
-                osR = new List<OrdenServicio>();
-                OsRecurrente children = new OsRecurrente();
-                children.OsOrigenId = _osRepo.GetOSbyFolio(os.Folio).Id;
-                children.Periodo = nOS.OSRecurrentePeriodo;
-                //if(JArray.Parse(nOS.fechasOSRecurrente).Count > 0){
-                int count = 0;
-                foreach (var f in JArray.Parse(nOS.fechasOSRecurrente))
-                {
-                    osR.Add(new OrdenServicio
-                    {
-                        Folio = getOsFolio(settings.FolioPrefix),
-                        FechaInicio = DateTime.Parse(JObject.Parse(f.ToString()).Property("inicio").Value.ToString()),
-                        FechaFin = DateTime.Parse(JObject.Parse(f.ToString()).Property("fin").Value.ToString()),
-                        Cliente = os.Cliente,
-                        Contrato = os.Contrato,
-                        Ubicacion = os.Ubicacion,
-                        LineaNegocio = os.LineaNegocio,
-                        Servicio = os.Servicio,
-                        Tipo = os.Tipo,
-                        EstatusServicio = os.EstatusServicio,
-                        Observaciones = os.Observaciones,
-                        ContactoNombre = os.ContactoNombre,
-                        ContactoAP = os.ContactoAP,
-                        ContactoAM = os.ContactoAM,
-                        ContactoEmail = os.ContactoEmail,
-                        ContactoTelefono = os.ContactoTelefono,
-                        NombreCompletoCC1 = os.NombreCompletoCC1,
-                        EmailCC1 = os.EmailCC1,
-                        NombreCompletoCC2 = os.NombreCompletoCC2,
-                        EmailCC2 = os.EmailCC2,
-                        Opcional1 = os.Opcional1,
-                        Opcional2 = os.Opcional2,
-                        Opcional3 = os.Opcional3,
-                        Opcional4 = os.Opcional4,
-                        Estatus = os.Estatus,
-                        Insumos = os.Insumos,
-                        Personal = os.Personal,
-                        Activos = os.Activos,
-                        PersonaComercial = os.PersonaComercial,
-                        PersonaValida = os.PersonaValida,
-                        FechaAdministrativa = os.FechaAdministrativa,
-                    });
-                    _osRepo.Insert(osR[count++]);
-                    children.OsRecurrentesIds.Add(new OsRecurrente.Oses { OsId = _osRepo.GetOSbyFolio(osR[count - 1].Folio).Id });
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
-                    Console.WriteLine("{0} {1} {2}", osR[count - 1].Folio, osR[count - 1].FechaInicio, osR[count - 1].FechaFin);
-                }
-                //}
-                _osRecuRepo.Insert(children);
+                osR = CreateOSR(os, nOS);
             }
 
             //termina OSRECURRENTE
@@ -1199,6 +1158,66 @@ namespace siges.Controllers
             ViewData["osRecurrente"] = osR;
             return View("~/Views/Servicio/ConfirmOrdenServicio.cshtml");
             //return RedirectToAction("IndexListOS", "Servicio");
+        }
+
+        /* Functions to Create and Insert OSR */
+        public List<OrdenServicio> CreateOSR(OrdenServicio os, OrdenServicioDTO nOS)
+        {
+            Console.WriteLine("\n\n\n\tInicio Create OS recurrente");
+            var osR = new List<OrdenServicio>();
+            OsRecurrente children = new OsRecurrente();
+            children.OsOrigenId = _osRepo.GetOSbyFolio(os.Folio).Id;
+            Console.WriteLine("children folio: " + children.OsOrigenId);
+            children.Periodo = nOS.OSRecurrentePeriodo;
+            //if(JArray.Parse(nOS.fechasOSRecurrente).Count > 0){
+            int count = 0;
+            Console.WriteLine("fechasOSRecurrente: " + nOS.fechasOSRecurrente);
+            foreach (var f in JArray.Parse(nOS.fechasOSRecurrente))
+            {
+                Console.WriteLine("FolioPrefix settings: " + settings.FolioPrefix);
+                Console.WriteLine("Get folio: " + getOsFolio(settings.FolioPrefix));
+                osR.Add(new OrdenServicio
+                {
+                    Folio = getOsFolio(settings.FolioPrefix),
+                    FechaInicio = DateTime.Parse(JObject.Parse(f.ToString()).Property("inicio").Value.ToString(), CultureInfo.InvariantCulture),
+                    FechaFin = DateTime.Parse(JObject.Parse(f.ToString()).Property("fin").Value.ToString(), CultureInfo.InvariantCulture),
+                    Cliente = os.Cliente,
+                    Contrato = os.Contrato,
+                    Ubicacion = os.Ubicacion,
+                    LineaNegocio = os.LineaNegocio,
+                    Servicio = os.Servicio,
+                    Tipo = os.Tipo,
+                    EstatusServicio = os.EstatusServicio,
+                    Observaciones = os.Observaciones,
+                    ContactoNombre = os.ContactoNombre,
+                    ContactoAP = os.ContactoAP,
+                    ContactoAM = os.ContactoAM,
+                    ContactoEmail = os.ContactoEmail,
+                    ContactoTelefono = os.ContactoTelefono,
+                    NombreCompletoCC1 = os.NombreCompletoCC1,
+                    EmailCC1 = os.EmailCC1,
+                    NombreCompletoCC2 = os.NombreCompletoCC2,
+                    EmailCC2 = os.EmailCC2,
+                    Opcional1 = os.Opcional1,
+                    Opcional2 = os.Opcional2,
+                    Opcional3 = os.Opcional3,
+                    Opcional4 = os.Opcional4,
+                    Estatus = os.Estatus,
+                    Insumos = os.Insumos,
+                    Personal = os.Personal,
+                    Activos = os.Activos,
+                    PersonaComercial = os.PersonaComercial,
+                    PersonaValida = os.PersonaValida,
+                    FechaAdministrativa = os.FechaAdministrativa,
+                });
+                _osRepo.Insert(osR[count++]);
+                children.OsRecurrentesIds.Add(new OsRecurrente.Oses { OsId = _osRepo.GetOSbyFolio(osR[count - 1].Folio).Id });
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                Console.WriteLine("{0} {1} {2}", osR[count - 1].Folio, osR[count - 1].FechaInicio, osR[count - 1].FechaFin);
+            }
+            //}
+            _osRecuRepo.Insert(children);
+            return osR;
         }
 
         /* Editar Orden de servicios */
